@@ -1,0 +1,20 @@
+header.main-header{
+    display:flex;
+    flex-direction: column;
+    height: 144px;
+    box-shadow: 0 1px 2px -2px gray;
+    box-sizing: border-box;
+}
+
+header.top-header{
+    width: 100%;
+    background-color: #435966;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding:0px 90px;
+    height: 80px;
+    box-sizing: border-box;
+}
+
