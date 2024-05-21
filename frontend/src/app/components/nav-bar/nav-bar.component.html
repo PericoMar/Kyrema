@@ -1,6 +1,9 @@
 <nav class="nav-bar">
+    <ul class="nav-options">
     <ng-container *ngFor="let menu of navigation">
-        <button mat-button [matMenuTriggerFor]="menuTrigger">{{ menu.label }}</button>
+        <li>
+            <button mat-button [matMenuTriggerFor]="menuTrigger">{{ menu.label }}</button>
+        </li>
         <mat-menu #menuTrigger="matMenu">
         <ng-container *ngFor="let subMenu of menu.children">
             <!-- <button mat-menu-item [routerLink]="subMenu.link">{{ subMenu.label }}</button> -->
@@ -8,4 +11,5 @@
         </ng-container>
         </mat-menu>
     </ng-container>   
+    </ul>
 </nav>

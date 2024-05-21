@@ -4,3 +4,12 @@ nav.nav-bar{
     align-items: center;
     padding: 0px 90px;
 }
+
+ul.nav-options{
+    padding:0;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+}
