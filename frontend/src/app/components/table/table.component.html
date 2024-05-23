@@ -1,0 +1,19 @@
+<div class="table-container" style="width: 100%; height: 100%;">
+  <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
+  <ag-grid-angular
+    style="width: 100%; height: 100%;"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [rowSelection]="rowSelection"
+    [suppressRowClickSelection]="true"
+    [pagination]="true"
+    [paginationPageSize]="paginationPageSize"
+    [paginationPageSizeSelector]="paginationPageSizeSelector"
+    [localeText]="localeText"
+    [class]="themeClass"
+    (rowClicked)="onRowClicked($event)"
+    (cellDoubleClicked)="onCellDoubleClicked($event)"
+    (cellKeyDown)="onCellKeyDown($event)"
+  ></ag-grid-angular>
+</div>

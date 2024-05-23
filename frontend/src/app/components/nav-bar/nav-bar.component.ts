@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 interface MenuItem {
   label: string;
@@ -13,7 +14,7 @@ interface MenuItem {
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [MatButtonModule, MatMenuModule, CommonModule],
+  imports: [MatButtonModule, MatMenuModule, CommonModule, RouterModule],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })
@@ -47,4 +48,5 @@ export class NavBarComponent {
       ]
     }
   ];
+
 }

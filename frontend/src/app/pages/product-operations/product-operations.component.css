@@ -1,0 +1,17 @@
+main.product-page{
+    background-color: #ebeff2;
+}
+
+.listado{
+    height: 540px;
+    padding: 40px 90px;
+}
+
+.datos-producto{
+    height: 100vh;
+    padding: 40px 90px;
+}
+
+h2{
+    font-weight: 500;
+}

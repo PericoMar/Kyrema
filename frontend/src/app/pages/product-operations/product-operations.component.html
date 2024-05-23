@@ -1,0 +1,11 @@
+
+<main class="product-page">
+    <section class="listado">
+        <h2>Listado de {{ productName }}</h2>
+        <app-table [products]="products" (productSelectedChange)="onProductSelectedChanged($event)"></app-table>
+    </section>
+    <section class="datos-producto">
+        <h2>Datos del producto</h2>
+        <app-product-form [product]="productSelected"></app-product-form>
+    </section>
+</main>

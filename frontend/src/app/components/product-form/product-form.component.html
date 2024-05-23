@@ -1,0 +1,8 @@
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+    @for(key of productKeys() ; track key){
+        <label [for]="key" class="input-label">{{ key }}</label>
+        <input [id]="key" [formControlName]="key" [type]="getInputType(key)" class="input-field">
+    }
+    <hr>
+    <button type="submit" class="submit-button" >Submit</button>
+  </form>

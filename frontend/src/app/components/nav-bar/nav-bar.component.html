@@ -7,7 +7,7 @@
         <mat-menu #menuTrigger="matMenu">
         <ng-container *ngFor="let subMenu of menu.children">
             <!-- <button mat-menu-item [routerLink]="subMenu.link">{{ subMenu.label }}</button> -->
-            <button mat-menu-item>{{ subMenu.label }}</button>
+            <button mat-menu-item [routerLink]="subMenu.link">{{ subMenu.label }}</button>
         </ng-container>
         </mat-menu>
     </ng-container>   
