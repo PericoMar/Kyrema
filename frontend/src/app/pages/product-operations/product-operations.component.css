@@ -1,5 +1,5 @@
 main.product-page{
-    background-color: #ebeff2;
+    background-color: var(--main-bg-color);
 }
 
 .listado{

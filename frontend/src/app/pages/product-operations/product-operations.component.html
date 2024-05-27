@@ -5,7 +5,7 @@
         <app-table [products]="products" (productSelectedChange)="onProductSelectedChanged($event)"></app-table>
     </section>
     <section class="datos-producto">
-        <h2>Datos del producto</h2>
-        <app-product-form [product]="productSelected"></app-product-form>
+        <h2>Formulario de gestión</h2>
+        <app-product-form [product]="productSelected" [isProductSelected]="isProductSelected"></app-product-form>
     </section>
 </main>

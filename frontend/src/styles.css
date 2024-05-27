@@ -1,6 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+:root{
+    --main-bg-color: #ebeff2;   
+}
+
 body{
     margin:0;
 }
 html, body { height: 100%; }
 body { margin: 0; font-family:"IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif }
+

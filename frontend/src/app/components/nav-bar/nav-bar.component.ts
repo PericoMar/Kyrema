@@ -42,9 +42,9 @@ export class NavBarComponent {
       label: 'Productos',
       show: false,
       children: [
-        { label: 'Seguros Combinados', link: '/seguros-combinados' },
-        { label: 'Seguros de Cacerías', link: '/seguros-cacerias' },
-        { label: 'Seguros Extranjeros', link: '/seguros-extranjeros' }
+        { label: 'Seguros Combinados', link: '/operaciones/seguros-combinados' },
+        { label: 'Seguros de Cacerías', link: '/operaciones/seguros-cacerias' },
+        { label: 'Seguros Extranjeros', link: '/operaciones/seguros-extranjeros' }
       ]
     }
   ];

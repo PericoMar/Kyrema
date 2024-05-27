@@ -1,8 +1,16 @@
 <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+    <header class="form-header">
+        <h3>Datos del producto</h3>
+        @if(product){
+            <button type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
+        }
+    </header>
     @for(key of productKeys() ; track key){
-        <label [for]="key" class="input-label">{{ key }}</label>
+        <label [for]="key" class="input-label">{{ capitalizeFirstLetter(key) }}</label>
         <input [id]="key" [formControlName]="key" [type]="getInputType(key)" class="input-field">
     }
     <hr>
-    <button type="submit" class="submit-button" >Submit</button>
+    <button type="submit" class="submit-button">
+        {{ isProductSelected ? 'Editar' : 'Crear' }}
+      </button>
   </form>

@@ -10,7 +10,8 @@ import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angul
   styleUrls: ['./product-form.component.css']
 })
 export class ProductFormComponent implements OnInit, OnChanges {
-  @Input() product!: any;
+  @Input() isProductSelected : boolean = false;
+  @Input() product!: any | null;
   productForm: FormGroup = this.fb.group({});
 
   constructor(private fb: FormBuilder) { }
@@ -24,6 +25,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['product']) {
+      this.isProductSelected = true;  
       this.createForm(this.product);
     }
   }
@@ -53,6 +55,26 @@ export class ProductFormComponent implements OnInit, OnChanges {
     }
   }
 
+  capitalizeFirstLetter(key: string): string {
+    return key.charAt(0).toUpperCase() + key.slice(1);
+  }
+
+  eliminateProductSelected() {
+    const emptyProduct: any = {};
+    Object.keys(this.product).forEach(key => {
+      const value = this.product[key];
+      if (typeof value === 'boolean') {
+        emptyProduct[key] = false;
+      } else if (typeof value === 'string') {
+        emptyProduct[key] = '';
+      } else {
+        emptyProduct[key] = null;
+      }
+    });
+    this.product = emptyProduct;
+    this.createForm(this.product);
+    this.isProductSelected = false;
+  }
   onSubmit() {
     console.log(this.productForm.value);
   }

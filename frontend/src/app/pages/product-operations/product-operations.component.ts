@@ -20,6 +20,7 @@ export class ProductOperationsComponent {
       electric: true,
       month: "",
   };
+  isProductSelected : boolean = false;
   
 
   constructor(private route: ActivatedRoute) {}
@@ -34,6 +35,7 @@ export class ProductOperationsComponent {
 
   public onProductSelectedChanged(product: any) {
     this.productSelected = product;
+    this.isProductSelected = true;
   }
 
   // Método para cargar los datos del producto
