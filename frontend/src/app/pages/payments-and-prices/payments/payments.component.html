@@ -1,7 +1,8 @@
-<form [formGroup]="pricesForm" (ngSubmit)="onSubmit()" class="prices-form">
-    <table mat-table [dataSource]="paymentsArray.controls">
+<section class="content-block payments">
+  <form [formGroup]="pricesForm" (ngSubmit)="onSubmit()" class="prices-form">
+    <table mat-table [dataSource]="paymentsArray.controls" class="mat-elevation-z8">
       <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef> Tipos de pago </th>
+        <th mat-header-cell *matHeaderCellDef class="type-column"> Tipos de pago </th>
         <td mat-cell *matCellDef="let payment"> {{ payment.get('type')?.value }} </td>
       </ng-container>
   
@@ -15,5 +16,8 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    <button mat-raised-button color="primary" type="submit">Guardar</button>
+    <div class="button-container">
+      <button mat-raised-button color="primary" type="submit">Guardar</button>
+    </div>
   </form>
+</section>

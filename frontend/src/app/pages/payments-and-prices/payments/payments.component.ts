@@ -4,11 +4,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-payments',
   standalone: true,
-  imports: [MatTableModule, MatCheckboxModule , MatButtonModule, ReactiveFormsModule, BrowserAnimationsModule],
+  imports: [MatTableModule, MatCheckboxModule , MatButtonModule, ReactiveFormsModule, CommonModule],
   templateUrl: './payments.component.html',
   styleUrl: './payments.component.css'
 })

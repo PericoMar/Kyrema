@@ -1,6 +1,12 @@
+.payments{
+    height: 400px;
+    padding: 20px;
+}
+
 .prices-form {
     width: 100%;
     margin: 20px 0;
+    box-shadow: none;
 }
 
 table {
@@ -16,3 +22,17 @@ th, td {
 th {
     background-color: #f2f2f2;
 }
+
+.type-column {
+    width: 20%; /* Ajusta este valor según sea necesario */
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  button {
+    margin-top: 20px;
+  }
+  
