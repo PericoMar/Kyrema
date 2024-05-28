@@ -1,0 +1,7 @@
+<div>
+    <a [routerLink]="['/sociedades/pagos', data.codigo]" routerLinkActive="active" class="a-pagos">Pagos y precios</a>
+    <a [routerLink]="['/sociedades/productos', data.codigo]" routerLinkActive="active" class="a-productos">Productos</a>
+    <a [routerLink]="['/sociedades/permisos', data.codigo]" routerLinkActive="active" class="a-permisos">Permisos</a>
+    <a [routerLink]="['/sociedades/modificar', data.codigo]" routerLinkActive="active" class="a-modificar">Modificar</a>
+    <button (click)="onBorrarClick(data)" class="button-borrar">Borrar</button>
+</div>

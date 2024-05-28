@@ -1,0 +1,41 @@
+div.action-buttons{
+    display: flex;
+    align-items: center;
+}
+
+a{
+    color: white;
+    font-size: 1em;
+    text-decoration: none;
+    padding: 4px;
+    border-radius: 4px;
+    margin-right: 6px;
+}
+
+button{
+    padding: 5px;
+    color: white;
+    border-radius: 4px;
+    border: none;   
+    font-size: 1em;
+    cursor: pointer;
+    background-color: red;
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+
+a.a-pagos{
+    background-color: blue;
+}
+
+a.a-permisos{
+    background-color: orange;
+}
+
+a.a-productos{
+    background-color: black;
+}
+
+a.a-modificar{
+    background-color: yellow;
+}

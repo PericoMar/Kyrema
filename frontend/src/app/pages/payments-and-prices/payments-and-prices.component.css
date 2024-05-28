@@ -1,0 +1,15 @@
+main.price-payment-manager{
+    padding: 40px 90px;
+    background-color: var(--main-bg-color);
+    height: 100%;
+}
+
+.payments-content{
+    background-color: white;
+    border-radius: 4px;
+    height: 600px;
+}
+
+.price-manager{
+    margin-top: 40px;
+}

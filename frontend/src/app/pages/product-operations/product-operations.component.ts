@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { TableComponent } from '../../components/table/table.component';
-import { ProductFormComponent } from '../../components/product-form/product-form.component';
+import { TableComponent } from './table/table.component';
+import { ProductFormComponent } from './product-form/product-form.component';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
