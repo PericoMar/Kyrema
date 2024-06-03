@@ -40,7 +40,7 @@ export class SocietyTableComponent {
       cellRendererParams: (params: any) => ({
         data: params.data
       }),
-      suppressMenu: true,
+      suppressHeaderMenuButton: true,
       sortable: false,
       filter: false
     }

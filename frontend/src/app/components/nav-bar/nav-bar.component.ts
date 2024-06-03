@@ -35,7 +35,8 @@ export class NavBarComponent {
       children: [
         { label: 'Sociedades', link: '/sociedades' },
         { label: 'Tarifas', link: '/tarifas' },
-        { label: 'Comisiones', link: '/comisiones' }
+        { label: 'Comisiones', link: '/comisiones' },
+        { label: 'Productos', link: '/gestion-productos'}
       ]
     },
     {

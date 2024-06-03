@@ -1,0 +1,15 @@
+main.products-manager{
+    padding: 40px 90px;
+    background-color: var(--main-bg-color);
+    height: 100%;
+}
+
+.products-table{
+    padding:40px;
+}
+
+.button-container{
+    margin-top:40px;
+    display: flex;
+    justify-content: flex-end;
+}

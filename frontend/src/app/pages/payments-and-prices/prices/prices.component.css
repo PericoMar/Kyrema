@@ -7,3 +7,17 @@
     border-left: 4px solid #2196F3;
     border-radius: 4px;
   }
+
+  .content-block{
+    padding:40px;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  button {
+    margin-top: 20px;
+  }
+  
