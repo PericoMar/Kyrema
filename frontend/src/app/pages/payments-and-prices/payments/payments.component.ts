@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, FormArray, FormControl, ReactiveFormsModule } f
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
 
 @Component({

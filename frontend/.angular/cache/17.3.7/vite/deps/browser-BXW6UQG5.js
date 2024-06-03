@@ -6,17 +6,16 @@ import {
   sequence,
   style,
   ɵPRE_STYLE
-} from "./chunk-2YY234LU.js";
+} from "./chunk-SPMU75HA.js";
+import "./chunk-UGF2ZH53.js";
 import {
   Injectable,
   RuntimeError,
+  __objRest,
+  __spreadValues,
   setClassMetadata,
   ɵɵdefineInjectable
-} from "./chunk-TPPOGGTD.js";
-import {
-  __objRest,
-  __spreadValues
-} from "./chunk-SXIXOCJ4.js";
+} from "./chunk-4Q5IILKM.js";
 
 // node_modules/@angular/animations/fesm2022/browser.mjs
 var LINE_START = "\n - ";
@@ -4027,29 +4026,28 @@ var AnimationRendererFactory = class {
     return this.engine.whenRenderingDone();
   }
 };
-
 export {
-  getParentElement,
-  validateStyleProperty,
-  validateWebAnimatableStyleProperty,
-  containsElement,
-  invokeQuery,
-  NoopAnimationDriver,
   AnimationDriver,
-  AnimationStyleNormalizer,
-  NoopAnimationStyleNormalizer,
-  normalizeKeyframes,
-  camelCaseToDashCase,
-  allowPreviousPlayerStylesMerge,
-  WebAnimationsStyleNormalizer,
-  AnimationEngine,
-  WebAnimationsPlayer,
-  WebAnimationsDriver,
-  createEngine,
-  Animation,
-  BaseAnimationRenderer,
-  AnimationRenderer,
-  AnimationRendererFactory
+  NoopAnimationDriver,
+  Animation as ɵAnimation,
+  AnimationEngine as ɵAnimationEngine,
+  AnimationRenderer as ɵAnimationRenderer,
+  AnimationRendererFactory as ɵAnimationRendererFactory,
+  AnimationStyleNormalizer as ɵAnimationStyleNormalizer,
+  BaseAnimationRenderer as ɵBaseAnimationRenderer,
+  NoopAnimationStyleNormalizer as ɵNoopAnimationStyleNormalizer,
+  WebAnimationsDriver as ɵWebAnimationsDriver,
+  WebAnimationsPlayer as ɵWebAnimationsPlayer,
+  WebAnimationsStyleNormalizer as ɵWebAnimationsStyleNormalizer,
+  allowPreviousPlayerStylesMerge as ɵallowPreviousPlayerStylesMerge,
+  camelCaseToDashCase as ɵcamelCaseToDashCase,
+  containsElement as ɵcontainsElement,
+  createEngine as ɵcreateEngine,
+  getParentElement as ɵgetParentElement,
+  invokeQuery as ɵinvokeQuery,
+  normalizeKeyframes as ɵnormalizeKeyframes,
+  validateStyleProperty as ɵvalidateStyleProperty,
+  validateWebAnimatableStyleProperty as ɵvalidateWebAnimatableStyleProperty
 };
 /*! Bundled license information:
 
@@ -4060,4 +4058,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-FGTOMFAS.js.map
+//# sourceMappingURL=browser-BXW6UQG5.js.map
