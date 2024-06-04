@@ -1,6 +1,6 @@
 <main class="products-manager">
     <section class="products-table content-block">
-    <form [formGroup]="insuranceForm" (ngSubmit)="onSubmit()" id="insurance-form">
+      <form [formGroup]="insuranceForm" id="insurance-form">
         <table mat-table [dataSource]="insurancesArray.controls">
           <!-- Tipos de seguros Column -->
           <ng-container matColumnDef="type">
@@ -8,18 +8,15 @@
             <td mat-cell *matCellDef="let insurance"> {{ insurance.get('type')?.value }} </td>
           </ng-container>
       
-          <!-- Editar Column -->
-          <ng-container matColumnDef="edit">
-            <th mat-header-cell *matHeaderCellDef> Editar </th>
+          <!-- Acciones Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
             <td mat-cell *matCellDef="let insurance; let i = index">
-              <button mat-button color="accent" (click)="editInsurance(i)">Editar</button>
-            </td>
-          </ng-container>
-      
-          <!-- Borrar Column -->
-          <ng-container matColumnDef="delete">
-            <th mat-header-cell *matHeaderCellDef> Borrar </th>
-            <td mat-cell *matCellDef="let insurance; let i = index">
+              <button mat-button color="primary"
+                      [routerLink]="['/configurador-productos', insurance.get('id')?.value]"
+                      style="margin-right: 8px;">
+                Editar
+              </button>
               <button mat-button color="warn" (click)="deleteInsurance(i)">Borrar</button>
             </td>
           </ng-container>
@@ -30,8 +27,9 @@
         </table>
       
         <div class="button-container">
-          <button mat-raised-button color="primary" (click)="addInsurance()">Crear nuevo producto</button>
+          <button mat-raised-button color="primary" [routerLink]="['/configurador-productos']">Crear nuevo producto</button>
         </div>
       </form>
+      
     </section>
 </main>

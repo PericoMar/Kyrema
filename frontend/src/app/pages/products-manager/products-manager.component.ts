@@ -2,22 +2,23 @@ import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-products-manager',
   standalone: true,
-  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule],
   templateUrl: './products-manager.component.html',
   styleUrl: './products-manager.component.css'
 })
 export class ProductsManagerComponent {
   insuranceForm!: FormGroup;
   insurancesArray!: FormArray;
-  displayedColumns: string[] = ['type', 'edit', 'delete'];
-  insurances: { type: string }[] = [
-    { type: 'Seguro 1' },
-    { type: 'Seguro 2' },
-    { type: 'Seguro 3' },
+  displayedColumns: string[] = ['type', 'actions'];
+  insurances: { id: number, type: string }[] = [
+    { id: 1, type: 'Seguro 1' },
+    { id: 2, type: 'Seguro 2' },
+    { id: 3, type: 'Seguro 3' },
   ];
 
   constructor(private fb: FormBuilder) {}
@@ -30,8 +31,9 @@ export class ProductsManagerComponent {
     this.insurancesArray = this.insuranceForm.get('insurances') as FormArray;
   }
 
-  createInsuranceGroup(insurance: { type: string }): FormGroup {
+  createInsuranceGroup(insurance: { id: number, type: string }): FormGroup {
     return this.fb.group({
+      id: [insurance.id],
       type: [insurance.type]
     });
   }

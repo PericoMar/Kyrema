@@ -1,0 +1,5 @@
+.product-configurator{
+    padding: 40px 90px;
+    background-color: var(--main-bg-color);
+    height: 100%;
+}
