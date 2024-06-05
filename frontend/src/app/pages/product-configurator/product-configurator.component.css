@@ -3,3 +3,12 @@
     background-color: var(--main-bg-color);
     height: 100%;
 }
+
+.new-product-form{
+    padding:40px;
+}
+
+table{
+    width: 100%;
+    margin-bottom: 40px;
+}
