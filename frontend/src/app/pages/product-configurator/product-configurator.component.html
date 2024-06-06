@@ -1,92 +1,131 @@
 <section class="product-configurator">
     <h1>Creación de tipo de producto</h1>
     <main class="content-block new-product-form">
-        
         <form>
           <h2>Datos fijos</h2>
           <hr>
-            <table class="table">
-              <thead>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Tipo de Dato</th>
+                <th>Posición en el Certificado</th>
+                <th>Visible</th>
+                <th>Obligatorio</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (campoFijo of camposFijos; track $index) {
                 <tr>
-                  <th>Nombre</th>
-                  <th>Tipo de Dato</th>
-                  <th>Posición en el Certificado</th>
-                  <th>Visible</th>
-                  <th>Obligatorio</th>
+                  <td>
+                    <div class="center">
+                      <input type="text" placeholder="Nombre" [(ngModel)]="campoFijo.nombre" name="nombreFijo{{$index}}" disabled>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="center">
+                      <select [(ngModel)]="campoFijo.tipoDato" name="tipoDatoFijo{{$index}}" disabled>
+                        <option value="numero">Número</option>
+                        <option value="texto">Texto</option>
+                        <option value="fecha">Fecha</option>
+                      </select>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display: flex; gap: 4px;">
+                      <div style="flex: 1;" class="small-input">
+                        <input type="text" placeholder="Columna" [(ngModel)]="campoFijo.columna" name="columna{{$index}}">
+                      </div>
+                      <div style="flex: 1;" class="small-input">
+                        <input type="text" placeholder="Fila" [(ngModel)]="campoFijo.fila" name="fila{{$index}}">
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="center">
+                      <mat-checkbox [(ngModel)]="campoFijo.visible" name="visibleFijo{{$index}}"></mat-checkbox>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="center">
+                      <mat-checkbox [(ngModel)]="campoFijo.obligatorio" name="obligatorioFijo{{$index}}"></mat-checkbox>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                @for (campoFijo of camposFijos; track $index) {
-                  <tr>
-                    <td><input type="text" [(ngModel)]="campoFijo.nombre" name="nombreFijo{{$index}}" class="form-control" disabled></td>
-                    <td><select [(ngModel)]="campoFijo.tipoDato" name="tipoDatoFijo{{$index}}" class="form-control" disabled>
-                      <option value="numero">Número</option>
-                      <option value="texto">Texto</option>
-                      <option value="fecha">Fecha</option>
-                    </select>
-                    </td>
-                    <td><input type="text" [(ngModel)]="campoFijo.posicion" name="posicionFijo{{$index}}" class="form-control"></td>
-                    <td><input type="checkbox" [(ngModel)]="campoFijo.visible" name="visibleFijo{{$index}}"></td>
-                    <td><input type="checkbox" [(ngModel)]="campoFijo.obligatorio" name="obligatorioFijo{{$index}}"></td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-            <h2>Datos variables</h2>
-            <hr>
-            <table class="table">
-              <thead>
+              }
+            </tbody>
+          </table>          
+          <h2>Datos variables</h2>
+          <hr>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Tipo de Dato</th>
+                <th>Posición en el Certificado</th>
+                <th>Visible</th>
+                <th>Obligatorio</th>
+                <th>Eliminar</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (campo of campos; track $index) {
                 <tr>
-                  <th>Nombre</th>
-                  <th>Tipo de Dato</th>
-                  <th>Posición en el Certificado</th>
-                  <th>Visible</th>
-                  <th>Obligatorio</th>
-                  <th>Eliminar</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (campo of campos; track $index) {
-                  <tr>
-                    <td>
-                      <mat-form-field appearance="fill">
-                        <mat-label>Nombre</mat-label>
-                        <input matInput type="text" [(ngModel)]="campo.nombre" name="nombre{{$index}}">
+                  <td>
+                    <div class="center">
+                    <mat-form-field appearance="fill">
+                      <mat-label>Nombre</mat-label>
+                      <input matInput type="text" [(ngModel)]="campo.nombre" name="nombre{{$index}}">
+                    </mat-form-field>
+                  </div>
+                  </td>
+                  <td>
+                    <div class="center">
+                    <mat-form-field appearance="fill">
+                      <mat-label>Tipo de Dato</mat-label>
+                      <mat-select [(ngModel)]="campo.tipoDato" name="tipoDato{{$index}}">
+                        <mat-option value="numero">Número</mat-option>
+                        <mat-option value="texto">Texto</mat-option>
+                        <mat-option value="fecha">Fecha</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  </td>
+                  <td>
+                    <div style="display: flex; gap: 4px;">
+                      <mat-form-field appearance="fill" style="flex: 1;" class="small-input">
+                        <mat-label>Fila</mat-label>
+                        <input matInput type="text" [(ngModel)]="campo.fila" name="fila{{$index}}">
                       </mat-form-field>
-                    </td>
-                    <td>
-                      <mat-form-field appearance="fill">
-                        <mat-label>Tipo de Dato</mat-label>
-                        <mat-select [(ngModel)]="campo.tipoDato" name="tipoDato{{$index}}">
-                          <mat-option value="numero">Número</mat-option>
-                          <mat-option value="texto">Texto</mat-option>
-                          <mat-option value="fecha">Fecha</mat-option>
-                        </mat-select>
+                      <mat-form-field appearance="fill" style="flex: 1;" class="small-input">
+                        <mat-label>Columna</mat-label>
+                        <input matInput type="text" [(ngModel)]="campo.columna" name="columna{{$index}}">
                       </mat-form-field>
-                    </td>
-                    <td>
-                      <mat-form-field appearance="fill">
-                        <mat-label>Posición</mat-label>
-                        <input matInput type="text" [(ngModel)]="campo.posicion" name="posicion{{$index}}">
-                      </mat-form-field>
-                    </td>
-                    <td>
-                      <mat-checkbox [(ngModel)]="campo.visible" name="visible{{$index}}">Visible</mat-checkbox>
-                    </td>
-                    <td>
-                      <mat-checkbox [(ngModel)]="campo.obligatorio" name="obligatorio{{$index}}">Obligatorio</mat-checkbox>
-                    </td>
-                    <td>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="center">
+                    <mat-checkbox [(ngModel)]="campo.visible" name="visible{{$index}}"></mat-checkbox>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="center">
+                      <mat-checkbox [(ngModel)]="campo.obligatorio" name="obligatorio{{$index}}"></mat-checkbox>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="center">
                       <button mat-icon-button color="warn" (click)="eliminarCampo($index)">
                         <mat-icon>delete</mat-icon>
-                      </button>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-            <button type="button" class="btn btn-primary" (click)="agregarCampo()">Agregar Nuevo Campo</button>
-            <button>Crear nuevo tipo de producto</button>
-          </form>
+                      </button> 
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <button type="button" class="btn btn-primary" (click)="agregarCampo()">Agregar Nuevo Campo</button>
+          <button>Crear nuevo tipo de producto</button>
+        </form>
     </main>
 </section>

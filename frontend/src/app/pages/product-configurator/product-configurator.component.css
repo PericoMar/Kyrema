@@ -8,7 +8,80 @@
     padding:40px;
 }
 
-table{
+/* Estilo para la tabla */
+.table {
+    border-collapse: collapse; /* Elimina espacios entre celdas */
     width: 100%;
-    margin-bottom: 40px;
+    table-layout: fixed; /* Hace que las columnas tengan el mismo ancho */
+  }
+  
+  /* Estilo para la primera fila (encabezado) */
+  .table thead th {
+    border-bottom: 2px solid #555; /* Borde más grueso solo en la parte inferior */
+    border-right: 1px solid #555; /* Borde fino a la derecha */
+    padding: 8px; /* Espaciado interno */
+    text-align: left;
+    font-size: 14px; /* Tamaño de la letra */
+  }
+  
+  /* Estilo para las celdas de datos */
+  .table tbody td {
+    border-bottom: 1px solid #ddd; /* Borde fino en la parte inferior */
+    border-right: 1px solid #ddd; /* Borde fino a la derecha */
+    padding: 0; /* Espaciado interno */
+    text-align: left;
+    font-size: 12px; /* Tamaño de la letra */
+  }
+  
+  /* Eliminar bordes exteriores */
+  /* Eliminar borde izquierdo de la tabla */
+  .table, .table th:first-child, .table td:first-child {
+    border-left: none;
+  }
+  
+  /* Eliminar borde superior de la tabla */
+  .table thead th, .table tbody td {
+    border-top: none;
+  }
+  
+  /* Eliminar borde derecho de la última columna */
+  .table th:last-child, .table td:last-child {
+    border-right: none;
+  }
+  
+  /* Eliminar borde inferior de la última fila */
+  .table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  /* Estilo para las entradas de texto y select */
+  input[type="text"], select {
+    width: 100%;
+    box-sizing: border-box; /* Incluye padding y border en el ancho total */
+    font-size: 12px; /* Tamaño de la letra */
+    border: none; /* Elimina bordes por defecto */
+    background-color: transparent; /* Fondo transparente para mezclar con la celda */
+    padding: 8px; /* Espaciado interno para que el input llene toda la celda */
+  }
+  
+  /* Estilo específico para las entradas de fila y columna */
+  .small-input input {
+    width: 40px; /* Ancho reducido */
+    font-size: 12px; /* Tamaño de la letra */
+    padding: 2px; /* Espaciado reducido */
+  } 
+
+  /* Estilo para ajustar el input al tamaño de la celda y su enfoque */
+input[type="text"]:focus, select:focus {
+    outline: none; /* Elimina el borde de enfoque por defecto */
+    border: 1px solid #555; /* Añade un borde fino cuando el input está en foco */
+    margin: -1px; /* Compensa el borde para que no altere el tamaño del input */
+  }
+
+div.center{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

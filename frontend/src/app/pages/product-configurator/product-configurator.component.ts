@@ -10,7 +10,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 interface Campo {
   nombre: string;
   tipoDato: string;
-  posicion: string;
+  fila: string;
+  columna: string,
   visible: boolean;
   obligatorio: boolean;
 }
@@ -24,23 +25,23 @@ interface Campo {
 })
 export class ProductConfiguratorComponent {
   camposFijos: Campo[] = [
-    { nombre: 'Nombre socio', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Apellido 1', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Apellido 2', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'DNI', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Email', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Telefono', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Sexo', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Dirección', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Población', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Provincia', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Codigo Postal', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false },
-    { nombre: 'Fecha de nacimiento', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false},
+    { nombre: 'Nombre socio', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: true },
+    { nombre: 'Apellido 1', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'Apellido 2', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'DNI', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'Email', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'Telefono', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'Sexo', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'Dirección', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'Población', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'Provincia', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'Codigo Postal', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
+    { nombre: 'Fecha de nacimiento', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false},
   ];
-  campos: Campo[] = [{ nombre: '', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false }];
+  campos: Campo[] = [{ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false }];
 
   agregarCampo() {
-    this.campos.push({ nombre: '', tipoDato: 'texto', posicion: '', visible: false, obligatorio: false });
+    this.campos.push({ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false });
   }
 
   eliminarCampo(index: number) {
