@@ -1,11 +1,12 @@
 import { ICellRendererParams } from "ag-grid-community";
 import { Component } from '@angular/core';
 import { RouterModule } from "@angular/router";
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'app-action-buttons',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule ,MatIcon],
   templateUrl: './action-buttons.component.html',
   styleUrl: './action-buttons.component.css'
 })

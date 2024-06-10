@@ -1,82 +1,124 @@
+
+
 .product-configurator{
     padding: 40px 90px;
     background-color: var(--main-bg-color);
     height: 100%;
 }
 
+
 .new-product-form{
     padding:40px;
+}
+.overflow-scroll{
+  overflow-x: auto;
+  height: auto;
+  margin-bottom: 60px;
+  margin-top: 30px;
 }
 
 /* Estilo para la tabla */
 .table {
-    border-collapse: collapse; /* Elimina espacios entre celdas */
-    width: 100%;
-    table-layout: fixed; /* Hace que las columnas tengan el mismo ancho */
-  }
-  
-  /* Estilo para la primera fila (encabezado) */
-  .table thead th {
-    border-bottom: 2px solid #555; /* Borde más grueso solo en la parte inferior */
-    border-right: 1px solid #555; /* Borde fino a la derecha */
-    padding: 8px; /* Espaciado interno */
-    text-align: left;
-    font-size: 14px; /* Tamaño de la letra */
-  }
-  
-  /* Estilo para las celdas de datos */
-  .table tbody td {
-    border-bottom: 1px solid #ddd; /* Borde fino en la parte inferior */
-    border-right: 1px solid #ddd; /* Borde fino a la derecha */
-    padding: 0; /* Espaciado interno */
-    text-align: left;
-    font-size: 12px; /* Tamaño de la letra */
-  }
-  
-  /* Eliminar bordes exteriores */
-  /* Eliminar borde izquierdo de la tabla */
-  .table, .table th:first-child, .table td:first-child {
-    border-left: none;
-  }
-  
-  /* Eliminar borde superior de la tabla */
-  .table thead th, .table tbody td {
-    border-top: none;
-  }
-  
-  /* Eliminar borde derecho de la última columna */
-  .table th:last-child, .table td:last-child {
-    border-right: none;
-  }
-  
-  /* Eliminar borde inferior de la última fila */
-  .table tbody tr:last-child td {
-    border-bottom: none;
-  }
-  
-  /* Estilo para las entradas de texto y select */
-  input[type="text"], select {
-    width: 100%;
-    box-sizing: border-box; /* Incluye padding y border en el ancho total */
-    font-size: 12px; /* Tamaño de la letra */
-    border: none; /* Elimina bordes por defecto */
-    background-color: transparent; /* Fondo transparente para mezclar con la celda */
-    padding: 8px; /* Espaciado interno para que el input llene toda la celda */
-  }
-  
-  /* Estilo específico para las entradas de fila y columna */
-  .small-input input {
-    width: 40px; /* Ancho reducido */
-    font-size: 12px; /* Tamaño de la letra */
-    padding: 2px; /* Espaciado reducido */
-  } 
+  border-collapse: collapse; /* Elimina espacios entre celdas */
+  width: 1240px;
+  box-sizing: border-box;
+  table-layout: fixed; /* Hace que las columnas tengan el mismo ancho */
+}
 
-  /* Estilo para ajustar el input al tamaño de la celda y su enfoque */
+/* Estilo para la primera fila (encabezado) */
+.table thead th {
+  border-bottom: 2px solid #555; /* Borde más grueso solo en la parte inferior */
+  padding: 8px; /* Espaciado interno */
+  text-align: left;
+  font-size: 14px; /* Tamaño de la letra */
+}
+
+/* Estilo para las celdas de datos */
+.table tbody td {
+  border-bottom: 1px solid #ddd; /* Borde fino en la parte inferior */
+  padding: 0; /* Espaciado interno */
+  text-align: left;
+  font-size: 12px; /* Tamaño de la letra */
+  position: relative; /* Posicionamiento relativo para ajustar el focus */
+  box-sizing: border-box; /* Asegura que el tamaño incluya los bordes */
+}
+
+/* Eliminar bordes exteriores */
+/* Eliminar borde izquierdo de la tabla */
+.table, .table th:first-child, .table td:first-child {
+  border-left: none;
+}
+
+/* Eliminar borde superior de la tabla */
+.table thead th, .table tbody td {
+  border-top: none;
+}
+
+/* Eliminar borde derecho de la última columna */
+.table th:last-child, .table td:last-child {
+  border-right: none;
+}
+
+/* Eliminar borde inferior de la última fila */
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.col-nombre {
+  width: 150px;
+  padding-right: 10px;
+}
+
+.col-tipo-dato {
+  width: 50px;
+}
+
+.col-posicion {
+  width: 160px;
+}
+
+.col-visible {
+  width: 100px;
+}
+
+.col-obligatorio {
+  width: 100px;
+}
+
+.col-eliminar{
+  width: 100px; 
+}
+
+/* Estilo para las entradas de texto y select */
+input[type="text"], select {
+  width: 100%;
+  box-sizing: border-box; /* Incluye padding y border en el ancho total */
+  font-size: 12px; /* Tamaño de la letra */
+  border: none; /* Elimina bordes por defecto */
+  background-color: transparent; /* Fondo transparente para mezclar con la celda */
+  padding: 8px; /* Espaciado interno para que el input llene toda la celda */
+  background-color: #f5f5f5;
+}
+
+/* Estilo específico para las entradas de fila y columna */
+.small-input input {
+  width: 66px; /* Ancho reducido */
+  font-size: 12px; /* Tamaño de la letra */
+  padding: 8px; /* Espaciado reducido */
+}
+
+/* Eliminar el focus outline de los inputs y select */
 input[type="text"]:focus, select:focus {
-    outline: none; /* Elimina el borde de enfoque por defecto */
-    border: 1px solid #555; /* Añade un borde fino cuando el input está en foco */
-    margin: -1px; /* Compensa el borde para que no altere el tamaño del input */
-  }
+  outline: none; /* Elimina el borde de enfoque por defecto */
+  border-bottom: 2px solid #2196F3; /* Añade una línea azul debajo del input al enfocar */
+} 
+
+input[disabled], select[disabled] {
+  cursor: not-allowed; /* Cambia el cursor a not-allowed */
+  background-color: #f5f5f5; /* Fondo gris claro */
+  color: #b8b8b8; /* Texto gris claro */
+  border: none;
+}
 
 div.center{
     width: 100%;
@@ -84,4 +126,63 @@ div.center{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.space-around{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.div-select{
+  padding-right: 40px;
+}
+
+.add-field {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  border-radius: 4px;
+  background-color: #5b4cff;
+  color: white;
+  padding: 8px;
+  border:none;
+  cursor: pointer; /* Asegura que el cursor sea pointer */
+}
+
+.add-field svg {
+  transition: transform 0.7s ease-in-out;
+  font-weight: bold;
+}
+
+.add-field:hover{
+  background-color: #483cca;
+}
+
+.add-field:hover svg {
+  transform: rotate(360deg);
+}
+
+.form-footer{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.form-footer button{
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  padding:10px;
+  background-color:rgb(18, 18, 193);
+  color: white;
+  border-radius: 4px;
+  border:none;
+}
+
+.form-footer button:hover{
+  background-color: rgb(8, 8, 135);
 }
