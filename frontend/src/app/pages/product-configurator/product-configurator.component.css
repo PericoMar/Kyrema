@@ -30,6 +30,7 @@ input.nombre-producto{
 .overflow-scroll{
   overflow-x: auto;
   height: 600px;
+  width: 100%;
   margin-bottom: 60px;
   margin-top: 30px;
 }
@@ -41,9 +42,10 @@ input.nombre-producto{
 /* Estilo para la tabla */
 .table {
   border-collapse: collapse; /* Elimina espacios entre celdas */
-  width: 100%;
+  width: max-content; /* La tabla ocupa el mínimo de ancho posible */
+  min-width: 100%; /* Pero al menos el 100% del contenedor */
+  table-layout: fixed;
   box-sizing: border-box;
-  table-layout: fixed; /* Hace que las columnas tengan el mismo ancho */
 }
 
 /* Estilo para la primera fila (encabezado) */
@@ -86,28 +88,28 @@ input.nombre-producto{
 }
 
 .col-nombre {
-  width: 150px;
+  min-width: 150px;
   padding-right: 10px;
 }
 
 .col-tipo-dato {
-  width: 50px;
+  min-width: 150px !important;
 }
 
 .col-posicion {
-  width: 160px;
+  min-width: 160px;
 }
 
 .col-visible {
-  width: 100px;
+  min-width: 100px;
 }
 
 .col-obligatorio {
-  width: 100px;
+  min-width: 100px;
 }
 
 .col-eliminar{
-  width: 100px; 
+  min-width: 100px; 
 }
 
 /* Estilo para las entradas de texto y select */

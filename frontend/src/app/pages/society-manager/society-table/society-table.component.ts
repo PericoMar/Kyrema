@@ -28,11 +28,11 @@ export class SocietyTableComponent {
   }
 
   public columnDefs: ColDef[] = [
-    { field: 'codigo', headerName: 'Código', width: 150 },
-    { field: 'sociedad', headerName: 'Sociedad', width: 200 },
-    { field: 'poblacion', headerName: 'Población', width: 200 },
-    { field: 'codigoPostal', headerName: 'Cod. Postal', width: 150 },
-    { field: 'tipoSociedad', headerName: 'Tipo Sociedad', width: 200 },
+    { field: 'codigo', headerName: 'Código', width: 150, flex:1 },
+    { field: 'sociedad', headerName: 'Sociedad', width: 200, flex:1 },
+    { field: 'poblacion', headerName: 'Población', width: 200, flex:1 },
+    { field: 'codigoPostal', headerName: 'Cod. Postal', width: 150, flex:1 },
+    { field: 'tipoSociedad', headerName: 'Tipo Sociedad', width: 200,flex:1 },
     {
       headerName: 'Acciones',
       width: 410,
@@ -42,7 +42,8 @@ export class SocietyTableComponent {
       }),
       suppressHeaderMenuButton: true,
       sortable: false,
-      filter: false
+      filter: false,
+      flex:2,
     }
   ];
 
