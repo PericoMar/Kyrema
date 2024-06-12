@@ -14,7 +14,9 @@ export class ProductFormComponent implements OnInit, OnChanges {
   @Input() product!: any | null;
   productForm: FormGroup = this.fb.group({});
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) { 
+    this.isProductSelected = false;
+  }
 
   ngOnInit() {
     if (this.product) {

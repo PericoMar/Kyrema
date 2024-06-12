@@ -24,6 +24,8 @@ interface Campo {
   styleUrl: './product-configurator.component.css'
 })
 export class ProductConfiguratorComponent {
+  fileName = '';
+
   camposFijos: Campo[] = [
     { nombre: 'DNI', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
     { nombre: 'Nombre socio', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: true },
@@ -47,4 +49,16 @@ export class ProductConfiguratorComponent {
   eliminarCampo(index: number) {
     this.campos.splice(index, 1);
   }
+
+  onFileSelected(event : any) {
+
+    const file:File = event.target.files[0];
+
+    if (file) {
+
+        this.fileName = file.name;
+
+        console.log(this.fileName);
+    }
+}
 }

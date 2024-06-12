@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular';
+import { getMatFormFieldPlaceholderConflictError } from '@angular/material/form-field';
+import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
 import { ColDef,ColGroupDef,
   GridApi,
   GridOptions,
@@ -13,7 +14,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [AgGridAngular],
+  imports: [AgGridAngular, AgGridModule],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css'
 })
@@ -22,6 +23,8 @@ export class TableComponent {
   @Input() products!: Array<any>;
   @Output() productSelectedChange: EventEmitter<any> = new EventEmitter<any>();
   public productSelected: any;
+  private gridApi: any;
+  private gridColumnApi: any;
 
   public rowData: any[] | null = [
     {
@@ -281,10 +284,18 @@ export class TableComponent {
     {
       field: "make",
       cellEditor: 'agTextCellEditor',
+      flex : 1,
     },
-    { field: "model" },
-    { field: "price", filter: "agNumberColumnFilter" },
-    { field: "electric" },
+    { field: "model",
+      flex : 1,
+     },
+    { field: "price",
+      filter: "agNumberColumnFilter",
+      flex : 1,
+     },
+    { field: "electric",
+      flex : 1,
+     },
     {
       field: "month",
       comparator: (valueA, valueB) => {
@@ -306,6 +317,7 @@ export class TableComponent {
         const idxB = months.indexOf(valueB);
         return idxA - idxB;
       },
+      flex : 1,
     },
   ];
   public defaultColDef: ColDef = {
@@ -422,6 +434,10 @@ export class TableComponent {
     dummyTextArea.select(); // Selecciona el texto en el elemento de texto
     document.execCommand('copy'); // Copia el texto seleccionado al portapapeles
     document.body.removeChild(dummyTextArea); // Elimina el elemento de texto del DOM
+  }
+
+  onGridReady(params: any) {
+    params.api.sizeColumnsToFit();
   }
   
 }

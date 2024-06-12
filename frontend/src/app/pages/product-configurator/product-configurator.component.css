@@ -10,17 +10,38 @@
 .new-product-form{
     padding:40px;
 }
+
+.form-header{
+  margin-bottom: 40px;
+}
+
+hr{
+  margin-top: 8px;
+}
+
+.file-input {
+  display: none;
+}
+
+input.nombre-producto{
+  border-radius: 4px;
+}
+
 .overflow-scroll{
   overflow-x: auto;
-  height: auto;
+  height: 600px;
   margin-bottom: 60px;
   margin-top: 30px;
+}
+
+.flexible{
+  height: auto;
 }
 
 /* Estilo para la tabla */
 .table {
   border-collapse: collapse; /* Elimina espacios entre celdas */
-  width: 1240px;
+  width: 100%;
   box-sizing: border-box;
   table-layout: fixed; /* Hace que las columnas tengan el mismo ancho */
 }
@@ -115,7 +136,7 @@ input[type="text"]:focus, select:focus {
 
 input[disabled], select[disabled] {
   cursor: not-allowed; /* Cambia el cursor a not-allowed */
-  background-color: #f5f5f5; /* Fondo gris claro */
+  background-color: white; /* Fondo gris claro */
   color: #b8b8b8; /* Texto gris claro */
   border: none;
 }
@@ -132,6 +153,12 @@ div.center{
   display: flex;
   align-items: center;
   justify-content: space-around;
+}
+
+.space-between{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .div-select{
@@ -186,3 +213,4 @@ div.center{
 .form-footer button:hover{
   background-color: rgb(8, 8, 135);
 }
+

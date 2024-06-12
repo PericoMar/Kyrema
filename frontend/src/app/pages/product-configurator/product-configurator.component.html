@@ -2,6 +2,35 @@
     <h1>Creación de tipo de producto</h1>
     <main class="content-block new-product-form">
         <form>
+          <header class="form-header">
+          <h2>Descripción del producto</h2>
+          <hr>
+          <div class="space-between">
+            <div>
+              <label for="nombre_producto">Nombre del producto</label>
+              <input type="text" class="nombre-producto" placeholder="Escriba aquí el nombre del nuevo producto">
+            </div>
+            <div>
+              <label for="nombre_producto">Letras de identificación</label>
+              <input type="text" class="nombre-producto" placeholder="Escriba aquí las letras de identificación">
+            </div>
+            <div>
+              <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
+                (change)="onFileSelected($event)" #fileUpload>
+
+                <div class="file-upload">
+
+                {{fileName || "No has añadido ninguna plantilla aún."}}
+
+                  <button mat-mini-fab color="primary" class="upload-btn"
+                    (click)="fileUpload.click()">
+                      <mat-icon>attach_file</mat-icon>
+                  </button>
+                </div>
+            </div>
+          </div>
+          </header>
+
           <h2>Datos fijos</h2>
           <hr>
           <div class="overflow-scroll">
@@ -21,7 +50,7 @@
                 </th>
                 <th class="col-visible">
                   <div class="center">
-                    Visible
+                    Visible en la tabla
                   </div>
                 </th>
                 <th class="col-obligatorio">
@@ -75,7 +104,7 @@
           </div>
           <h2>Datos variables</h2>
           <hr>
-          <div class="overflow-scroll">
+          <div class="overflow-scroll flexible">
             <table class="table">
               <thead>
                 <tr>
@@ -92,7 +121,7 @@
                   </th>
                   <th class="col-visible">
                     <div class="center">
-                      Visible
+                      Visible en la tabla
                     </div>
                   </th>
                   <th class="col-obligatorio">

@@ -23,7 +23,8 @@ export class ProductOperationsComponent {
   isProductSelected : boolean = false;
   
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute) {
+  }
 
   ngOnInit(): void {
     // Suscríbete a los parámetros de la ruta para obtener el nombre del producto
