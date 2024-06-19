@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('tipo_producto', function (Blueprint $table) {
             $table->string('id')->primary();
+            $table->string('letras_identificacion')->nullable();
             $table->string('nombre');
             $table->timestamps();
         });
