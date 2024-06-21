@@ -23,8 +23,6 @@ export class TableComponent {
   @Input() products!: Array<any>;
   @Output() productSelectedChange: EventEmitter<any> = new EventEmitter<any>();
   public productSelected: any;
-  private gridApi: any;
-  private gridColumnApi: any;
 
   public rowData: any[] | null = [
     {
