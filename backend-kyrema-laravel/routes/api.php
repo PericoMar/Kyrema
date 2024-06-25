@@ -17,6 +17,7 @@ use App\Http\Controllers\TarifaAnexoController;
 use App\Http\Controllers\EscaladoAnexoController;
 use App\Http\Controllers\NavegacionController;
 use App\Http\Controllers\CPFamiliaController;
+use App\Http\Controllers\AuthController;
 
 Route::apiResource('campos', CampoController::class);
 Route::apiResource('valores', ValorController::class);
@@ -24,6 +25,8 @@ Route::apiResource('tipos-producto', TipoProductoController::class);
 Route::apiResource('sociedades', SociedadController::class);
 Route::apiResource('tipo-producto-sociedad', TipoProductoSociedadController::class);
 Route::apiResource('comerciales', ComercialController::class);
+Route::post('/auth/login', [AuthController::class, 'login']);
+
 Route::apiResource('comercial-comisiones', ComercialComisionController::class);
 Route::apiResource('tipos-anexo', TipoAnexoController::class);
 Route::apiResource('campos-anexo', CampoAnexoController::class);

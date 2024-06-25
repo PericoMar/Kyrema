@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('id_sociedad');
             $table->string('usuario');
             $table->string('contraseña');
+            $table->string('nivel');
             $table->foreign('id_sociedad')->references('id')->on('sociedad')->onDelete('cascade');
             $table->timestamps();
         });

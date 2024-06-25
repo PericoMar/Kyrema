@@ -1,23 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
-use App\Models\Comercial;
-use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Facades\JWTAuth;
+namespace App\Http\Controllers;
 
-class AuthController extends Controller
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
+
+class Controller extends BaseController
 {
-    public function login(Request $request)
-    {
-        $credentials = $request->only('usuario', 'contraseña');
-
-        if (Auth::guard('comercial')->attempt($credentials)) {
-            $comercial = Auth::guard('comercial')->user();
-            $token = JWTAuth::fromUser($comercial);
-
-            return response()->json(['token' => $token]);
-        }
-
-        return response()->json(['error' => 'Unauthorized'], 401);
-    }
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }

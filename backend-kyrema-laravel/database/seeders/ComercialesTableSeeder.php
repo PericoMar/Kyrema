@@ -22,6 +22,7 @@ class ComercialesTableSeeder extends Seeder
             'usuario' => 'admin@admin.com', // Puede ser un email u otro identificador único
             'contraseña' => Hash::make('admin@'), // Hashear la contraseña
             'id_sociedad' => 1, // ID de la sociedad a la que pertenece el comercial
+            'nivel' => 1,
             // Otros campos según tu estructura de la tabla Comercial
         ];
 

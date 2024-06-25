@@ -8,7 +8,6 @@ interface MenuItem {
   label: string;
   children?: MenuItem[];
   link?: string;
-  show?: boolean; // Añadir esta propiedad para manejar el estado del menú
 }
 
 @Component({
@@ -23,7 +22,6 @@ export class NavBarComponent {
   navigation: MenuItem[] = [
     {
       label: 'Administración',
-      show: false,
       children: [
         { label: 'Informes', link: '/informes' },
         { label: 'Informes Seguros', link: '/informes-seguros' }
@@ -31,7 +29,6 @@ export class NavBarComponent {
     },
     {
       label: 'Gestión',
-      show: false,
       children: [
         { label: 'Sociedades', link: '/sociedades' },
         { label: 'Tarifas', link: '/tarifas' },
@@ -41,7 +38,6 @@ export class NavBarComponent {
     },
     {
       label: 'Productos',
-      show: false,
       children: [
         { label: 'Seguros Combinados', link: '/operaciones/seguros-combinados' },
         { label: 'Seguros de Cacerías', link: '/operaciones/seguros-cacerias' },

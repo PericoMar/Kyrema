@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('poblacion', 255)->nullable();
             $table->string('tipo_sociedad', 255)->nullable();
             $table->integer('nivel_sociedad')->nullable();
+            $table->binary('logo')->nullable();
             $table->string('sociedad_padre_id', 255)->nullable(); // Clave foránea auto-referencial
 
             $table->timestamps(); // Añade los campos 'created_at' y 'updated_at'
