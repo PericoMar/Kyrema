@@ -10,7 +10,7 @@ return new class extends Migration {
             $table->id(); // Utilizamos el helper 'id()' para definir una clave primaria autoincremental
             $table->string('navegacion');
             $table->unsignedBigInteger('navegacion_padre_id')->nullable(); // Cambiamos a unsignedBigInteger
-            $table->string('ruta');
+            $table->string('ruta')->nullable();
             $table->integer('nivel');
             $table->timestamps();
 

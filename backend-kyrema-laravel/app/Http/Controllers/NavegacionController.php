@@ -7,65 +7,33 @@ use Illuminate\Http\Request;
 
 class NavegacionController extends Controller
 {
-    /**
-     * Display a listing of the resource by level.
-     *
-     * @param int $nivel
-     * @return \Illuminate\Http\Response
-     */
-    public function getByLevel($nivel)
+    public function index(Request $request, $nivel)
     {
-        $navegaciones = Navegacion::where('nivel', $nivel)->get();
-        return response()->json($navegaciones);
+        // Obtener los elementos de navegación de nivel específico
+        $navegacion = Navegacion::where('nivel', $nivel)
+            ->whereNull('navegacion_padre_id') // Filtrar solo los elementos padre
+            ->with('children') // Cargar los hijos de navegación
+            ->get();
+
+        // Recorrer los elementos padre y cargar sus hijos de manera recursiva
+        $navegacionConHijos = $navegacion->map(function ($item) {
+            return $this->cargarHijos($item);
+        });
+
+        return response()->json($navegacionConHijos);
     }
 
-    
-    public function index()
+    private function cargarHijos($item)
     {
-        $navegaciones = Navegacion::all();
-        return response()->json($navegaciones);
-    }
+        $item->load('children'); // Cargar los hijos de navegación
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'navegacion' => 'required|string|max:255',
-            'navegacion_padre_id' => 'nullable|string|max:255|exists:navegacions,id',
-            'ruta' => 'nullable|string|max:255',
-            'nivel' => 'nullable|integer',
-        ]);
+        // Si tiene hijos, recorrer recursivamente para cargar sus hijos
+        if ($item->children) {
+            $item->children->each(function ($child) {
+                $this->cargarHijos($child);
+            });
+        }
 
-        $navegacion = Navegacion::create($request->all());
-
-        return response()->json($navegacion, 201);
-    }
-
-    public function show($id)
-    {
-        $navegacion = Navegacion::findOrFail($id);
-        return response()->json($navegacion);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'navegacion' => 'string|max:255',
-            'navegacion_padre_id' => 'nullable|string|max:255|exists:navegacions,id',
-            'ruta' => 'nullable|string|max:255',
-            'nivel' => 'nullable|integer',
-        ]);
-
-        $navegacion = Navegacion::findOrFail($id);
-        $navegacion->update($request->all());
-
-        return response()->json($navegacion);
-    }
-
-    public function destroy($id)
-    {
-        $navegacion = Navegacion::findOrFail($id);
-        $navegacion->delete();
-
-        return response()->json(null, 204);
+        return $item;
     }
 }

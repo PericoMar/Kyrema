@@ -32,14 +32,4 @@ export class AuthService {
         })
       );
   }
-
-  getCurrentUser() {
-    const user = localStorage.getItem(this.USER_KEY);
-    return user ? JSON.parse(user) : null;
-  }
-
-  logout() {
-    localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.TOKEN_KEY);
-  }
 }

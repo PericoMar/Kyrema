@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NavService } from '../../services/nav.service';
+import { UserService } from '../../services/user.service';
 
 interface MenuItem {
   label: string;
@@ -17,8 +19,26 @@ interface MenuItem {
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnInit{
 
+  currentUser! : any;
+
+  constructor (
+    private navService : NavService,
+    private userService : UserService
+  ){}
+  
+  ngOnInit(){
+    this.currentUser = this.userService.getCurrentUser();
+    this.navService.getNavegation(this.currentUser.nivel).subscribe(
+      (data: MenuItem[]) => {
+        this.navigation = data;
+      },
+      (error) => {
+        console.error('Error fetching navigation:', error);
+      }
+    );
+  }
   navigation: MenuItem[] = [
     {
       label: 'Administración',

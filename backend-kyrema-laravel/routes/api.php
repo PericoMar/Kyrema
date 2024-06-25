@@ -35,7 +35,7 @@ Route::apiResource('tarifas-producto', TarifaProductoController::class);
 Route::apiResource('tarifas-anexo', TarifaAnexoController::class);
 Route::apiResource('escalado-anexos', EscaladoAnexoController::class);
 
-Route::apiResource('navegacion', NavegacionController::class);
+Route::apiResource('nav', NavegacionController::class);
 Route::get('navegacion/nivel/{nivel}', [NavegacionController::class, 'getByLevel']);
 
 Route::apiResource('cp-familia', CPFamiliaController::class);
