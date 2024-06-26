@@ -1,6 +1,6 @@
 <section>
-    <p class="info-message">
-        Nota: Los precios que establezca en este formulario se aplicarán únicamente a la sociedad seleccionada.
+    <p [class]="infoClass">
+        {{ infoText }}
     </p>
     <main class="content-block">
         <form [formGroup]="insurancePricesForm" (ngSubmit)="onSubmit()" id="insurance-prices-form">

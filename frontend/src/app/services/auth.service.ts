@@ -10,6 +10,7 @@ export class AuthService {
   private readonly USER_KEY = 'currentUser';
   private readonly TOKEN_KEY = 'token';
   private loginUrl = 'http://localhost:8000'; // Actualiza esta URL con la ruta de tu backend
+  private isLoged : boolean = false;
 
   constructor(private http: HttpClient) {}
 
@@ -18,9 +19,12 @@ export class AuthService {
     return this.http.post<any>(`${this.loginUrl}/api/auth/login`, { usuario, contraseña }, { headers })
       .pipe(
         map(response => {
+          console.log(response);
           // Guarda los datos del usuario y el token en localStorage si el login es exitoso
           if (response.token) {
-            localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+            this.isLoged = true;
+            
+            localStorage.setItem(this.USER_KEY, JSON.stringify(response.comercial));
             localStorage.setItem(this.TOKEN_KEY, response.token);
             return true;
           }
@@ -31,5 +35,9 @@ export class AuthService {
           return of(false); // Devuelve un Observable que emite false en caso de error de autenticación
         })
       );
+  }
+
+  getLoggedStatus(){
+    return this.isLoged;
   }
 }

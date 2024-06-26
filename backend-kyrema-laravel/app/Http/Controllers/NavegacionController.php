@@ -7,33 +7,48 @@ use Illuminate\Http\Request;
 
 class NavegacionController extends Controller
 {
-    public function index(Request $request, $nivel)
+    /**
+     * Obtener la navegación para un nivel de comercial específico.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getNavegacion(Request $request)
     {
-        // Obtener los elementos de navegación de nivel específico
-        $navegacion = Navegacion::where('nivel', $nivel)
-            ->whereNull('navegacion_padre_id') // Filtrar solo los elementos padre
-            ->with('children') // Cargar los hijos de navegación
+        $nivel = $request->input('nivel');
+        
+        // Obtener todas las navegaciones de nivel dado
+        $navegacionesPadres = Navegacion::where('nivel', $nivel)
+            ->whereNull('navegacion_padre_id')
             ->get();
-
-        // Recorrer los elementos padre y cargar sus hijos de manera recursiva
-        $navegacionConHijos = $navegacion->map(function ($item) {
-            return $this->cargarHijos($item);
+        
+        // Transformar los datos al formato deseado
+        $formattedNav = $navegacionesPadres->map(function ($navegacion) {
+            return $this->transformNavegacion($navegacion);
         });
 
-        return response()->json($navegacionConHijos);
+        return response()->json($formattedNav);
     }
 
-    private function cargarHijos($item)
+    /**
+     * Transformar la navegación en el formato deseado.
+     *
+     * @param  \App\Models\Navegacion  $navegacion
+     * @return array
+     */
+    private function transformNavegacion($navegacion)
     {
-        $item->load('children'); // Cargar los hijos de navegación
+        // Obtener los hijos del padre actual
+        $children = Navegacion::where('navegacion_padre_id', $navegacion->id)->get();
 
-        // Si tiene hijos, recorrer recursivamente para cargar sus hijos
-        if ($item->children) {
-            $item->children->each(function ($child) {
-                $this->cargarHijos($child);
-            });
-        }
-
-        return $item;
+        return [
+            'label' => $navegacion->navegacion,
+            'children' => $children->map(function ($child) {
+                return [
+                    'label' => $child->navegacion,
+                    'link' => $child->ruta,
+                ];
+            })->toArray()
+        ];
     }
 }

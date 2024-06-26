@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->string('id', 255)->primary(); // Clave primaria
             $table->string('nombre', 255)->nullable(false);
             $table->string('codigo_postal', 10)->nullable();
+            $table->string('codigo_sociedad', 10)->nullable();
             $table->string('poblacion', 255)->nullable();
             $table->string('tipo_sociedad', 255)->nullable();
             $table->integer('nivel_sociedad')->nullable();

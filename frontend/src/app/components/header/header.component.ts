@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import { UserService } from '../../services/user.service';
 
 interface User {
   nombre: string,
@@ -18,4 +19,10 @@ export class HeaderComponent {
     nombre: "admin",
     correo: "admin@admin.com"
   }
+
+  constructor(
+    private userService : UserService
+  ){}
+
+  
 }

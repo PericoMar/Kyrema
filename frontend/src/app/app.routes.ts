@@ -8,6 +8,8 @@ import { ProductConfiguratorComponent } from './pages/product-configurator/produ
 import { LayoutLoginComponent } from './pages/layout-login/layout-login.component';
 import { LayoutMainComponent } from './pages/layout-main/layout-main.component';
 import { LoginComponent } from './pages/login/login.component';
+import { authGuard } from './auth.guard';
+import { TarifasComponent } from './pages/tarifas/tarifas.component';
 
 export const routes: Routes = [
     {
@@ -21,15 +23,28 @@ export const routes: Routes = [
     path: '',
     component: LayoutMainComponent,
     children: [
-        { path: '', component: ProductOperationsComponent }, // Ruta vacía dirige al componente HomeComponent
-        { path: 'operaciones/:product', component: ProductOperationsComponent }, 
-        { path: 'informes', component: ReportsComponent }, 
-        { path: 'sociedades' , component: SocietyManagerComponent },
-        { path: 'sociedades/pagos/:codigo', component: PaymentsAndPricesComponent },
-        // { path: 'sociedades/productos/:sociedad', component: ProductosComponent },
-        // { path: 'sociedades/permisos/:sociedad', component: PermisosComponent },
-        // { path: 'sociedades/modificar/:sociedad', component: ModificarComponent },
-        { path: 'gestion-productos' , component: ProductsManagerComponent},
+        // { path: '', component: ProductOperationsComponent, canActivate: [authGuard] },
+        // { path: 'operaciones/:product', component: ProductOperationsComponent, canActivate: [authGuard] }, 
+        // { path: 'informes', component: ReportsComponent, canActivate: [authGuard] }, 
+        // { path: 'sociedades' , component: SocietyManagerComponent, canActivate: [authGuard] },
+        // { path: 'tarifas' , component: TarifasComponent, canActivate: [authGuard] },
+        // { path: 'sociedades/pagos/:codigo', component: PaymentsAndPricesComponent, canActivate: [authGuard] },
+        // { path: 'sociedades/productos/:sociedad', component: ProductOperationsComponent },
+        // { path: 'sociedades/permisos/:sociedad', component: ProductOperationsComponent },
+        // { path: 'sociedades/modificar/:sociedad', component: ProductOperationsComponent },
+        // { path: 'gestion-productos' , component: ProductsManagerComponent, canActivate: [authGuard]},
+        // { path: 'configurador-productos' , component: ProductConfiguratorComponent, canActivate: [authGuard]},
+        // { path: 'configurador-productos/:id' , component: ProductConfiguratorComponent, canActivate: [authGuard]},
+        { path: '', component: ProductOperationsComponent,  },
+        { path: 'operaciones/:product', component: ProductOperationsComponent, }, 
+        { path: 'informes', component: ReportsComponent, }, 
+        { path: 'sociedades' , component: SocietyManagerComponent,},
+        { path: 'tarifas' , component: TarifasComponent,  },
+        { path: 'sociedades/pagos/:codigo', component: PaymentsAndPricesComponent, },
+        { path: 'sociedades/productos/:sociedad', component: ProductOperationsComponent },
+        { path: 'sociedades/permisos/:sociedad', component: ProductOperationsComponent },
+        { path: 'sociedades/modificar/:sociedad', component: ProductOperationsComponent },
+        { path: 'gestion-productos' , component: ProductsManagerComponent, },
         { path: 'configurador-productos' , component: ProductConfiguratorComponent},
         { path: 'configurador-productos/:id' , component: ProductConfiguratorComponent},
     ]

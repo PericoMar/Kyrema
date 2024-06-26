@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
@@ -14,6 +14,8 @@ import { MatSuffix } from '@angular/material/form-field';
   styleUrl: './prices.component.css'
 })
 export class PricesComponent {
+  @Input() infoClass : string = "info-message";
+  @Input() infoText : string = "Nota: Los precios que establezca en este formulario se aplicarán únicamente a la sociedad seleccionada.";
   insurancePricesForm!: FormGroup;
   insurancesArray!: FormArray;
   displayedColumns: string[] = ['type', 'premium', 'associationFee', 'totalPrice'];

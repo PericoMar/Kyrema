@@ -22,6 +22,7 @@ interface MenuItem {
 export class NavBarComponent implements OnInit{
 
   currentUser! : any;
+  navigation!: MenuItem[] 
 
   constructor (
     private navService : NavService,
@@ -30,40 +31,16 @@ export class NavBarComponent implements OnInit{
   
   ngOnInit(){
     this.currentUser = this.userService.getCurrentUser();
+    console.log(this.currentUser);
     this.navService.getNavegation(this.currentUser.nivel).subscribe(
-      (data: MenuItem[]) => {
+      data => {
         this.navigation = data;
+        console.log(this.navigation)
       },
       (error) => {
         console.error('Error fetching navigation:', error);
       }
     );
   }
-  navigation: MenuItem[] = [
-    {
-      label: 'Administración',
-      children: [
-        { label: 'Informes', link: '/informes' },
-        { label: 'Informes Seguros', link: '/informes-seguros' }
-      ]
-    },
-    {
-      label: 'Gestión',
-      children: [
-        { label: 'Sociedades', link: '/sociedades' },
-        { label: 'Tarifas', link: '/tarifas' },
-        { label: 'Comisiones', link: '/comisiones' },
-        { label: 'Productos', link: '/gestion-productos'}
-      ]
-    },
-    {
-      label: 'Productos',
-      children: [
-        { label: 'Seguros Combinados', link: '/operaciones/seguros-combinados' },
-        { label: 'Seguros de Cacerías', link: '/operaciones/seguros-cacerias' },
-        { label: 'Seguros Extranjeros', link: '/operaciones/seguros-extranjeros' }
-      ]
-    }
-  ];
 
 }

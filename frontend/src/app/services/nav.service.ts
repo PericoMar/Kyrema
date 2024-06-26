@@ -1,17 +1,18 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavService {
 
-  private loginUrl = 'http://localhost:8000';
+  private navUrl = 'http://localhost:8000/api/nav';
 
   constructor(private http: HttpClient) { }
 
-  getNavegation(id_sociedad:string){
+  getNavegation(nivel: string): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<any>(`${this.loginUrl}/api/nav`, { id_sociedad }, { headers })
+    return this.http.get<any>(`${this.navUrl}?nivel=${nivel}`, { headers });
   }
 }
