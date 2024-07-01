@@ -286,14 +286,13 @@ export class TableComponent {
     },
     { field: "model",
       flex : 1,
-     },
+    },
     { field: "price",
-      filter: "agNumberColumnFilter",
       flex : 1,
-     },
+    },
     { field: "electric",
       flex : 1,
-     },
+    },
     {
       field: "month",
       comparator: (valueA, valueB) => {

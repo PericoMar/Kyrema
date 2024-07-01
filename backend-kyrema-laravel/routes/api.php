@@ -22,7 +22,8 @@ use App\Http\Controllers\AuthController;
 Route::apiResource('campos', CampoController::class);
 Route::apiResource('valores', ValorController::class);
 Route::apiResource('tipos-producto', TipoProductoController::class);
-Route::apiResource('sociedades', SociedadController::class);
+
+Route::get('sociedad/{id}', [SociedadController::class, 'show']);
 Route::apiResource('tipo-producto-sociedad', TipoProductoSociedadController::class);
 Route::apiResource('comerciales', ComercialController::class);
 Route::post('/auth/login', [AuthController::class, 'login']);

@@ -1,0 +1,18 @@
+section{
+    padding: 40px 90px;
+    background-color: var(--main-bg-color);
+    height: 100%;
+}
+
+.content-block{
+    padding:40px;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  button {
+    margin-top: 20px;
+  }

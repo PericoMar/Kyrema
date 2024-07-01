@@ -8,8 +8,10 @@ import { ColDef,ColGroupDef,
   createGrid } from 'ag-grid-community'; 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ActionButtonsComponent } from './action-buttons/action-buttons.component';
+import { Action } from 'rxjs/internal/scheduler/Action';
+import { ComisionButtonsComponent } from './comision-buttons/comision-buttons.component';
 
 
 @Component({
@@ -23,6 +25,9 @@ export class SocietyTableComponent {
   themeClass = "ag-theme-quartz";
   @Output() productSelectedChange: EventEmitter<any> = new EventEmitter<any>();
   params: any;
+  
+  constructor(private router: Router){}
+
   sociedad : any = {
     nombre : "kyrema"
   }
@@ -35,7 +40,7 @@ export class SocietyTableComponent {
     { field: 'tipoSociedad', headerName: 'Tipo Sociedad', width: 200,flex:1 },
     {
       headerName: 'Acciones',
-      cellRenderer: ActionButtonsComponent,
+      cellRenderer: this.getCellRenderer(this.router.url),
       cellRendererParams: (params: any) => ({
         data: params.data
       }),
@@ -139,6 +144,14 @@ export class SocietyTableComponent {
     excelExport: 'Exportar a Excel',
   };  
 
+  getCellRenderer(route: string) {
+    if (route.includes('/sociedades')) {
+      return ActionButtonsComponent;
+    } else if (route.includes('/comisiones')) {
+      return ComisionButtonsComponent;
+    }
+    return null; // o cualquier valor por defecto
+  }
 
   // Función para manejar el evento cellDoubleClicked y copiar el valor de la celda al portapapeles
   public onCellDoubleClicked(event: any) {

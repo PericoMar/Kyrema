@@ -23,11 +23,25 @@ export class AuthService {
           // Guarda los datos del usuario y el token en localStorage si el login es exitoso
           if (response.token) {
             this.isLoged = true;
-            
-            localStorage.setItem(this.USER_KEY, JSON.stringify(response.comercial));
+        
+            // Extraer los datos específicos del objeto response.comercial
+            const { id, nivel, id_sociedad, nombre, usuario } = response.comercial;
+        
+            // Crear el objeto comercial con los datos extraídos
+            const comercial = {
+                id,
+                nivel,
+                id_sociedad,
+                nombre,
+                usuario
+            };
+        
+            // Guardar el objeto comercial y el token en localStorage
+            localStorage.setItem(this.USER_KEY, JSON.stringify(comercial));
             localStorage.setItem(this.TOKEN_KEY, response.token);
+        
             return true;
-          }
+        }
           return false;
         }),
         catchError(error => {

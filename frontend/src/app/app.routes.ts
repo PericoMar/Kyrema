@@ -10,6 +10,7 @@ import { LayoutMainComponent } from './pages/layout-main/layout-main.component';
 import { LoginComponent } from './pages/login/login.component';
 import { authGuard } from './auth.guard';
 import { TarifasComponent } from './pages/tarifas/tarifas.component';
+import { CommissionsComponent } from './pages/commissions/commissions.component';
 
 export const routes: Routes = [
     {
@@ -28,6 +29,7 @@ export const routes: Routes = [
         // { path: 'informes', component: ReportsComponent, canActivate: [authGuard] }, 
         // { path: 'sociedades' , component: SocietyManagerComponent, canActivate: [authGuard] },
         // { path: 'tarifas' , component: TarifasComponent, canActivate: [authGuard] },
+        // { path: 'comisiones' , component: CommissionsComponent, canActivate: [authGuard] },
         // { path: 'sociedades/pagos/:codigo', component: PaymentsAndPricesComponent, canActivate: [authGuard] },
         // { path: 'sociedades/productos/:sociedad', component: ProductOperationsComponent },
         // { path: 'sociedades/permisos/:sociedad', component: ProductOperationsComponent },
@@ -40,6 +42,8 @@ export const routes: Routes = [
         { path: 'informes', component: ReportsComponent, }, 
         { path: 'sociedades' , component: SocietyManagerComponent,},
         { path: 'tarifas' , component: TarifasComponent,  },
+        { path: 'comisiones' , component: SocietyManagerComponent },
+        { path: 'comisiones/:sociedad' , component: CommissionsComponent},
         { path: 'sociedades/pagos/:codigo', component: PaymentsAndPricesComponent, },
         { path: 'sociedades/productos/:sociedad', component: ProductOperationsComponent },
         { path: 'sociedades/permisos/:sociedad', component: ProductOperationsComponent },

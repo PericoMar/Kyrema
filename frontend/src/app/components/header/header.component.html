@@ -1,12 +1,19 @@
 
 <header class="main-header">
     <header class="top-header">
-        <img src="" alt="Logo" class="logo">
+        <img [src]="logoUrl" alt="Logo" class="logo">
         <aside>
-            <span>Bienvenido, {{ user.nombre }}. </span>
+            <span>
+                @if(user.nombre){
+                    Bienvenido, {{ user.nombre }}. 
+                } @else {
+                    Bienvenido.
+                }
+                
+            </span>
         </aside>
     </header>
-    <app-nav-bar></app-nav-bar>
+    <app-nav-bar [navigation]="navigation"></app-nav-bar>
 </header>
 
 

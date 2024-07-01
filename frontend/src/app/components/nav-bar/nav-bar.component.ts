@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -19,28 +19,8 @@ interface MenuItem {
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })
-export class NavBarComponent implements OnInit{
+export class NavBarComponent{
 
-  currentUser! : any;
-  navigation!: MenuItem[] 
-
-  constructor (
-    private navService : NavService,
-    private userService : UserService
-  ){}
+  @Input() navigation!: MenuItem[] | null;
   
-  ngOnInit(){
-    this.currentUser = this.userService.getCurrentUser();
-    console.log(this.currentUser);
-    this.navService.getNavegation(this.currentUser.nivel).subscribe(
-      data => {
-        this.navigation = data;
-        console.log(this.navigation)
-      },
-      (error) => {
-        console.error('Error fetching navigation:', error);
-      }
-    );
-  }
-
 }

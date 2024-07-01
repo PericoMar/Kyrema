@@ -1,17 +1,39 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable,of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable,of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocietyService {
+  private readonly SOCIETY_KEY = "currentSociety";
+  private apiUrl = 'http://localhost:8000';
+  private sociedad!: string;
 
-  // private apiUrl = 'http://example.com/api/societies'; // Ajusta esta URL según tu API
+  constructor(private http: HttpClient,private route: ActivatedRoute, private router: Router) {
+    this.route.paramMap.subscribe(params => {
+      this.sociedad = params.get('sociedad') || '';
+    });
+  }
 
-  // constructor(private http: HttpClient) {}
+  getSocietyById(id_sociedad: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/sociedad/${id_sociedad}`).pipe(
+      tap(response => {
+        if (response.logo) {
+          response.logo = `data:image/png;base64,${response.logo}`;
+        }
+        localStorage.setItem(this.SOCIETY_KEY, JSON.stringify(response));
+      })
+    );
+  }
 
-  // getSocietyByCode(codigo: string): Observable<any> {
-  //   return this.http.get<any>(`${this.apiUrl}/${codigo}`);
-  // }
+  getCurrentSociety() {
+    const sociedad = localStorage.getItem(this.SOCIETY_KEY);
+    return sociedad ? JSON.parse(sociedad) : null;
+  }
+
+  getSociedadPorRuta(): string {
+    return this.sociedad;
+  }
 }

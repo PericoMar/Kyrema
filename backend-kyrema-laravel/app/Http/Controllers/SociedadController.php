@@ -30,10 +30,16 @@ class SociedadController extends Controller
     }
 
     public function show($id)
-    {
-        $sociedad = Sociedad::findOrFail($id);
-        return response()->json($sociedad);
+{
+    $sociedad = Sociedad::findOrFail($id);
+    
+    // Convertir el logo binario a Base64
+    if ($sociedad->logo) {
+        $sociedad->logo = base64_encode($sociedad->logo);
     }
+
+    return response()->json($sociedad);
+}
 
     public function update(Request $request, $id)
     {
