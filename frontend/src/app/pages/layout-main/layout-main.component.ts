@@ -67,6 +67,7 @@ export class LayoutMainComponent {
     this.societyService.getSocietyById(this.user.id_sociedad).subscribe(
       data => {
         this.society = data;
+        this.societyService.setSociedadLocalStorage(this.society);
         this.pageLoading = false;
       },
       error => {

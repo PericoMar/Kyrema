@@ -1,56 +1,43 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
+import { AgGridModule } from 'ag-grid-angular';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community'; 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { Router, RouterModule } from '@angular/router';
-import { ActionButtonsComponent } from './action-buttons/action-buttons.component';
-import { ComisionButtonsComponent } from './comision-buttons/comision-buttons.component';
-
+import { CommercialCommissionButtonComponent } from './commercial-commission-button/commercial-commission-button.component';
 
 @Component({
-  selector: 'app-society-table',
+  selector: 'app-commercials-commissions-table',
   standalone: true,
-  imports: [AgGridAngular, RouterModule],
-  templateUrl: './society-table.component.html',
-  styleUrl: './society-table.component.css'
+  imports: [AgGridModule, AgGridAngular],
+  templateUrl: './commercials-commissions-table.component.html',
+  styleUrl: './commercials-commissions-table.component.css'
 })
-export class SocietyTableComponent {
+export class CommercialsCommissionsTableComponent {
   themeClass = "ag-theme-quartz";
-  @Output() productSelectedChange: EventEmitter<any> = new EventEmitter<any>();
-  params: any;
-  
-  constructor(private router: Router){}
-
-  sociedad : any = {
-    nombre : "kyrema"
-  }
-
-  public columnDefs: ColDef[] = [
-    { field: 'codigo', headerName: 'Código', width: 150 },
-    { field: 'sociedad', headerName: 'Sociedad', width: 200 },
-    { field: 'poblacion', headerName: 'Población', width: 200, flex:1 },
-    { field: 'codigoPostal', headerName: 'Cod. Postal', width: 150, flex:1 },
-    { field: 'tipoSociedad', headerName: 'Tipo Sociedad', width: 200,flex:1 },
+  columnDefs : ColDef[]= [
+    { headerName: 'ID', field: 'codigo',flex: 1 },
+    { headerName: 'Nombre', field: 'nombre',flex: 1 },
+    { headerName: 'DNI', field: 'dni',flex: 1 },
     {
       headerName: 'Acciones',
-      cellRenderer: this.getCellRenderer(this.router.url),
+      field: 'acciones',
+      cellRenderer: CommercialCommissionButtonComponent,
       cellRendererParams: (params: any) => ({
         data: params.data
       }),
-      suppressHeaderMenuButton: true,
-      sortable: false,
-      filter: false,
-      flex:2.3,
+      flex: 1
     }
   ];
 
-  public rowData: any[] = [
-    { codigo: '001', sociedad: 'Sociedad A', poblacion: 'Madrid', codigoPostal: '28001', tipoSociedad: 'S.A.' },
-    { codigo: '002', sociedad: 'Sociedad B', poblacion: 'Barcelona', codigoPostal: '08001', tipoSociedad: 'S.L.' },
-    { codigo: '003', sociedad: 'Sociedad C', poblacion: 'Valencia', codigoPostal: '46001', tipoSociedad: 'Cooperativa' },
-    // Agrega más datos aquí
+  rowData = [
+    { codigo: '1', nombre: 'Juan Pérez', dni: '12345678A' },
+    { codigo: '002', nombre: 'María Gómez', dni: '87654321B' },
+    { codigo: '003', nombre: 'Luis Martínez', dni: '11223344C' }
   ];
+
+
   public defaultColDef: ColDef = {
     filter: "agTextColumnFilter",
     floatingFilter: true,
@@ -137,15 +124,6 @@ export class SocietyTableComponent {
     csvExport: 'Exportar a CSV',
     excelExport: 'Exportar a Excel',
   };  
-
-  getCellRenderer(route: string) {
-    if (route.includes('/sociedades')) {
-      return ActionButtonsComponent;
-    } else if (route.includes('/comisiones')) {
-      return ComisionButtonsComponent;
-    }
-    return null; // o cualquier valor por defecto
-  }
 
   // Función para manejar el evento cellDoubleClicked y copiar el valor de la celda al portapapeles
   public onCellDoubleClicked(event: any) {

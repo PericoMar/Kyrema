@@ -24,9 +24,12 @@ Route::apiResource('valores', ValorController::class);
 Route::apiResource('tipos-producto', TipoProductoController::class);
 
 Route::get('sociedad/{id}', [SociedadController::class, 'show']);
+
 Route::apiResource('tipo-producto-sociedad', TipoProductoSociedadController::class);
+
 Route::apiResource('comerciales', ComercialController::class);
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::get('/comercial/{id}', [ComercialController::class, 'show']);
 
 Route::apiResource('comercial-comisiones', ComercialComisionController::class);
 Route::apiResource('tipos-anexo', TipoAnexoController::class);

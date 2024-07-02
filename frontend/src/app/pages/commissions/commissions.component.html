@@ -1,57 +1,54 @@
 <section>
-    <h2>Comisiones</h2>
+    <h2>Comisiones - {{entidad}}</h2>
     <main class="content-block">
-        <form [formGroup]="comisionesForm" (ngSubmit)="onSubmit()" id="comisiones-form">
-          <table mat-table [dataSource]="comisionesArray.controls">
-            
-            <ng-container matColumnDef="type">
-              <th mat-header-cell *matHeaderCellDef class="type-column"> Tipos de comisiones </th>
-              <td mat-cell *matCellDef="let comision"> {{ comision.get('type')?.value }} </td>
-            </ng-container>
-        
-            <ng-container matColumnDef="fixedFee">
-              <th mat-header-cell *matHeaderCellDef> Cuota fija </th>
-              <td mat-cell *matCellDef="let comision" [formGroup]="comision">
-                <mat-form-field>
-                  <input matInput formControlName="fixedFee" placeholder="€" type="number">
-                  <span matSuffix>€</span>
-                  <mat-error *ngIf="comision.get('fixedFee')?.hasError('bothFilled')">
-                    No se puede rellenar ambos campos
-                  </mat-error>
-                </mat-form-field>
-              </td>
-            </ng-container>
-        
-            <ng-container matColumnDef="percentageFee">
-              <th mat-header-cell *matHeaderCellDef> Cuota porcentual </th>
-              <td mat-cell *matCellDef="let comision" [formGroup]="comision">
-                <mat-form-field>
-                  <input matInput formControlName="percentageFee" placeholder="%" type="number">
-                  <span matSuffix>%</span>
-                  <mat-error *ngIf="comision.get('percentageFee')?.hasError('bothFilled')">
-                    No se puede rellenar ambos campos
-                  </mat-error>
-                </mat-form-field>
-              </td>
-            </ng-container>
-        
-            <ng-container matColumnDef="totalPrice">
-              <th mat-header-cell *matHeaderCellDef> Precio total </th>
-              <td mat-cell *matCellDef="let comision" [formGroup]="comision">
-                <mat-form-field>
-                  <input matInput formControlName="totalPrice" placeholder="€" type="number">
-                  <span matSuffix>€</span>
-                </mat-form-field>
-              </td>
-            </ng-container>
-        
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-        
-          <div class="button-container">
-            <button mat-raised-button color="primary" type="submit">Guardar</button>
-          </div>
-        </form>
-      </main> 
+      <form [formGroup]="comisionesForm" (ngSubmit)="onSubmit()" id="comisiones-form">
+        <table mat-table [dataSource]="comisionesArray.controls">
+          
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef class="type-column"> Tipos de comisiones </th>
+            <td mat-cell *matCellDef="let comision"> {{ comision.get('type')?.value }} </td>
+          </ng-container>
+      
+          <ng-container matColumnDef="fixedFee">
+            <th mat-header-cell *matHeaderCellDef> Cuota fija </th>
+            <td mat-cell *matCellDef="let comision" [formGroup]="comision">
+              <mat-form-field>
+                <input matInput formControlName="fixedFee" placeholder="€" type="number">
+                <span matSuffix>€</span>
+                <mat-error *ngIf="comision.get('fixedFee')?.hasError('bothFilled')">
+                  No se puede rellenar ambos campos
+                </mat-error>
+              </mat-form-field>
+            </td>
+          </ng-container>
+      
+          <ng-container matColumnDef="percentageFee">
+            <th mat-header-cell *matHeaderCellDef> Cuota porcentual </th>
+            <td mat-cell *matCellDef="let comision" [formGroup]="comision">
+              <mat-form-field>
+                <input matInput formControlName="percentageFee" placeholder="%" type="number">
+                <span matSuffix>%</span>
+                <mat-error *ngIf="comision.get('percentageFee')?.hasError('bothFilled')">
+                  No se pueden rellenar ambos campos
+                </mat-error>
+              </mat-form-field>
+            </td>
+          </ng-container>
+      
+          <ng-container matColumnDef="totalPrice">
+            <th mat-header-cell *matHeaderCellDef> Precio total </th>
+            <td mat-cell *matCellDef="let comision">
+              {{ comision.get('totalPrice')?.value }} €
+            </td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      
+        <div class="button-container">
+          <button mat-raised-button color="primary" type="submit">Guardar</button>
+        </div>
+      </form>
+    </main>
 </section>

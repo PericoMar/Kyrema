@@ -28,6 +28,10 @@ export class SocietyService {
     );
   }
 
+  setSociedadLocalStorage(sociedad : any){
+    localStorage.setItem(this.SOCIETY_KEY, JSON.stringify(sociedad));
+  }
+
   getCurrentSociety() {
     const sociedad = localStorage.getItem(this.SOCIETY_KEY);
     return sociedad ? JSON.parse(sociedad) : null;

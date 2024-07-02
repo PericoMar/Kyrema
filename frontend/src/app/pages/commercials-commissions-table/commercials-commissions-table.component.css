@@ -1,0 +1,13 @@
+main{
+    background-color: var(--main-bg-color);
+    width: 100%;
+    height: 100%;
+    padding: 40px 90px;
+    box-sizing: border-box;
+}
+
+.table-container{
+    background-color: white;
+    border-radius: 4px;
+    height: 400px;
+}
