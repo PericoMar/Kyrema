@@ -20,8 +20,13 @@ use App\Http\Controllers\CPFamiliaController;
 use App\Http\Controllers\AuthController;
 
 Route::apiResource('campos', CampoController::class);
+Route::get('/campos', [CampoController::class, 'getByTipoProducto']);
+
 Route::apiResource('valores', ValorController::class);
+
 Route::apiResource('tipos-producto', TipoProductoController::class);
+Route::get('tipo-producto/{ruta}', [TipoProductoController::class, 'getByUrl']);
+Route::get('tipo-producto/show/{ruta}', [TipoProductoController::class, 'show']);
 
 Route::get('sociedad/{id}', [SociedadController::class, 'show']);
 

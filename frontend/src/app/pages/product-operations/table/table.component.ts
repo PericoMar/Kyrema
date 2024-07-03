@@ -1,12 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { getMatFormFieldPlaceholderConflictError } from '@angular/material/form-field';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
-import { ColDef,ColGroupDef,
-  GridApi,
-  GridOptions,
-  GridReadyEvent,
-  ModuleRegistry,
-  createGrid } from 'ag-grid-community'; 
+import { ColDef} from 'ag-grid-community'; 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
@@ -24,7 +19,7 @@ export class TableComponent {
   @Output() productSelectedChange: EventEmitter<any> = new EventEmitter<any>();
   public productSelected: any;
 
-  public rowData: any[] | null = [
+  @Input() rowData: any[] | null = [
     {
       make: "Tesla",
       model: "Model Y",
@@ -278,7 +273,7 @@ export class TableComponent {
       month: "May",
     },
   ];
-  public columnDefs: ColDef[] = [
+  @Input() columnDefs: ColDef[] = [
     {
       field: "make",
       cellEditor: 'agTextCellEditor',

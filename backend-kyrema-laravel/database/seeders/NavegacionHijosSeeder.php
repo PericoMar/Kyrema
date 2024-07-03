@@ -74,7 +74,7 @@ class NavegacionHijosSeeder extends Seeder
         $seguros_extranjeros = Navegacion::create([
             'navegacion' => 'Seguros Extranjeros',
             'ruta' => '/operaciones/seguros-extranjeros',
-            'nivel' => 1,
+            'nivel' => 1    ,
             'navegacion_padre_id' => 3,
         ]);
     }

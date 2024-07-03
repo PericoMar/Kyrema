@@ -42,11 +42,11 @@ export class SocietyTableComponent {
       sortable: false,
       filter: false,
       flex:2.3,
-    }
+    } 
   ];
 
   public rowData: any[] = [
-    { codigo: '001', sociedad: 'Sociedad A', poblacion: 'Madrid', codigoPostal: '28001', tipoSociedad: 'S.A.' },
+    { codigo: '1', sociedad: 'Sociedad A', poblacion: 'Madrid', codigoPostal: '28001', tipoSociedad: 'S.A.' },
     { codigo: '002', sociedad: 'Sociedad B', poblacion: 'Barcelona', codigoPostal: '08001', tipoSociedad: 'S.L.' },
     { codigo: '003', sociedad: 'Sociedad C', poblacion: 'Valencia', codigoPostal: '46001', tipoSociedad: 'Cooperativa' },
     // Agrega más datos aquí

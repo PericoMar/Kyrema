@@ -2,7 +2,7 @@
 <main class="product-page">
     <section class="listado">
         <h1>Listado de {{ productName }}</h1>
-        <app-table [products]="products" (productSelectedChange)="onProductSelectedChanged($event)"></app-table>
+        <app-table [products]="products" (productSelectedChange)="onProductSelectedChanged($event)" [columnDefs]="columnDefs"></app-table>
     </section>
     <section class="datos-producto">
         <h2>Formulario de gestión</h2>

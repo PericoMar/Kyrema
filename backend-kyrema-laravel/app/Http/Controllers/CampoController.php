@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Campo;
+use App\Models\Campos;
 use Illuminate\Http\Request;
 
 class CampoController extends Controller
@@ -12,7 +12,17 @@ class CampoController extends Controller
      */
     public function index()
     {
-        $campos = Campo::all();
+        $campos = Campos::all();
+        return response()->json($campos);
+    }
+
+    public function getByTipoProducto(Request $request)
+    {
+        $id_tipo_producto = $request->input('id_tipo_producto');
+        // Obtener todos los campos que tengan el id_tipo_producto pasado por parámetro
+        $campos = Campos::where('tipo_producto_id', $id_tipo_producto)->get();
+        
+        // Devolver los resultados en formato JSON
         return response()->json($campos);
     }
 
@@ -29,7 +39,7 @@ class CampoController extends Controller
             'aparece_formulario' => 'required|boolean',
         ]);
 
-        $campo = Campo::create($request->all());
+        $campo = Campos::create($request->all());
 
         return response()->json($campo, 201);
     }
@@ -39,7 +49,7 @@ class CampoController extends Controller
      */
     public function show($id)
     {
-        $campo = Campo::findOrFail($id);
+        $campo = Campos::findOrFail($id);
         return response()->json($campo);
     }
 
@@ -56,7 +66,7 @@ class CampoController extends Controller
             'aparece_formulario' => 'boolean',
         ]);
 
-        $campo = Campo::findOrFail($id);
+        $campo = Campos::findOrFail($id);
         $campo->update($request->all());
 
         return response()->json($campo);
@@ -67,7 +77,7 @@ class CampoController extends Controller
      */
     public function destroy($id)
     {
-        $campo = Campo::findOrFail($id);
+        $campo = Campos::findOrFail($id);
         $campo->delete();
 
         return response()->json(null, 204);

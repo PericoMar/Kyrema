@@ -25,6 +25,18 @@ class TipoProductoController extends Controller
         return response()->json($tipoProducto, 201);
     }
 
+    public function getByUrl($ruta){
+        // Buscar el tipo de producto cuya ruta contiene la ruta pasada como parámetro
+        $tipoProducto = TipoProducto::where('ruta', 'LIKE', '%' . $ruta . '%')->get();
+
+        if ($tipoProducto->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron resultados'], 404);
+        }
+
+        return response()->json($tipoProducto);
+
+    }
+
     public function show($id)
     {
         $tipoProducto = TipoProducto::findOrFail($id);

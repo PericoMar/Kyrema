@@ -23,7 +23,6 @@ export class SocietyService {
         if (response.logo) {
           response.logo = `data:image/png;base64,${response.logo}`;
         }
-        localStorage.setItem(this.SOCIETY_KEY, JSON.stringify(response));
       })
     );
   }

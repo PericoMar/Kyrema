@@ -32,7 +32,7 @@ export class CommercialsCommissionsTableComponent {
   ];
 
   rowData = [
-    { codigo: '1', nombre: 'Juan Pérez', dni: '12345678A' },
+    { codigo: '1', nombre: 'Pedro', dni: '12345678A' },
     { codigo: '002', nombre: 'María Gómez', dni: '87654321B' },
     { codigo: '003', nombre: 'Luis Martínez', dni: '11223344C' }
   ];

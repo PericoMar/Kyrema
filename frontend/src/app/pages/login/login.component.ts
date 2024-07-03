@@ -41,7 +41,7 @@ export class LoginComponent {
       this.authService.loginUser(username, password).subscribe(
         success => {
           if (success) {
-            this.router.navigate(['']); // Cambia esto por la ruta de tu dashboard
+            this.router.navigate(['/operaciones/1']); // Cambia esto por la ruta de tu dashboard
           } else {
             this.errorMessage = 'Credenciales incorrectas';
             this.loadingLogin = false;

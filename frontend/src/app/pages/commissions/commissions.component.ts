@@ -25,9 +25,9 @@ export class CommissionsComponent {
   displayedColumns: string[] = ['type', 'fixedFee', 'percentageFee', 'totalPrice'];
 
   comisiones: { type: string }[] = [
-    { type: 'Comisión 1' },
-    { type: 'Comisión 2' },
-    { type: 'Comisión 3' },
+    { type: 'Seguros combinados' },
+    { type: 'Seguros de caza' },
+    { type: 'Seguros Kyrema Naturaleza' },
   ];
   
   defaultPrices: { fixedFee: number, percentageFee: number, totalPrice: number }[] = [
