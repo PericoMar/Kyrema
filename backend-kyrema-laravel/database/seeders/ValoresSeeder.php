@@ -10,7 +10,7 @@ class ValoresSeeder extends Seeder
 {
     public function run()
     {
-        $productosCount = 100; // Número de productos
+        $productosCount = 300; // Número de productos
 
         $campos = [
             '0931602c-3559-423f-b24c-12efa0ed531b', // Tipo
@@ -29,7 +29,7 @@ class ValoresSeeder extends Seeder
         // Fecha inicial para los productos
         $currentDate = Carbon::now();
 
-        for ($i = 1; $i <= $productosCount; $i++) {
+        for ($i = 201; $i <= $productosCount; $i++) {
             foreach ($campos as $campo) {
                 DB::table('valores')->insert([
                     'campo_id' => $campo,

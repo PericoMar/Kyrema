@@ -18,6 +18,12 @@ use App\Http\Controllers\EscaladoAnexoController;
 use App\Http\Controllers\NavegacionController;
 use App\Http\Controllers\CPFamiliaController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductoController;
+
+
+
+Route::get('/productos/{tipo_producto_id}', [ProductoController::class, 'getProductosPorTipo']);
+
 
 Route::apiResource('campos', CampoController::class);
 Route::get('/campos', [CampoController::class, 'getByTipoProducto']);

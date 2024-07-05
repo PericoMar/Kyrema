@@ -19,7 +19,8 @@ export class TableComponent {
   @Output() productSelectedChange: EventEmitter<any> = new EventEmitter<any>();
   public productSelected: any;
 
-  @Input() rowData: any[] | null = [
+  @Input() rowData: any[] | null = 
+  [
     {
       make: "Tesla",
       model: "Model Y",

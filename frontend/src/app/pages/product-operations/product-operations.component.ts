@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FamilyProductService } from '../../services/family-product.service';
 import { CamposService } from '../../services/campos.service';
 import { ColDef} from 'ag-grid-community'; 
+import { ProductsService } from '../../services/products.service';
 
 @Component({
   selector: 'app-product-operations',
@@ -17,6 +18,7 @@ export class ProductOperationsComponent {
   productName! : string;
   productUrl! : string;
   columnDefs! : ColDef[];
+  rowData! : any[] | null;
   products! : Array<any>;
   productSelected : any = {
     make: "",
@@ -32,7 +34,8 @@ export class ProductOperationsComponent {
   constructor(
     private route: ActivatedRoute,
     private familyService : FamilyProductService,
-    private camposService : CamposService
+    private camposService : CamposService,
+    private productsService : ProductsService
   ) {
   }
 
@@ -69,6 +72,15 @@ export class ProductOperationsComponent {
         this.columnDefs = data.map((campo : any) => {
           return { headerName: campo.nombre, field: campo.nombre.replace(/\s/g, '_').toLowerCase() };
         });
+      },
+      error => {
+        console.log(error); 
+      }
+    )
+    this.productsService.getProductosByTipoProducto(productUrl).subscribe(
+      data => {
+        console.log(data);
+        this.rowData = data;
       },
       error => {
         console.log(error); 
