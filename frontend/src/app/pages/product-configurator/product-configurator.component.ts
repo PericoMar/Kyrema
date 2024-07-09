@@ -14,6 +14,7 @@ interface Campo {
   columna: string,
   visible: boolean;
   obligatorio: boolean;
+  formulario: boolean;
 }
 
 @Component({
@@ -25,25 +26,35 @@ interface Campo {
 })
 export class ProductConfiguratorComponent {
   fileName = '';
+  selectedFile : File | null = null;
+  nombreProducto = '';
+  letrasIdentificacion = '';
+  nuevoProducto : any = {
+    nombreProducto: '',
+    letrasIdentificacion: '',
+    plantilla: null,
+    campos: []
+  };
 
+  
   camposFijos: Campo[] = [
-    { nombre: 'DNI', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Nombre socio', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: true },
-    { nombre: 'Apellido 1', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Apellido 2', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Email', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Telefono', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Sexo', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Dirección', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Población', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Provincia', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Codigo Postal', tipoDato: 'numero', fila: '',columna: '', visible: false, obligatorio: false },
-    { nombre: 'Fecha de nacimiento', tipoDato: 'fecha', fila: '',columna: '', visible: false, obligatorio: false},
+    { nombre: 'DNI', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Nombre socio', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: true, formulario: false },
+    { nombre: 'Apellido 1', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Apellido 2', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Email', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Telefono', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Sexo', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Dirección', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Población', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Provincia', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Codigo Postal', tipoDato: 'numero', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
+    { nombre: 'Fecha de nacimiento', tipoDato: 'fecha', fila: '',columna: '', visible: false, obligatorio: false, formulario: false},
   ];
-  campos: Campo[] = [{ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false }];
+  campos: Campo[] = [{ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false }];
 
   agregarCampo() {
-    this.campos.push({ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false });
+    this.campos.push({ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false });
   }
 
   eliminarCampo(index: number) {
@@ -60,5 +71,19 @@ export class ProductConfiguratorComponent {
 
         console.log(this.fileName);
     }
-}
+  }
+
+  crearTipoProducto() {
+    const camposFormulario = [...this.camposFijos, ...this.campos]; // Concatenación de campos fijos y variables
+
+    const nuevoProducto = {
+      nombreProducto: this.nombreProducto,
+      letrasIdentificacion: this.letrasIdentificacion,
+      plantilla: this.selectedFile,
+      campos: camposFormulario
+    };
+    
+    console.log(nuevoProducto);
+  }
+
 }

@@ -112,6 +112,10 @@ input.nombre-producto{
   min-width: 100px; 
 }
 
+.col-formulario {
+  min-width: 100px;
+}
+
 /* Estilo para las entradas de texto y select */
 input[type="text"], select {
   width: 100%;
@@ -214,5 +218,6 @@ div.center{
 
 .form-footer button:hover{
   background-color: rgb(8, 8, 135);
+  cursor: pointer;
 }
 

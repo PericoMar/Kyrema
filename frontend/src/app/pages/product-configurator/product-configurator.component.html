@@ -1,18 +1,18 @@
 <section class="product-configurator">
     <h1>Creación de tipo de producto</h1>
     <main class="content-block new-product-form">
-        <form>
+        <form (ngSubmit)="crearTipoProducto()">
           <header class="form-header">
           <h2>Descripción del producto</h2>
           <hr>
           <div class="space-between">
             <div>
               <label for="nombre_producto">Nombre del producto</label>
-              <input type="text" class="nombre-producto" placeholder="Escriba aquí el nombre del nuevo producto">
+              <input type="text" class="nombre-producto" [(ngModel)]="nombreProducto" name="nombreProducto" placeholder="Escriba aquí el nombre del nuevo producto">
             </div>
             <div>
               <label for="nombre_producto">Letras de identificación</label>
-              <input type="text" class="nombre-producto" placeholder="Escriba aquí las letras de identificación">
+              <input type="text" class="nombre-producto" [(ngModel)]="letrasIdentificacion" name="letrasIdentificacion" placeholder="Escriba aquí las letras de identificación">
             </div>
             <div>
               <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
@@ -58,6 +58,11 @@
                     Obligatorio
                   </div>
                 </th>
+                <th class="col-formulario">
+                  <div class="center">
+                    Aparece en el formulario
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -97,6 +102,11 @@
                       <mat-checkbox [(ngModel)]="campoFijo.obligatorio" name="obligatorioFijo{{$index}}"></mat-checkbox>
                     </div>
                   </td>
+                  <td class="col-formulario">
+                    <div class="center">
+                      <mat-checkbox [(ngModel)]="campoFijo.formulario" name="formularioFijo{{$index}}"></mat-checkbox>
+                    </div>
+                  </td>
                 </tr>                
               }
             </tbody>
@@ -127,6 +137,11 @@
                   <th class="col-obligatorio">
                     <div class="center">
                       Obligatorio
+                    </div>
+                  </th>
+                  <th class="col-formulario">
+                    <div class="center">
+                      Aparece en el formulario
                     </div>
                   </th>
                   <th class="col-eliminar">
@@ -171,6 +186,11 @@
                     <td class="col-obligatorio">
                       <div class="center">
                         <mat-checkbox [(ngModel)]="campo.obligatorio" name="obligatorio{{$index}}"></mat-checkbox>
+                      </div>
+                    </td>
+                    <td class="col-formulario">
+                      <div class="center">
+                        <mat-checkbox [(ngModel)]="campo.formulario" name="formulario{{$index}}"></mat-checkbox>
                       </div>
                     </td>
                     <td class="col-eliminar">
