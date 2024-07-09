@@ -1,15 +1,43 @@
 <nav class="nav-bar">
     <ul class="nav-options">
-    <ng-container *ngFor="let menu of navigation">
+      <ng-container *ngFor="let menu of navigation">
         <li>
-            <button mat-button [matMenuTriggerFor]="menuTrigger">{{ menu.label }}</button>
+          <!-- Button to trigger the menu or just display the label if no children -->
+          <button mat-button *ngIf="menu.children?.length; else noChildren" [matMenuTriggerFor]="menuTrigger">
+            {{ menu.label }}
+          </button>
+          <ng-template #noChildren>
+            <button mat-button [routerLink]="menu.link">
+              {{ menu.label }}
+            </button>
+          </ng-template>
+          <mat-menu #menuTrigger="matMenu">
+            <div class="submenu-container">
+              <ng-container *ngFor="let subMenu of menu.children">
+                <ng-container *ngIf="subMenu.children?.length; else noSubMenuChildren">
+                  <button mat-menu-item [matMenuTriggerFor]="subMenuTrigger">
+                    {{ subMenu.label }}
+                  </button>
+                  <mat-menu #subMenuTrigger="matMenu" class="submenu">
+                    <div class="submenu-content">
+                      <ng-container *ngFor="let subSubMenu of subMenu.children">
+                        <button mat-menu-item [routerLink]="subSubMenu.link">
+                          {{ subSubMenu.label }}
+                        </button>
+                      </ng-container>
+                    </div>
+                  </mat-menu>
+                </ng-container>
+                <ng-template #noSubMenuChildren>
+                  <button mat-menu-item [routerLink]="subMenu.link">
+                    {{ subMenu.label }}
+                  </button>
+                </ng-template>
+              </ng-container>
+            </div>
+          </mat-menu>
         </li>
-        <mat-menu #menuTrigger="matMenu">
-        <ng-container *ngFor="let subMenu of menu.children">
-            <!-- <button mat-menu-item [routerLink]="subMenu.link">{{ subMenu.label }}</button> -->
-            <button mat-menu-item [routerLink]="subMenu.link">{{ subMenu.label }}</button>
-        </ng-container>
-        </mat-menu>
-    </ng-container>   
+      </ng-container>
     </ul>
-</nav>
+  </nav>
+  

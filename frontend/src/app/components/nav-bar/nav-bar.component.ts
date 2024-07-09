@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -20,7 +20,7 @@ interface MenuItem {
   styleUrl: './nav-bar.component.css'
 })
 export class NavBarComponent{
-
+  
   @Input() navigation!: MenuItem[] | null;
   
 }
