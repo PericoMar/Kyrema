@@ -14,12 +14,12 @@ class SociedadSeeder extends Seeder
      */
     public function run()
     {
-        Sociedad::create([
+        Sociedad::create([  
             'id' => '1',
-            'nombre' => 'Sociedad Admin',
-            'codigo_postal' => '41940',
-            'poblacion' => 'Sevilla',
-            'tipo_sociedad' => 'Pruebas',
+            'nombre' => 'Admin',
+            'codigo_postal' => '0000',
+            'poblacion' => 'Admin',
+            'tipo_sociedad' => 'Admin',
             'nivel_sociedad' => 1,
             'sociedad_padre_id' => null, // Opcional: Si tiene sociedad padre, cambia esto
         ]);

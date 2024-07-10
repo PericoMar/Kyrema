@@ -12,6 +12,9 @@ return new class extends Migration
             $table->string('id')->primary();
             $table->string('nombre');
             $table->string('tipo_producto_id')->nullable();
+            $table->string('columna')->nullable();
+            $table->string('fila')->nullable();
+            $table->string('tipo_dato');
             $table->boolean('visible');
             $table->boolean('obligatorio');
             $table->boolean('aparece_formulario');

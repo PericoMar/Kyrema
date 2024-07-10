@@ -29,13 +29,14 @@ export class ProductOperationsComponent {
   };
   isProductSelected : boolean = false;
   familyProduct! : any;
+
   
 
   constructor(
     private route: ActivatedRoute,
     private familyService : FamilyProductService,
     private camposService : CamposService,
-    private productsService : ProductsService
+    private productsService : ProductsService,
   ) {
   }
 
@@ -56,28 +57,28 @@ export class ProductOperationsComponent {
   loadProductData(productUrl: string): void {
     // Aquí puedes implementar la lógica para cargar los datos del producto
     console.log(`Producto cargado: ${productUrl}`);
-    this.familyService.getTipoProductoPorId(productUrl).subscribe(
-      data => {
+    this.familyService.getTipoProductoPorLetras(productUrl).subscribe(
+      (data : any) => {
         this.familyProduct = data;
         this.productName = this.familyProduct.nombre;
-        console.log("Data",this.familyProduct);
+        console.log("Data",this.familyProduct.id);
+        this.camposService.getCamposVisiblesPorTipoProducto(this.familyProduct.id).subscribe(
+          data => {
+            console.log(data);
+            this.columnDefs = data.map((campo : any) => {
+              return { headerName: campo.nombre, field: campo.nombre.replace(/\s/g, '_').toLowerCase() };
+            });
+          },
+          error => {
+            console.log(error); 
+          }
+        )
       },
       error => {
         console.log(error);
       }
-    )
-    this.camposService.getCamposVisiblesPorTipoProducto(productUrl).subscribe(
-      data => {
-        console.log(data);
-        this.columnDefs = data.map((campo : any) => {
-          return { headerName: campo.nombre, field: campo.nombre.replace(/\s/g, '_').toLowerCase() };
-        });
-      },
-      error => {
-        console.log(error); 
-      }
-    )
-    this.productsService.getProductosByTipoProducto(productUrl).subscribe(
+    )    
+    this.productsService.getProductosByTipoAndSociedades(productUrl).subscribe(
       data => {
         console.log(data);
         this.rowData = data;

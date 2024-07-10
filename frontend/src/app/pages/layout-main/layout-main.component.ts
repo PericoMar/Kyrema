@@ -15,6 +15,7 @@ interface User {
 }
 
 interface Society {
+  id: string,
   nombre : string,
   codigo_postal : string,
   poblacion :string,
@@ -69,10 +70,20 @@ export class LayoutMainComponent {
         this.society = data;
         this.societyService.setSociedadLocalStorage(this.society);
         this.pageLoading = false;
+        this.societyService.getSociedadAndHijas(this.society.id).subscribe(
+          (sociedad : Society[]) => {
+            this.societyService.guardarSociedadesEnLocalStorage(sociedad);
+          },
+          (error) => {
+            console.error('Error fetching societies:', error);
+          }
+        )
       },
       error => {
         console.error('Error al obtener la sociedad:', error);
       }
     );
+
+
   }
 }

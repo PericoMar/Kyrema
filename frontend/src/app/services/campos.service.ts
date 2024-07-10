@@ -16,9 +16,16 @@ export class CamposService {
   }
 
   getCamposVisiblesPorTipoProducto(id_tipo_producto: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/campos?id_tipo_producto=${id_tipo_producto}`)
+    return this.getCamposPorTipoProducto(id_tipo_producto)
     .pipe(
       map((campos :any) => campos.filter((campo :any) => campo.visible === '1'))
+    );
+  }
+
+  getCamposFormularioPorTipoProducto(id_tipo_producto: string): Observable<any> {
+    return this.getCamposPorTipoProducto(id_tipo_producto)
+    .pipe(
+      map((campos :any) => campos.filter((campo :any) => campo.aparece_formulario === '1'))
     );
   }
 }

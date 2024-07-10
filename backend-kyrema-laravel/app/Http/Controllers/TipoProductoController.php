@@ -25,11 +25,11 @@ class TipoProductoController extends Controller
         return response()->json($tipoProducto, 201);
     }
 
-    public function getByUrl($ruta){
+    public function getByLetras($letras){
         // Buscar el tipo de producto cuya ruta contiene la ruta pasada como parámetro
-        $tipoProducto = TipoProducto::where('ruta', 'LIKE', '%' . $ruta . '%')->get();
+        $tipoProducto = TipoProducto::where('letras_identificacion', $letras)->first();
 
-        if ($tipoProducto->isEmpty()) {
+        if (!$tipoProducto) {
             return response()->json(['message' => 'No se encontraron resultados'], 404);
         }
 

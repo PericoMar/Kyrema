@@ -14,7 +14,7 @@ export class FamilyProductService {
     return this.http.get<any>(`${this.apiUrl}/api/tipo-producto/show/${id_tipo_producto}`);
   }
 
-  getTipoProductoPorUrl(url_tipo_producto: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/tipo-producto/${url_tipo_producto}`);
+  getTipoProductoPorLetras(letras_identificacion: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/tipo-producto/${letras_identificacion}`);
   }
 }

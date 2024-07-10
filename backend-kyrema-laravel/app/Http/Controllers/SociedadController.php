@@ -29,17 +29,27 @@ class SociedadController extends Controller
         return response()->json($sociedad, 201);
     }
 
-    public function show($id)
-{
-    $sociedad = Sociedad::findOrFail($id);
-    
-    // Convertir el logo binario a Base64
-    if ($sociedad->logo) {
-        $sociedad->logo = base64_encode($sociedad->logo);
+    public function getSociedadesHijas($id)
+    {
+        $sociedad = Sociedad::findOrFail($id); // Obtener la sociedad inicial
+        $sociedadesHijas = $sociedad->getSociedadesHijasRecursivo($id);
+
+        $sociedadesCompletas = array_merge([$sociedad], $sociedadesHijas);
+
+        return response()->json($sociedadesCompletas);
     }
 
-    return response()->json($sociedad);
-}
+    public function show($id)
+    {
+        $sociedad = Sociedad::findOrFail($id);
+        
+        // Convertir el logo binario a Base64
+        if ($sociedad->logo) {
+            $sociedad->logo = base64_encode($sociedad->logo);
+        }
+
+        return response()->json($sociedad);
+    }
 
     public function update(Request $request, $id)
     {

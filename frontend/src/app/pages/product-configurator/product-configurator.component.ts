@@ -6,6 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ProductsService } from '../../services/products.service';
+import { error } from 'console';
 
 interface Campo {
   nombre: string;
@@ -36,7 +38,8 @@ export class ProductConfiguratorComponent {
     campos: []
   };
 
-  
+  constructor(private productService : ProductsService) {}
+
   camposFijos: Campo[] = [
     { nombre: 'DNI', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
     { nombre: 'Nombre socio', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: true, formulario: false },
@@ -82,8 +85,15 @@ export class ProductConfiguratorComponent {
       plantilla: this.selectedFile,
       campos: camposFormulario
     };
-    
+
     console.log(nuevoProducto);
+    
+    this.productService.crearTipoProducto(nuevoProducto).subscribe((res) => {
+      console.log(res);
+    },
+    (error) => {
+      console.log(error);
+    });
   }
 
 }

@@ -27,6 +27,14 @@ export class SocietyService {
     );
   }
 
+  getSociedadAndHijas(id_sociedad: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/sociedad/hijas/${id_sociedad}`);
+  }
+
+  guardarSociedadesEnLocalStorage(sociedades: any[]): void {
+    localStorage.setItem('sociedades', JSON.stringify(sociedades));
+  }
+
   setSociedadLocalStorage(sociedad : any){
     localStorage.setItem(this.SOCIETY_KEY, JSON.stringify(sociedad));
   }

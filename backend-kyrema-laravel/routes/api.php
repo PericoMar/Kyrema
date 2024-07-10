@@ -22,7 +22,8 @@ use App\Http\Controllers\ProductoController;
 
 
 
-Route::get('/productos/{tipo_producto_id}', [ProductoController::class, 'getProductosPorTipo']);
+Route::get('/productos/{letras_identificativas}', [ProductoController::class, 'getProductosPorTipo']);
+Route::post('/crear-tipo-producto', [ProductoController::class, 'crearTipoProducto']);
 
 
 Route::apiResource('campos', CampoController::class);
@@ -31,10 +32,12 @@ Route::get('/campos', [CampoController::class, 'getByTipoProducto']);
 Route::apiResource('valores', ValorController::class);
 
 Route::apiResource('tipos-producto', TipoProductoController::class);
-Route::get('tipo-producto/{ruta}', [TipoProductoController::class, 'getByUrl']);
+Route::get('tipo-producto/{letras}', [TipoProductoController::class, 'getByLetras']);
 Route::get('tipo-producto/show/{ruta}', [TipoProductoController::class, 'show']);
 
 Route::get('sociedad/{id}', [SociedadController::class, 'show']);
+Route::get('sociedad/hijas/{id}', [SociedadController::class, 'getSociedadesHijas']);
+
 
 Route::apiResource('tipo-producto-sociedad', TipoProductoSociedadController::class);
 

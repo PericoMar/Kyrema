@@ -125,6 +125,7 @@ input[type="text"], select {
   background-color: transparent; /* Fondo transparente para mezclar con la celda */
   padding: 8px; /* Espaciado interno para que el input llene toda la celda */
   background-color: #f5f5f5;
+
 }
 
 /* Estilo específico para las entradas de fila y columna */
@@ -132,10 +133,12 @@ input[type="text"], select {
   width: 66px; /* Ancho reducido */
   font-size: 12px; /* Tamaño de la letra */
   padding: 8px; /* Espaciado reducido */
+  box-sizing: border-box;
 }
 
 /* Eliminar el focus outline de los inputs y select */
 input[type="text"]:focus, select:focus {
+  box-sizing: border-box;
   outline: none; /* Elimina el borde de enfoque por defecto */
   border-bottom: 2px solid #2196F3; /* Añade una línea azul debajo del input al enfocar */
 } 
@@ -145,6 +148,7 @@ input[disabled], select[disabled] {
   background-color: white; /* Fondo gris claro */
   color: #b8b8b8; /* Texto gris claro */
   border: none;
+  box-sizing: border-box; 
 }
 
 div.center{

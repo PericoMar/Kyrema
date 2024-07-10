@@ -23,6 +23,18 @@ class Sociedad extends Model
         'sociedad_padre_id',
     ];
 
+    public function getSociedadesHijasRecursivo($id, &$results = [])
+    {
+        $sociedades = Sociedad::where('sociedad_padre_id', $id)->get();
+
+        foreach ($sociedades as $sociedad) {
+            $results[] = $sociedad;
+            $this->getSociedadesHijasRecursivo($sociedad->id, $results);
+        }
+
+        return $results;
+    }   
+
     public function tipoProductoSociedades()
     {
         return $this->hasMany(TipoProductoSociedad::class, 'id_sociedad', 'id');
