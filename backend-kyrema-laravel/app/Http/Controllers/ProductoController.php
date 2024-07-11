@@ -111,5 +111,24 @@ class ProductoController extends Controller
     
         return response()->json($result);
     }
+
+    public function getProductosByTipoAndSociedades($id_tipo_producto, Request $request)
+    {
+        $sociedades = $request->query('sociedades');
+
+        if ($sociedades) {
+            $sociedades = explode(',', $sociedades);
+        } else {
+            $sociedades = [];
+        }
+
+        $productos = Producto::where('tipo_producto_id', $id_tipo_producto)
+            ->when(count($sociedades) > 0, function ($query) use ($sociedades) {
+                $query->whereIn('sociedad_id', $sociedades);
+            })
+            ->get();
+
+        return response()->json($productos);
+    }
     
 }

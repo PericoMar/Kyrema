@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -11,8 +11,9 @@ export class ProductsService {
 
   constructor(private http : HttpClient) { }
 
-  getProductosByTipoAndSociedades(id_tipo_producto: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/productos/${id_tipo_producto}`);
+  getProductosByTipoAndSociedades(id_tipo_producto: string, sociedades: any[]): Observable<any> {
+    const params = new HttpParams().set('sociedades', sociedades.join(','));
+    return this.http.get<any>(`${this.apiUrl}/api/productos/${id_tipo_producto}`, { params });
   }
 
   crearTipoProducto(nuevoProducto : any): Observable<any>{

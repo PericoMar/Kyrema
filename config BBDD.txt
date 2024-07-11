@@ -7,3 +7,5 @@ php artisan db:seed --class=SociedadSeeder
 php artisan db:seed --class=ComercialesTableSeeder
 
 php artisan db:seed --class=NavegacionSeeder
+
+php artisan db:seed --class=ProductsSeeder

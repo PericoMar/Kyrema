@@ -6,6 +6,7 @@ import { FamilyProductService } from '../../services/family-product.service';
 import { CamposService } from '../../services/campos.service';
 import { ColDef} from 'ag-grid-community'; 
 import { ProductsService } from '../../services/products.service';
+import { SocietyService } from '../../services/society.service';
 
 @Component({
   selector: 'app-product-operations',
@@ -29,6 +30,7 @@ export class ProductOperationsComponent {
   };
   isProductSelected : boolean = false;
   familyProduct! : any;
+  sociedadesBusqueda! : any[];
 
   
 
@@ -37,7 +39,9 @@ export class ProductOperationsComponent {
     private familyService : FamilyProductService,
     private camposService : CamposService,
     private productsService : ProductsService,
+    private societyService : SocietyService
   ) {
+    this.sociedadesBusqueda = this.societyService.getSociedadesHijas()
   }
 
   ngOnInit(): void {
@@ -73,20 +77,20 @@ export class ProductOperationsComponent {
             console.log(error); 
           }
         )
+        this.productsService.getProductosByTipoAndSociedades(this.familyProduct.id, this.sociedadesBusqueda).subscribe(
+          data => {
+            console.log(data);
+            this.rowData = data;
+          },
+          error => {
+            console.log(error); 
+          }
+        )
       },
       error => {
         console.log(error);
       }
     )    
-    this.productsService.getProductosByTipoAndSociedades(productUrl).subscribe(
-      data => {
-        console.log(data);
-        this.rowData = data;
-      },
-      error => {
-        console.log(error); 
-      }
-    )
   }
 
 }

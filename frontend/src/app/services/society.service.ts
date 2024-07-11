@@ -8,6 +8,7 @@ import { Observable,of, tap } from 'rxjs';
 })
 export class SocietyService {
   private readonly SOCIETY_KEY = "currentSociety";
+  private readonly SOCIEDADES_HIJAS_KEY = 'sociedades';
   private apiUrl = 'http://localhost:8000';
   private sociedad!: string;
 
@@ -32,7 +33,12 @@ export class SocietyService {
   }
 
   guardarSociedadesEnLocalStorage(sociedades: any[]): void {
-    localStorage.setItem('sociedades', JSON.stringify(sociedades));
+    localStorage.setItem(this.SOCIEDADES_HIJAS_KEY, JSON.stringify(sociedades));
+  }
+
+  getSociedadesHijas(){
+    const sociedades = localStorage.getItem(this.SOCIEDADES_HIJAS_KEY);
+    return sociedades ? JSON.parse(sociedades) : null;
   }
 
   setSociedadLocalStorage(sociedad : any){
