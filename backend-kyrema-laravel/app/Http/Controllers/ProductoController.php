@@ -112,7 +112,7 @@ class ProductoController extends Controller
         return response()->json($result);
     }
 
-    public function getProductosByTipoAndSociedades($id_tipo_producto, Request $request)
+    public function getProductosByTipoAndSociedades($letrasIdentificacion, Request $request)
     {
         $sociedades = $request->query('sociedades');
 
@@ -122,12 +122,17 @@ class ProductoController extends Controller
             $sociedades = [];
         }
 
-        $productos = Producto::where('tipo_producto_id', $id_tipo_producto)
+    
+        // Convertir letras de identificación a nombre de tabla
+        $nombreTabla = strtolower($letrasIdentificacion);
+    
+        // Realizar consulta dinámica usando el nombre de la tabla
+        $productos = DB::table($nombreTabla)
             ->when(count($sociedades) > 0, function ($query) use ($sociedades) {
                 $query->whereIn('sociedad_id', $sociedades);
             })
             ->get();
-
+    
         return response()->json($productos);
     }
     

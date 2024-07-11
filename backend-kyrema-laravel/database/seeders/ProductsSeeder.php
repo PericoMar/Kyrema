@@ -32,6 +32,9 @@ class ProductsSeeder extends Seeder
                 'codigo_postal' => $faker->numerify('#####'), // 5 dígitos para el código postal
                 'fecha_de_nacimiento' => $faker->date($format = 'Y-m-d', $max = '2000-12-31'),
                 'codigo' => $faker->numerify('###'),
+                'sociedad_id' => 1, // Valor fijo para sociedad_id
+                'sociedad' => 'Admin', // Valor fijo para sociedad
+                'comercial_id' => 1, // Valor fijo para comercial_id
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);

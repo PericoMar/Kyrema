@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { CamposService } from '../../../services/campos.service';
+import { error } from 'console';
 
 @Component({
   selector: 'app-product-form',
@@ -14,13 +16,13 @@ export class ProductFormComponent implements OnInit, OnChanges {
   @Input() product!: any | null;
   productForm: FormGroup = this.fb.group({});
 
-  constructor(private fb: FormBuilder) { 
+  constructor(private fb: FormBuilder, private camposService: CamposService) { 
     this.isProductSelected = false;
   }
 
   ngOnInit() {
     if (this.product) {
-      this.createForm(this.product);
+      // this.createForm(this.product);
       console.log(this.product);
     }
   }
@@ -58,8 +60,17 @@ export class ProductFormComponent implements OnInit, OnChanges {
   }
 
   capitalizeFirstLetter(key: string): string {
-    return key.charAt(0).toUpperCase() + key.slice(1);
-  }
+    // Reemplazar guiones bajos por espacios y dividir por espacios
+    const words = key.replace(/_/g, ' ').split(' ');
+    
+    // Capitalizar la primera letra de cada palabra
+    const capitalizedWords = words.map(word => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    });
+
+    // Unir las palabras capitalizadas con espacios y devolver
+    return capitalizedWords.join(' ');
+}
 
   eliminateProductSelected() {
     const emptyProduct: any = {};

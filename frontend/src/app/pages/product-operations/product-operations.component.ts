@@ -31,6 +31,8 @@ export class ProductOperationsComponent {
   isProductSelected : boolean = false;
   familyProduct! : any;
   sociedadesBusqueda! : any[];
+  idsSociedades! : any[];
+  camposFormulario: any;
 
   
 
@@ -41,7 +43,9 @@ export class ProductOperationsComponent {
     private productsService : ProductsService,
     private societyService : SocietyService
   ) {
-    this.sociedadesBusqueda = this.societyService.getSociedadesHijas()
+    this.sociedadesBusqueda = this.societyService.getSociedadesHijas();
+    this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
+    console.log("ids", this.idsSociedades)
   }
 
   ngOnInit(): void {
@@ -65,7 +69,7 @@ export class ProductOperationsComponent {
       (data : any) => {
         this.familyProduct = data;
         this.productName = this.familyProduct.nombre;
-        console.log("Data",this.familyProduct.id);
+        console.log("Data",this.familyProduct);
         this.camposService.getCamposVisiblesPorTipoProducto(this.familyProduct.id).subscribe(
           data => {
             console.log(data);
@@ -77,7 +81,9 @@ export class ProductOperationsComponent {
             console.log(error); 
           }
         )
-        this.productsService.getProductosByTipoAndSociedades(this.familyProduct.id, this.sociedadesBusqueda).subscribe(
+
+        //Recoger todos los valores de la tabla
+        this.productsService.getProductosByTipoAndSociedades(this.familyProduct.letras_identificacion, this.idsSociedades).subscribe(
           data => {
             console.log(data);
             this.rowData = data;
@@ -86,11 +92,22 @@ export class ProductOperationsComponent {
             console.log(error); 
           }
         )
+
+        //Recoger los campos del formulario
+        this.camposService.getCamposFormularioPorTipoProducto(this.familyProduct.id).subscribe(
+          (camposFormulario:any) => {
+            this.camposFormulario = camposFormulario;
+          },
+          (error: any) => {
+            console.log(error);
+        })
+        
+      //Control de errores de getTipoProductoPorLetras
       },
       error => {
         console.log(error);
       }
-    )    
+    );   
   }
 
 }
