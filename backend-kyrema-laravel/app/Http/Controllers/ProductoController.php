@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use Carbon\Carbon;
 
 class ProductoController extends Controller
 {
@@ -31,6 +32,12 @@ class ProductoController extends Controller
         // Crear la tabla en la base de datos
         Schema::create($nombreTabla, function (Blueprint $table) use ($campos) {
             $table->id();
+            
+            // Agregar campos adicionales
+            $table->unsignedBigInteger('sociedad_id')->nullable();
+            $table->string('sociedad')->nullable();
+            $table->unsignedBigInteger('comercial_id')->nullable();
+
             foreach ($campos as $campo) {
                 $nombreCampo = strtolower(str_replace(' ', '_', $campo['nombre']));
                 switch ($campo['tipoDato']) {
@@ -121,19 +128,62 @@ class ProductoController extends Controller
         } else {
             $sociedades = [];
         }
-
-    
+        
         // Convertir letras de identificación a nombre de tabla
         $nombreTabla = strtolower($letrasIdentificacion);
-    
+        
         // Realizar consulta dinámica usando el nombre de la tabla
         $productos = DB::table($nombreTabla)
             ->when(count($sociedades) > 0, function ($query) use ($sociedades) {
                 $query->whereIn('sociedad_id', $sociedades);
             })
+            ->orderBy('updated_at', 'desc') // Ordenar por fecha de actualización de forma descendente
             ->get();
-    
+        
         return response()->json($productos);
+    }
+
+    public function crearProducto($letrasIdentificacion, Request $request)
+    {
+         // Convertir letras de identificación a nombre de tabla
+        $nombreTabla = strtolower($letrasIdentificacion);
+    
+        // Validar los datos recibidos
+        $request->validate([
+            'nuevoProducto' => 'required|array',
+        ]);
+        
+        $datos = $request->input('nuevoProducto');
+
+        // Añadir created_at y updated_at al array de datos
+        $datos['created_at'] = Carbon::now();
+        $datos['updated_at'] = Carbon::now();
+        
+        // Insertar los datos en la tabla correspondiente
+        $id = DB::table($nombreTabla)->insertGetId($datos);
+        
+        return response()->json(['id' => $id], 201);
+    }
+
+    public function editarProducto($letrasIdentificacion, Request $request){
+        // Convertir letras de identificación a nombre de tabla
+        $nombreTabla = strtolower($letrasIdentificacion);
+    
+        // Validar los datos recibidos
+        $request->validate([
+            'id' => 'required|integer',
+            'producto' => 'required|array',
+        ]);
+        
+        $datos = $request->input('productoEditado');
+        $id = $datos['id'];
+        
+        // Actualizar los datos en la tabla correspondiente
+        DB::table($nombreTabla)
+            ->where('id', $id)
+            ->update($datos);
+        
+        return response()->json(['message' => 'Producto actualizado con éxito'], 200);
     }
     
 }

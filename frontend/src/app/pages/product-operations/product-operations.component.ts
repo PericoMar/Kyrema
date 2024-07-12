@@ -57,8 +57,17 @@ export class ProductOperationsComponent {
   }
 
   public onProductSelectedChanged(product: any) {
-    this.productSelected = product;
     this.isProductSelected = true;
+
+    // Añadir el campo id a productSelected y actualizar sus valores
+    this.productSelected = { id: product.id, ...this.camposFormulario };
+
+    // Actualizar los valores de productSelected con los del producto seleccionado
+    for (const key in this.camposFormulario) {
+      if (this.camposFormulario.hasOwnProperty(key) && product.hasOwnProperty(key)) {
+        this.productSelected[key] = product[key];
+      }
+    }
   }
 
   // Método para cargar los datos del producto
@@ -95,8 +104,38 @@ export class ProductOperationsComponent {
 
         //Recoger los campos del formulario
         this.camposService.getCamposFormularioPorTipoProducto(this.familyProduct.id).subscribe(
-          (camposFormulario:any) => {
-            this.camposFormulario = camposFormulario;
+          (productSelected:any) => {
+
+            const resultObject : any = {};
+
+            // Procesar cada objeto en el array
+            productSelected.forEach((item : any) => {
+              const key = item.nombre.toLowerCase().replace(/ /g, "_");
+
+              // Asignar valor según el tipo de dato
+              let value;
+              switch (item.tipo_dato) {
+                  case "texto":
+                  case "numero":
+                      value = "";
+                      break;
+                  case "booleano":
+                      value = false;
+                      break;
+                  case "fecha":
+                      value = new Date();
+                      break;
+                  default:
+                      value = "";
+              }
+          
+              // Asignar el valor al nuevo objeto usando la clave dinámica
+              resultObject[key] = value;
+            });
+
+            this.camposFormulario = resultObject;
+            this.productSelected = resultObject;
+
           },
           (error: any) => {
             console.log(error);

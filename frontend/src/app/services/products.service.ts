@@ -16,8 +16,20 @@ export class ProductsService {
     return this.http.get<any>(`${this.apiUrl}/api/productos/${letras_identificacion}`, { params });
   }
 
-  crearTipoProducto(nuevoProducto : any): Observable<any>{
-    return this.http.post<any>(`${this.apiUrl}/api/crear-tipo-producto`, nuevoProducto);
+  //Esto crea la tabla en BDD de los productos nuevos
+  crearTipoProducto(nuevoTipoProducto : any): Observable<any>{
+    return this.http.post<any>(`${this.apiUrl}/api/crear-tipo-producto`, nuevoTipoProducto);
   }
 
+  //Esto inserta una fila en la tabla del producto
+  //En el objeto nuevoProducto NO se debe incluir el id del tipo de producto
+  crearProducto(tipo_producto: any, nuevoProducto : any): Observable<any>{
+    return this.http.post<any>(`${this.apiUrl}/api/crear-producto/${tipo_producto}`, {nuevoProducto});
+  }
+
+  //Esto edita una fila en la tabla del producto
+  //En el objeto nuevoProducto se debe incluir el id del tipo de producto
+  editarProducto(tipo_producto: any, productoEditado : any): Observable<any>{
+    return this.http.post<any>(`${this.apiUrl}/api/editar-producto${tipo_producto}`, {productoEditado});
+  }
 }

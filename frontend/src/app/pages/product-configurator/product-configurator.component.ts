@@ -41,23 +41,23 @@ export class ProductConfiguratorComponent {
   constructor(private productService : ProductsService) {}
 
   camposFijos: Campo[] = [
-    { nombre: 'DNI', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Nombre socio', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: true, formulario: false },
-    { nombre: 'Apellido 1', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Apellido 2', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Email', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Telefono', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Sexo', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Dirección', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Población', tipoDato: 'texto',fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Provincia', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Codigo Postal', tipoDato: 'numero', fila: '',columna: '', visible: false, obligatorio: false, formulario: false },
-    { nombre: 'Fecha de nacimiento', tipoDato: 'fecha', fila: '',columna: '', visible: false, obligatorio: false, formulario: false},
+    { nombre: 'DNI', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, formulario: true },
+    { nombre: 'Nombre socio', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio:true, formulario: true },
+    { nombre: 'Apellido 1', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio: true, formulario: true },
+    { nombre: 'Apellido 2', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio: true, formulario: true },
+    { nombre: 'Email', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio: true, formulario: true },
+    { nombre: 'Telefono', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, formulario: true },
+    { nombre: 'Sexo', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, formulario: true },
+    { nombre: 'Dirección', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio:true, formulario: true },
+    { nombre: 'Población', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio: true, formulario: true },
+    { nombre: 'Provincia', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, formulario: true },
+    { nombre: 'Codigo Postal', tipoDato: 'numero', fila: '',columna: '', visible: true, obligatorio: true, formulario: true },
+    { nombre: 'Fecha de nacimiento', tipoDato: 'fecha', fila: '',columna: '', visible: true, obligatorio: true, formulario: true},
   ];
-  campos: Campo[] = [{ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false }];
+  campos: Campo[] = [{ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, formulario: true }];
 
   agregarCampo() {
-    this.campos.push({ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: false, obligatorio: false, formulario: false });
+    this.campos.push({ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, formulario: true });
   }
 
   eliminarCampo(index: number) {

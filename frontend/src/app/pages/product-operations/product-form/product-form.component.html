@@ -1,16 +1,30 @@
 <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form content-block">
     <header class="form-header">
+        <h3>Datos de la sociedad</h3>
+    </header>
+    <label for="sociedad" class="input-label">Sociedad</label>
+    <select formControlName="sociedad_id" id="sociedad" class="input-field select">
+        @for(sociedad of sociedades ; track sociedad.id){
+            <option [value]="sociedad.id">{{ sociedad.nombre }}</option>
+        }
+    </select>
+
+    <hr class="divider">
+
+    <header class="form-header">
         <h3>Datos del producto</h3>
-        @if(product){
+        @if(product.id !== null || product.id !== ''){
             <button type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
         }
     </header>
     @for(key of productKeys() ; track key){
-        <label [for]="key" class="input-label">{{ capitalizeFirstLetter(key) }}</label>
-        <input [id]="key" [formControlName]="key" [type]="getInputType(key)" class="input-field">
+        <label *ngIf="key !== 'id'" [for]="key" class="input-label">{{ capitalizeFirstLetter(key) }}</label>
+        <input [id]="key" [formControlName]="key" [type]="getInputType(key)" class="input-field" [hidden]="key === 'id'">
     }
     <hr>
+
     <button type="submit" class="submit-button">
-        {{ isProductSelected ? 'Editar' : 'Crear' }}
-      </button>
+        {{ product.id == null || product.id == '' ? 'Crear' : 'Editar'}}
+    </button>
+
   </form>

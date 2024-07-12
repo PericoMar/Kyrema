@@ -26,6 +26,8 @@ use App\Http\Controllers\ProductoController;
 
 Route::get('/productos/{letrasIdentificacion}', [ProductoController::class, 'getProductosByTipoAndSociedades']);
 
+Route::post('/crear-producto/{letrasIdentificacion}', [ProductoController::class, 'crearProducto']);
+
 Route::post('/crear-tipo-producto', [ProductoController::class, 'crearTipoProducto']);
 
 

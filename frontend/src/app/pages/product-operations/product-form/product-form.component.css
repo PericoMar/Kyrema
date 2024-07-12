@@ -27,6 +27,14 @@
     margin-bottom: 10px;
 }
 
+.select{
+    width: 30%;
+}
+
+.divider{
+    margin-bottom: 20px;
+}
+
 .submit-button {
     background-color: #4CAF50;
     color: white;
