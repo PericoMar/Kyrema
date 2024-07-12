@@ -50,7 +50,6 @@ export class SocietyService {
     return sociedad ? JSON.parse(sociedad) : null;
   }
 
-  getSociedadPorRuta(): string {
-    return this.sociedad;
-  }
+  
+
 }

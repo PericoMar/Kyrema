@@ -27,6 +27,12 @@ class ComercialController extends Controller
         return response()->json($comercial, 201);
     }
 
+    public function getComercialesPorSociedad($sociedad)
+    {
+        $comerciales = Comercial::where('sociedad_id', $sociedad)->get();
+        return response()->json($comerciales);
+    }
+
     public function show($id)
     {
         $comercial = Comercial::findOrFail($id);

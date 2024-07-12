@@ -6,18 +6,21 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { Router, RouterModule } from '@angular/router';
 import { CommercialCommissionButtonComponent } from './commercial-commission-button/commercial-commission-button.component';
+import { ActivatedRoute } from '@angular/router';
+import { UserService } from '../../services/user.service';
+import { TableComponent } from '../product-operations/table/table.component';
 
 @Component({
   selector: 'app-commercials-commissions-table',
   standalone: true,
-  imports: [AgGridModule, AgGridAngular],
+  imports: [AgGridModule, AgGridAngular, TableComponent],
   templateUrl: './commercials-commissions-table.component.html',
   styleUrl: './commercials-commissions-table.component.css'
 })
 export class CommercialsCommissionsTableComponent {
   themeClass = "ag-theme-quartz";
   columnDefs : ColDef[]= [
-    { headerName: 'ID', field: 'codigo',flex: 1 },
+    { headerName: 'ID', field: 'id',flex: 1 },
     { headerName: 'Nombre', field: 'nombre',flex: 1 },
     { headerName: 'DNI', field: 'dni',flex: 1 },
     {
@@ -30,13 +33,27 @@ export class CommercialsCommissionsTableComponent {
       flex: 1
     }
   ];
+  sociedad! : any;
+  rowData! : any[];
 
-  rowData = [
-    { codigo: '1', nombre: 'Pedro', dni: '12345678A' },
-    { codigo: '002', nombre: 'María Gómez', dni: '87654321B' },
-    { codigo: '003', nombre: 'Luis Martínez', dni: '11223344C' }
-  ];
+  constructor (
+    private comercialService : UserService,
+    private route: ActivatedRoute
+  ) {
+    this.route.paramMap.subscribe(params => {
+      this.sociedad = params.get('sociedad');
+      this.initComercialTable();      
+    });
+  }
 
+  initComercialTable(){
+    this.comercialService.getComercialesPorSociedad(this.sociedad).subscribe(
+      comerciales => { 
+        this.rowData = Array.isArray(comerciales) ? [comerciales] : [comerciales];
+      },
+      error => { console.log(error)}
+    );
+  }
 
   public defaultColDef: ColDef = {
     filter: "agTextColumnFilter",

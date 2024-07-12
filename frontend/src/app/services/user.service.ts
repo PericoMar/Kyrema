@@ -37,6 +37,10 @@ export class UserService {
     );
   }
 
+  getComercialesPorSociedad(id_sociedad : any){
+    return this.http.get<any>(`${this.apiUrl}/api/comerciales/${id_sociedad}`);
+  }
+
   getCurrentUser() {
     const user = localStorage.getItem(this.USER_KEY);
     return user ? JSON.parse(user) : null;

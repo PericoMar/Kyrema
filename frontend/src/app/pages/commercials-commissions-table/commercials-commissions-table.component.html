@@ -1,21 +1,6 @@
 <main>
   <h2>Gestión de comisiones por comercial</h2>
     <div class="table-container content-block">
-        <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
-        <ag-grid-angular
-        style="width: 100%; height: 100%;"
-        [rowData]="rowData"
-        [columnDefs]="columnDefs"
-        [defaultColDef]="defaultColDef"
-        [rowSelection]="rowSelection"
-        [suppressRowClickSelection]="true"
-        [pagination]="true"
-        [paginationPageSize]="paginationPageSize"
-        [paginationPageSizeSelector]="paginationPageSizeSelector"
-        [localeText]="localeText"
-        [class]="themeClass"
-        (cellDoubleClicked)="onCellDoubleClicked($event)"
-        (cellKeyDown)="onCellKeyDown($event)"
-        ></ag-grid-angular>
+      <app-table [rowData]="rowData" [columnDefs]="columnDefs"></app-table>
     </div>
 </main>

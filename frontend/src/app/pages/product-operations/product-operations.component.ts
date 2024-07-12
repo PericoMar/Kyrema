@@ -20,7 +20,6 @@ export class ProductOperationsComponent {
   productUrl! : string;
   columnDefs! : ColDef[];
   rowData! : any[] | null;
-  products! : Array<any>;
   productSelected : any = {
     make: "",
       model: "",
