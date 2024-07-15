@@ -17,8 +17,16 @@ class ProductsSeeder extends Seeder
     {
         $faker = Faker::create();
         
-        for ($i = 0; $i < 100; $i++) {
-            DB::table('pp')->insert([
+        for ($i = 0; $i < 1000; $i++) { // Cambiado a 1000 para más datos
+            $fechaDeNacimiento = $faker->dateTimeBetween('-80 years', '-18 years')->format('Y-m-d');
+            $pruebaFecha = $faker->dateTimeBetween('-30 years', 'now')->format('Y-m-d');
+            $createdAt = Carbon::now()->toDateTimeString(); // Formato 'Y-m-d H:i:s'
+            $updatedAt = Carbon::now()->toDateTimeString(); // Formato 'Y-m-d H:i:s'
+
+            DB::table('tst2')->insert([
+                'sociedad_id' => 1,
+                'sociedad' => 'Admin',
+                'comercial_id' => 1,
                 'dni' => $faker->unique()->numerify('########') . strtoupper($faker->randomLetter),
                 'nombre_socio' => $faker->firstName,
                 'apellido_1' => $faker->lastName,
@@ -29,14 +37,11 @@ class ProductsSeeder extends Seeder
                 'dirección' => $faker->address,
                 'población' => $faker->city,
                 'provincia' => $faker->state,
-                'codigo_postal' => $faker->numerify('#####'), // 5 dígitos para el código postal
-                'fecha_de_nacimiento' => $faker->date($format = 'Y-m-d', $max = '2000-12-31'),
-                'codigo' => $faker->numerify('###'),
-                'sociedad_id' => 1, // Valor fijo para sociedad_id
-                'sociedad' => 'Admin', // Valor fijo para sociedad
-                'comercial_id' => 1, // Valor fijo para comercial_id
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'codigo_postal' => $faker->numerify('#####'),
+                'fecha_de_nacimiento' => $fechaDeNacimiento,
+                'prueba_fecha' => $pruebaFecha,
+                'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'
+                'updated_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'
             ]);
         }
     }

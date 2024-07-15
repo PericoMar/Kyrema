@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -18,7 +18,18 @@ export class ProductsService {
 
   //Esto crea la tabla en BDD de los productos nuevos
   crearTipoProducto(nuevoTipoProducto : any): Observable<any>{
-    return this.http.post<any>(`${this.apiUrl}/api/crear-tipo-producto`, nuevoTipoProducto);
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'multipart/form-data');
+    return this.http.post<any>(`${this.apiUrl}/api/crear-tipo-producto`, nuevoTipoProducto,  { headers });
+  }
+
+  subirPlantilla(letrasIdentificacion: any, plantilla: File): Observable<any>{
+    const formData : FormData = new FormData();
+    formData.append('plantilla', plantilla);
+
+    return this.http.post<any>(`${this.apiUrl}/api/subir-plantilla/${letrasIdentificacion}`, formData, {
+      responseType: 'json'
+    });
   }
 
   //Esto inserta una fila en la tabla del producto

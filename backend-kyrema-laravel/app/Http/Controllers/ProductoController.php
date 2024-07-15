@@ -6,10 +6,45 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log; // Importar la clase Log
 
 class ProductoController extends Controller
 {
+    public function generarPDF($id, Request $request){
+        // Obtener el tipo de producto por su ID
+        $tipoProducto = DB::table('tipo_producto')->find($id);
+
+        if (!$tipoProducto) {
+            abort(404, 'Tipo de producto no encontrado');
+        }
+
+        // Obtener la ruta de la plantilla desde la base de datos
+        $rutaPlantilla = $tipoProducto->plantilla_path;
+
+        // Crear un nuevo objeto Spreadsheet a partir del archivo Excel existente
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load(storage_path('app/public/' . $rutaPlantilla));
+
+        // Obtener la hoja activa del archivo Excel
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Agregar datos al archivo Excel (ejemplo)
+        $sheet->setCellValue('A1', 'Nombre');
+        $sheet->setCellValue('B1', 'Cantidad');
+        $sheet->setCellValue('A2', 'Producto A');
+        $sheet->setCellValue('B2', 10);
+
+        // Guardar el archivo modificado en una nueva ubicación
+        $nombreArchivoNuevo = 'archivo_modificado.xlsx';
+        $rutaArchivoNuevo = storage_path('app/public/' . $nombreArchivoNuevo);
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($rutaArchivoNuevo);
+
+        // Redirigir a la ruta del archivo descargado
+        return redirect()->route('descargar.pdf', ['nombreArchivo' => $nombreArchivoNuevo]);
+    }
+
     public function crearTipoProducto(Request $request)
     {
         // Validar los datos recibidos
@@ -23,7 +58,6 @@ class ProductoController extends Controller
 
         $nombreProducto = $request->input('nombreProducto');
         $letrasIdentificacion = $request->input('letrasIdentificacion');
-        $plantilla = $request->input('plantilla');
         $campos = $request->input('campos');
 
         // Definir el nombre de la nueva tabla usando las letras de identificación
@@ -32,7 +66,7 @@ class ProductoController extends Controller
         // Crear la tabla en la base de datos
         Schema::create($nombreTabla, function (Blueprint $table) use ($campos) {
             $table->id();
-            
+
             // Agregar campos adicionales
             $table->unsignedBigInteger('sociedad_id')->nullable();
             $table->string('sociedad')->nullable();
@@ -53,19 +87,19 @@ class ProductoController extends Controller
                 }
             }
             $table->timestamps();
-
         });
 
+        // Insertar información del tipo de producto en la tabla correspondiente
         DB::table('tipo_producto')->insert([
             'letras_identificacion' => $letrasIdentificacion,
-            'plantilla_path' => $plantilla,
             'nombre' => $nombreProducto,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
+            'updated_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
         ]);
-
+        // Obtener el ID del tipo de producto recién creado
         $tipoProductoId = DB::getPdo()->lastInsertId();
 
+        // Insertar información de los campos en la tabla 'campos'
         foreach ($campos as $campo) {
             DB::table('campos')->insert([
                 'id' => uniqid(),
@@ -77,12 +111,31 @@ class ProductoController extends Controller
                 'visible' => $campo['visible'] ?? false,
                 'obligatorio' => $campo['obligatorio'] ?? false,
                 'aparece_formulario' => $campo['formulario'] ?? false,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
             ]);
         }
 
         return response()->json(['message' => 'Producto creado con éxito'], 200);
+    }
+
+    public function subirPlantilla($letrasIdentificacion, Request $request)
+    {
+        if ($request->hasFile('plantilla')) {
+        
+            // Guardar la plantilla Excel en el sistema de archivos
+            $archivoPlantilla = $request->file('plantilla');
+            $rutaPlantilla = Storage::disk('public')->putFileAs('plantillas', $archivoPlantilla, $archivoPlantilla->getClientOriginalName());
+            // Procesar y almacenar la plantilla como sea necesario
+            //Añadimos la ruta de la plantilla a la tabla tipo_producto
+            DB::table('tipo_producto')
+                ->where('letras_identificacion', $letrasIdentificacion)
+                ->update(['plantilla_path' => $rutaPlantilla]);
+
+            return response()->json(['message' => 'Plantilla subida correctamente'], 200);
+        } else {
+            return response()->json(['error' => 'No se recibió ninguna plantilla'], 400);
+        }
     }
 
     public function getProductosPorTipo($tipo_producto_id)

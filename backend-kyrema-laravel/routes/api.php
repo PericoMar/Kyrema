@@ -29,6 +29,7 @@ Route::get('/productos/{letrasIdentificacion}', [ProductoController::class, 'get
 Route::post('/crear-producto/{letrasIdentificacion}', [ProductoController::class, 'crearProducto']);
 
 Route::post('/crear-tipo-producto', [ProductoController::class, 'crearTipoProducto']);
+Route::post('/subir-plantilla/{letrasIdentificacion}', [ProductoController::class, 'subirPlantilla']);
 
 
 Route::apiResource('campos', CampoController::class);

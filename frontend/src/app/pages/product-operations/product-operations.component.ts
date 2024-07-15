@@ -21,11 +21,17 @@ export class ProductOperationsComponent {
   columnDefs! : ColDef[];
   rowData! : any[] | null;
   productSelected : any = {
-    make: "",
-      model: "",
-      price: "",
-      electric: true,
-      month: "",
+    campo: "",
+    campo1: "",
+    campo2: "",
+    campo3: "",
+    campo4: "",
+    campo5: "",
+    campo6: "",
+    campo7: "",
+    campo8: "",
+    campo9: "",
+    campo10: "",
   };
   isProductSelected : boolean = false;
   familyProduct! : any;

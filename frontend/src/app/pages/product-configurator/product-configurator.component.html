@@ -1,7 +1,7 @@
 <section class="product-configurator">
     <h1>Creación de tipo de producto</h1>
     <main class="content-block new-product-form">
-        <form (ngSubmit)="crearTipoProducto()">
+        <form (ngSubmit)="crearTipoProducto()" enctype="multipart/form-data">
           <header class="form-header">
           <h2>Descripción del producto</h2>
           <hr>
@@ -22,7 +22,7 @@
 
                 {{fileName || "No has añadido ninguna plantilla aún."}}
 
-                  <button mat-mini-fab color="primary" class="upload-btn"
+                  <button type="button" mat-mini-fab color="primary" class="upload-btn"
                     (click)="fileUpload.click()">
                       <mat-icon>attach_file</mat-icon>
                   </button>

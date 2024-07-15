@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProductsService } from '../../services/products.service';
-import { error } from 'console';
+
 
 interface Campo {
   nombre: string;
@@ -28,7 +28,7 @@ interface Campo {
 })
 export class ProductConfiguratorComponent {
   fileName = '';
-  selectedFile : File | null = null;
+  selectedFile! : File;
   nombreProducto = '';
   letrasIdentificacion = '';
   nuevoProducto : any = {
@@ -66,7 +66,8 @@ export class ProductConfiguratorComponent {
 
   onFileSelected(event : any) {
 
-    const file:File = event.target.files[0];
+    const file:File = event.target.files.item(0);
+    this.selectedFile = file;
 
     if (file) {
 
@@ -82,7 +83,6 @@ export class ProductConfiguratorComponent {
     const nuevoProducto = {
       nombreProducto: this.nombreProducto,
       letrasIdentificacion: this.letrasIdentificacion,
-      plantilla: this.selectedFile,
       campos: camposFormulario
     };
 
@@ -90,6 +90,9 @@ export class ProductConfiguratorComponent {
     
     this.productService.crearTipoProducto(nuevoProducto).subscribe((res) => {
       console.log(res);
+      this.productService.subirPlantilla(this.letrasIdentificacion, this.selectedFile).subscribe((res:any) => {
+        console.log(res);
+      });
     },
     (error) => {
       console.log(error);
