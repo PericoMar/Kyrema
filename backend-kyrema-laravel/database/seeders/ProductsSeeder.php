@@ -23,7 +23,7 @@ class ProductsSeeder extends Seeder
             $createdAt = Carbon::now()->toDateTimeString(); // Formato 'Y-m-d H:i:s'
             $updatedAt = Carbon::now()->toDateTimeString(); // Formato 'Y-m-d H:i:s'
 
-            DB::table('tst2')->insert([
+            DB::table('excel')->insert([
                 'sociedad_id' => 1,
                 'sociedad' => 'Admin',
                 'comercial_id' => 1,
@@ -39,7 +39,6 @@ class ProductsSeeder extends Seeder
                 'provincia' => $faker->state,
                 'codigo_postal' => $faker->numerify('#####'),
                 'fecha_de_nacimiento' => $fechaDeNacimiento,
-                'prueba_fecha' => $pruebaFecha,
                 'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'
                 'updated_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'
             ]);

@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import { TableComponent } from './table/table.component';
 import { ProductFormComponent } from './product-form/product-form.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FamilyProductService } from '../../services/family-product.service';
 import { CamposService } from '../../services/campos.service';
 import { ColDef} from 'ag-grid-community'; 
 import { ProductsService } from '../../services/products.service';
 import { SocietyService } from '../../services/society.service';
+import { ActionButtonsComponent } from '../society-manager/society-table/action-buttons/action-buttons.component';
+import { ComisionButtonsComponent } from '../society-manager/society-table/comision-buttons/comision-buttons.component';
+import { ProductActionButtonsComponent } from '../../components/product-action-buttons/product-action-buttons.component';
 
 @Component({
   selector: 'app-product-operations',
@@ -46,7 +49,8 @@ export class ProductOperationsComponent {
     private familyService : FamilyProductService,
     private camposService : CamposService,
     private productsService : ProductsService,
-    private societyService : SocietyService
+    private societyService : SocietyService,
+    private router : Router
   ) {
     this.sociedadesBusqueda = this.societyService.getSociedadesHijas();
     this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
@@ -89,6 +93,17 @@ export class ProductOperationsComponent {
             console.log(data);
             this.columnDefs = data.map((campo : any) => {
               return { headerName: campo.nombre, field: campo.nombre.replace(/\s/g, '_').toLowerCase() };
+            });
+            // Agrega la columna 'Acciones'
+            this.columnDefs.push({
+              headerName: 'Acciones',
+              cellRenderer: this.getCellRenderer(this.router.url),
+              cellRendererParams: (params: any) => ({
+                data: params.data
+              }),
+              suppressHeaderMenuButton: true,
+              sortable: false,
+              filter: false,
             });
           },
           error => {
@@ -152,6 +167,17 @@ export class ProductOperationsComponent {
         console.log(error);
       }
     );   
+  }
+
+  getCellRenderer(route: string) {
+    if (route.includes('/sociedades')) {
+      return ActionButtonsComponent;
+    } else if (route.includes('/comisiones')) {
+      return ComisionButtonsComponent;
+    } else if(route.includes('/operaciones')){
+      return ProductActionButtonsComponent;
+    }
+    return null; // o cualquier valor por defecto
   }
 
 }

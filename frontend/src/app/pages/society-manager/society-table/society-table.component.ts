@@ -7,6 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ActionButtonsComponent } from './action-buttons/action-buttons.component';
 import { ComisionButtonsComponent } from './comision-buttons/comision-buttons.component';
 import { SocietyService } from '../../../services/society.service';
+import { ProductActionButtonsComponent } from '../../../components/product-action-buttons/product-action-buttons.component';
 
 
 @Component({
@@ -141,6 +142,8 @@ export class SocietyTableComponent {
       return ActionButtonsComponent;
     } else if (route.includes('/comisiones')) {
       return ComisionButtonsComponent;
+    } else if(route.includes('/operaciones')){
+      return ProductActionButtonsComponent;
     }
     return null; // o cualquier valor por defecto
   }

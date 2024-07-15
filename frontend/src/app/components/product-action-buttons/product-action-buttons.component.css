@@ -1,0 +1,23 @@
+.download-icon, .delete-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;       /* Ajusta el tamaño según sea necesario */
+    height: 30px;      /* Ajusta el tamaño según sea necesario */
+    color: white;
+    border-radius: 4px; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado en los enlaces */
+    margin: 3px; /* Margen entre los iconos */
+  }
+  
+  .download-icon {
+    background-color: rgb(72, 72, 231);
+  }
+  
+  .delete-icon {
+    background-color: rgb(255, 64, 64);
+  }
+  
+  .mat-icon {
+    font-size: 24px; /* Ajusta el tamaño del icono según sea necesario */
+  }
