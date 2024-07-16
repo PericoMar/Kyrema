@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +8,7 @@ import { Observable, map } from 'rxjs';
 export class CamposService {
 
   private apiUrl = 'http://localhost:8000';
+  private readonly CAMPOS_KEY = 'campos';
 
   constructor(private http : HttpClient) { }
 
@@ -28,4 +29,7 @@ export class CamposService {
       map((campos :any) => campos.filter((campo :any) => campo.aparece_formulario === '1'))
     );
   }
+
+
+
 }

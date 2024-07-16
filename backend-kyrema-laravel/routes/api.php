@@ -19,6 +19,7 @@ use App\Http\Controllers\NavegacionController;
 use App\Http\Controllers\CPFamiliaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ExportController;
 
 
 
@@ -30,6 +31,9 @@ Route::post('/crear-producto/{letrasIdentificacion}', [ProductoController::class
 
 Route::post('/crear-tipo-producto', [ProductoController::class, 'crearTipoProducto']);
 Route::post('/subir-plantilla/{letrasIdentificacion}', [ProductoController::class, 'subirPlantilla']);
+
+
+Route::get('/descargar-plantilla/{letrasIdentificacion}', [ExportController::class, 'exportExcelToPdf']);
 
 
 Route::apiResource('campos', CampoController::class);

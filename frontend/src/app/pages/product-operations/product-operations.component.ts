@@ -67,9 +67,12 @@ export class ProductOperationsComponent {
 
   public onProductSelectedChanged(product: any) {
     this.isProductSelected = true;
+    
 
     // Añadir el campo id a productSelected y actualizar sus valores
     this.productSelected = { id: product.id, ...this.camposFormulario };
+
+    console.log("Producto seleccionado", this.productSelected);
 
     // Actualizar los valores de productSelected con los del producto seleccionado
     for (const key in this.camposFormulario) {
@@ -126,7 +129,7 @@ export class ProductOperationsComponent {
         this.camposService.getCamposFormularioPorTipoProducto(this.familyProduct.id).subscribe(
           (productSelected:any) => {
 
-            const resultObject : any = {};
+            const resultObject : any = {id: ""};
 
             // Procesar cada objeto en el array
             productSelected.forEach((item : any) => {

@@ -8,6 +8,7 @@
     border-radius: 4px; /* Bordes redondeados */
     text-decoration: none; /* Sin subrayado en los enlaces */
     margin: 3px; /* Margen entre los iconos */
+    cursor: pointer;
   }
   
   .download-icon {

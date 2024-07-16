@@ -7,40 +7,60 @@ import { Observable } from 'rxjs';
 })
 export class ProductsService {
 
-  private apiUrl = 'http://localhost:8000';
+  private apiUrl = 'http://localhost:8000/api';
 
   constructor(private http : HttpClient) { }
 
   getProductosByTipoAndSociedades(letras_identificacion: string, sociedades: any[]): Observable<any> {
     const params = new HttpParams().set('sociedades', sociedades.join(','));
-    return this.http.get<any>(`${this.apiUrl}/api/productos/${letras_identificacion}`, { params });
+    return this.http.get<any>(`${this.apiUrl}/productos/${letras_identificacion}`, { params });
   }
 
   //Esto crea la tabla en BDD de los productos nuevos
   crearTipoProducto(nuevoTipoProducto : any): Observable<any>{
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
-    return this.http.post<any>(`${this.apiUrl}/api/crear-tipo-producto`, nuevoTipoProducto,  { headers });
+    return this.http.post<any>(`${this.apiUrl}/crear-tipo-producto`, nuevoTipoProducto,  { headers });
   }
 
   subirPlantilla(letrasIdentificacion: any, plantilla: File): Observable<any>{
     const formData : FormData = new FormData();
     formData.append('plantilla', plantilla);
 
-    return this.http.post<any>(`${this.apiUrl}/api/subir-plantilla/${letrasIdentificacion}`, formData, {
+    return this.http.post<any>(`${this.apiUrl}/subir-plantilla/${letrasIdentificacion}`, formData, {
       responseType: 'json'
+    });
+  }
+
+  downloadPlantilla(letrasIdentificacion: string, id: any): Observable<Blob> {
+    const url = `${this.apiUrl}/descargar-plantilla/${letrasIdentificacion}`;
+    
+    // Configurar parámetros de la consulta en la URL
+    let params = new HttpParams();
+    params = params.append('id', id);
+
+    // Configurar cabeceras si es necesario
+    const headers = new HttpHeaders({
+      'Accept': 'application/pdf' // Asegúrate de aceptar el tipo de contenido PDF
+    });
+
+    // Realizar la solicitud HTTP con responseType 'blob' para descargar un archivo
+    return this.http.get(url, {
+      params: params,
+      headers: headers,
+      responseType: 'blob'
     });
   }
 
   //Esto inserta una fila en la tabla del producto
   //En el objeto nuevoProducto NO se debe incluir el id del tipo de producto
   crearProducto(tipo_producto: any, nuevoProducto : any): Observable<any>{
-    return this.http.post<any>(`${this.apiUrl}/api/crear-producto/${tipo_producto}`, {nuevoProducto});
+    return this.http.post<any>(`${this.apiUrl}/crear-producto/${tipo_producto}`, {nuevoProducto});
   }
 
   //Esto edita una fila en la tabla del producto
   //En el objeto nuevoProducto se debe incluir el id del tipo de producto
   editarProducto(tipo_producto: any, productoEditado : any): Observable<any>{
-    return this.http.post<any>(`${this.apiUrl}/api/editar-producto${tipo_producto}`, {productoEditado});
+    return this.http.post<any>(`${this.apiUrl}/editar-producto${tipo_producto}`, {productoEditado});
   }
 }

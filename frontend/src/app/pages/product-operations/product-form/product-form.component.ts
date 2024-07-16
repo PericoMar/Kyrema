@@ -79,9 +79,25 @@ export class ProductFormComponent implements OnInit, OnChanges {
   }
 
   isDate(value: any): boolean {
-    const date = new Date(value);
-    return !isNaN(date.getTime());
+    // Comprobar si el valor es una instancia de Date
+    if (!(value instanceof Date)) {
+        // Intentar convertir el valor a Date
+        value = new Date(value);
+        // Si no se puede convertir a Date, entonces no es una fecha válida
+        if (!(value instanceof Date)) {
+            return false;
+        }
+    }
+
+    // Comprobar si el valor es un objeto Date válido
+    if (isNaN(value.getTime())) {
+        return false;
+    }
+
+    // Si pasa todas las comprobaciones, se considera una fecha válida
+    return true;
   }
+
 
   capitalizeFirstLetter(key: string): string {
     // Reemplazar guiones bajos por espacios y dividir por espacios
