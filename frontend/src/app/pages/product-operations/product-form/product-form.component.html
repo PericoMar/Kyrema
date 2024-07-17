@@ -1,4 +1,5 @@
 <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form content-block">
+    @if(formIsLoaded){
     <header class="form-header">
         <h3>Datos de la sociedad</h3>
     </header>
@@ -26,5 +27,10 @@
     <button type="submit" class="submit-button">
         {{ product.id == null || product.id == '' ? 'Crear' : 'Editar'}}
     </button>
-
-  </form>
+    } @else {
+        <div>
+            <p>Cargando...
+            </p>
+        </div>
+    }
+</form>

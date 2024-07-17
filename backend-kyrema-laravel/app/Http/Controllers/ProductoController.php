@@ -113,6 +113,7 @@ class ProductoController extends Controller
                 'aparece_formulario' => $campo['formulario'] ?? false,
                 'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
+                'grupo' => $campo['grupo'] ?? null,
             ]);
         }
 

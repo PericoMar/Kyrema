@@ -127,12 +127,12 @@ export class ProductOperationsComponent {
 
         //Recoger los campos del formulario
         this.camposService.getCamposFormularioPorTipoProducto(this.familyProduct.id).subscribe(
-          (productSelected:any) => {
+          (camposFormulario:any) => {
 
             const resultObject : any = {id: ""};
 
             // Procesar cada objeto en el array
-            productSelected.forEach((item : any) => {
+            camposFormulario.forEach((item : any) => {
               const key = item.nombre.toLowerCase().replace(/ /g, "_");
 
               // Asignar valor según el tipo de dato
@@ -156,7 +156,7 @@ export class ProductOperationsComponent {
               resultObject[key] = value;
             });
 
-            this.camposFormulario = resultObject;
+            this.camposFormulario = camposFormulario;
             this.productSelected = resultObject;
 
           },

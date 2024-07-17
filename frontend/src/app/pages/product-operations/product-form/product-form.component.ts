@@ -1,11 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { CamposService } from '../../../services/campos.service';
-import { error } from 'console';
 import { ProductsService } from '../../../services/products.service';
 import { SocietyService } from '../../../services/society.service';
 import { UserService } from '../../../services/user.service';
+
+interface CampoFormulario {
+  aparece_formulario: boolean, 
+  columna: string, 
+  created_at: string, 
+  fila: string, 
+  id: string, 
+  nombre: string, 
+  obligatorio: boolean, 
+  tipo_dato: string, 
+  tipo_producto_id: string, 
+  updated_at: string, 
+  visible: boolean,
+  grupo: string
+}
 
 @Component({
   selector: 'app-product-form',
@@ -20,6 +33,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
   productForm: FormGroup = this.fb.group({});
   @Input() tipo_producto!: any;
   sociedades: any;
+  @Input() camposFormulario!: CampoFormulario[];
+  formIsLoaded : boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -32,32 +47,51 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.sociedades = this.societyService.getSociedadesHijas();
-    console.log(this.sociedades);
-    if (this.product) {
-      this.createForm(this.product);
-      console.log(this.product);
-    }
+    console.log("Sociedades", this.sociedades);
+    this.createForm(this.camposFormulario, this.product);
+    console.log(this.product);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['product']) {
       this.isProductSelected = true;
       console.log(this.product);  
-      this.createForm(this.product);
+      this.createForm(this.camposFormulario, this.product);
     }
   }
 
-  createForm(product: any) {
-    const formGroup: any = {};
-
-    Object.keys(product).forEach(key => {
-      formGroup[key] = new FormControl(product[key]);
+  createForm(camposFormulario: CampoFormulario[], product: any) {
+     // Necesito un array asociativo donde la clave sea el nombre del grupo (Cada campo tiene un grupo asociado),
+    // además el valor de cada grupo será un array con todos los campos donde cada campo será un objeto con la información del campo: 
+    // name (nombre cambiando espacios por _ y en minusculas), label: El nombre "bonito", value el valor del producto que paso por parametro,
+    // tipo_dato es el tipo de dato que le llega del backend.
+    const camposPorGrupo: any = {};
+    camposFormulario.forEach(campo => {
+      // Este if lo que hace es que si no existe el grupo en el array asociativo lo crea:
+      if (camposPorGrupo[campo.grupo] == null) {
+        camposPorGrupo[campo.grupo] = [];
+      }
+      const name = campo.nombre.replace(/ /g, '_').toLowerCase();
+      const label = campo.nombre;
+      const value = product ? product[name] : '';
+      const tipo_dato = campo.tipo_dato;
+      camposPorGrupo[campo.grupo].push({name, label, value, tipo_dato});
     });
 
-    // Agregar el campo sociedad al formGroup
-    formGroup['sociedad_id'] = new FormControl(this.sociedades.length > 0 ? this.sociedades[0].id : '');
+    const formGroupConfig: any = {};
 
-    this.productForm = this.fb.group(formGroup);
+    Object.keys(this.camposFormulario).forEach(grupo => {
+      this.camposFormularioPorGrupo[grupo].forEach(campo => {
+        formGroupConfig[campo.name] = new FormControl('', Validators.required); // Puedes añadir validadores según sea necesario
+      });
+    });
+
+    // Añade el control para 'sociedad_id' como un FormControl
+    formGroupConfig['sociedad_id'] = new FormControl(this.sociedades.length > 0 ? this.sociedades[0].id : '');
+
+    // Crea el FormGroup usando los campos organizados
+    this.productForm = this.fb.group(formGroupConfig);
+
   }
 
   productKeys(): string[] {
@@ -66,8 +100,10 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
   getInputType(key: string): string {
     const value = this.product[key];
-  
-    if (typeof value === 'number') {
+    console.log("Input type", key, "valor", value, "tipo", typeof value);
+    if (typeof value === 'string') {
+      return 'text';
+    } else if (typeof value === 'number') {
       return 'number';
     } else if (typeof value === 'boolean') {
       return 'checkbox';
@@ -110,7 +146,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
     // Unir las palabras capitalizadas con espacios y devolver
     return capitalizedWords.join(' ');
-}
+  }
 
   eliminateProductSelected() {
     const emptyProduct: any = {};
