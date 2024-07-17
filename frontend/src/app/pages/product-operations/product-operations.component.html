@@ -5,7 +5,14 @@
         <app-table (productSelectedChange)="onProductSelectedChanged($event)" [columnDefs]="columnDefs" [rowData]="rowData"></app-table>
     </section>
     <section class="datos-producto">
-        <h2>Formulario de gestión</h2>
-        <app-product-form [product]="productSelected" [isProductSelected]="isProductSelected" [tipo_producto]="productUrl" [camposFormulario]="camposFormulario"></app-product-form>
+        @if(camposLoaded){
+            <h2>Formulario de gestión</h2>
+            <app-product-form [product]="productSelected" [isProductSelected]="isProductSelected" [tipo_producto]="productUrl" [campos]="camposFormulario"></app-product-form>
+        } @else {
+            <div>
+                <p>Cargando...</p>
+            </div>
+        }
+
     </section>
 </main>

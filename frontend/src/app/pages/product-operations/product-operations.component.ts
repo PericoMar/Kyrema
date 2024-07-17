@@ -41,6 +41,7 @@ export class ProductOperationsComponent {
   sociedadesBusqueda! : any[];
   idsSociedades! : any[];
   camposFormulario: any;
+  camposLoaded: boolean = false;
 
   
 
@@ -158,6 +159,7 @@ export class ProductOperationsComponent {
 
             this.camposFormulario = camposFormulario;
             this.productSelected = resultObject;
+            this.camposLoaded = true;
 
           },
           (error: any) => {

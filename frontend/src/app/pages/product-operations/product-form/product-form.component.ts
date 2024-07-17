@@ -56,7 +56,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.sociedades = this.societyService.getSociedadesHijas();
     console.log("Sociedades", this.sociedades);
-    this.createForm(this.campos);
+    
+    
     console.log(this.product);
   }
 
@@ -65,6 +66,11 @@ export class ProductFormComponent implements OnInit, OnChanges {
       this.isProductSelected = true;
       console.log(this.product);  
       this.productForm.setValue(this.product);
+    }
+
+    if(changes['campos']){
+      console.log("Campos", this.campos);
+      this.createForm(this.campos);
     }
   }
 

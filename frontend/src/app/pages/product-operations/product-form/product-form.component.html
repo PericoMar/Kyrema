@@ -1,5 +1,5 @@
 <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form content-block">
-    @if(formIsLoaded){
+    @if(productForm){
     <header class="form-header">
         <h3>Datos de la sociedad</h3>
     </header>
@@ -58,6 +58,7 @@
     </section>
     <hr>
 
+    @if(camposFormularioPorGrupos['datos_producto'].length > 0){
     <header class="form-header">
         <h3>Datos del producto</h3>
     </header>
@@ -66,6 +67,7 @@
             <label [for]="campo.name" class="input-label">{{ campo.label }}</label>
             <input [id]="campo.name" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field">
         }
+    }
 
     <button type="submit" class="submit-button">
         {{ product.id == null || product.id == '' ? 'Crear' : 'Editar'}}
