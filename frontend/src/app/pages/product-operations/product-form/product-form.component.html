@@ -13,16 +13,59 @@
     <hr class="divider">
 
     <header class="form-header">
-        <h3>Datos del producto</h3>
+        <h3>Datos del asegurado</h3>
         @if(product.id !== null || product.id !== ''){
             <button type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
         }
     </header>
-    @for(key of productKeys() ; track key){
-        <label *ngIf="key !== 'id'" [for]="key" class="input-label">{{ capitalizeFirstLetter(key) }}</label>
-        <input [id]="key" [formControlName]="key" [type]="getInputType(key)" class="input-field" [hidden]="key === 'id'">
-    }
+    <section>
+        <label for="dni_o_cif" class="input-label">DNI o CIF</label>
+        <input id="dni_o_cif" formControlName="dni_o_cif" class="input-field">
+
+        <label for="nombre" class="input-label">Nombre</label>
+        <input id="nombre" formControlName="nombre" class="input-field">
+
+        <label for="apellido_1" class="input-label">Apellido 1</label>
+        <input id="apellido_1" formControlName="apellido_1" class="input-field">
+
+        <label for="apellido_2" class="input-label">Apellido 2</label>
+        <input id="apellido_2" formControlName="apellido_2" class="input-field">
+
+        <label for="email" class="input-label">Email</label>
+        <input id="email" formControlName="email" class="input-field">
+
+        <label for="telefono" class="input-label">Telefono</label>
+        <input id="telefono" formControlName="telefono" class="input-field">
+
+        <label for="sexo" class="input-label">Sexo</label>
+        <input id="sexo" formControlName="sexo" class="input-field">
+
+        <label for="direccion" class="input-label">Dirección</label>
+        <input id="direccion" formControlName="direccion" class="input-field">
+
+        <label for="poblacion" class="input-label">Población</label>
+        <input id="poblacion" formControlName="poblacion" class="input-field">
+
+        <label for="provincia" class="input-label">Provincia</label>
+        <input id="provincia" formControlName="provincia" class="input-field">
+
+        <label for="codigo_postal" class="input-label">Código Postal</label>
+        <input id="codigo_postal" formControlName="codigo_postal" type="number" class="input-field">
+
+        <label for="fecha_de_nacimiento" class="input-label">Fecha de nacimiento</label>
+        <input id="fecha_de_nacimiento" formControlName="fecha_de_nacimiento" type="date" class="input-field">
+
+    </section>
     <hr>
+
+    <header class="form-header">
+        <h3>Datos del producto</h3>
+    </header>
+        <input id="id" formControlName="id" hidden>
+        @for(campo of camposFormularioPorGrupos['datos_producto']; track campo.name){
+            <label [for]="campo.name" class="input-label">{{ campo.label }}</label>
+            <input [id]="campo.name" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field">
+        }
 
     <button type="submit" class="submit-button">
         {{ product.id == null || product.id == '' ? 'Crear' : 'Editar'}}

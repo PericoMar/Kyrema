@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductsService } from '../../../services/products.service';
 import { SocietyService } from '../../../services/society.service';
 import { UserService } from '../../../services/user.service';
 
-interface CampoFormulario {
+interface Campo {
   aparece_formulario: boolean, 
   columna: string, 
   created_at: string, 
@@ -18,6 +18,12 @@ interface CampoFormulario {
   updated_at: string, 
   visible: boolean,
   grupo: string
+}
+
+interface CampoFormulario{
+  name: string,
+  label: string,
+  tipo_dato: string,  
 }
 
 @Component({
@@ -33,8 +39,10 @@ export class ProductFormComponent implements OnInit, OnChanges {
   productForm: FormGroup = this.fb.group({});
   @Input() tipo_producto!: any;
   sociedades: any;
-  @Input() camposFormulario!: CampoFormulario[];
+  @Input() campos!: Campo[];
+  camposFormularioPorGrupos!: any;
   formIsLoaded : boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -48,7 +56,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.sociedades = this.societyService.getSociedadesHijas();
     console.log("Sociedades", this.sociedades);
-    this.createForm(this.camposFormulario, this.product);
+    this.createForm(this.campos);
     console.log(this.product);
   }
 
@@ -56,33 +64,33 @@ export class ProductFormComponent implements OnInit, OnChanges {
     if (changes['product']) {
       this.isProductSelected = true;
       console.log(this.product);  
-      this.createForm(this.camposFormulario, this.product);
+      this.productForm.setValue(this.product);
     }
   }
 
-  createForm(camposFormulario: CampoFormulario[], product: any) {
+  createForm(campos: Campo[]) {
      // Necesito un array asociativo donde la clave sea el nombre del grupo (Cada campo tiene un grupo asociado),
     // además el valor de cada grupo será un array con todos los campos donde cada campo será un objeto con la información del campo: 
     // name (nombre cambiando espacios por _ y en minusculas), label: El nombre "bonito", value el valor del producto que paso por parametro,
     // tipo_dato es el tipo de dato que le llega del backend.
-    const camposPorGrupo: any = {};
-    camposFormulario.forEach(campo => {
+    this.camposFormularioPorGrupos = {};
+    campos.forEach((campo : Campo) => {
       // Este if lo que hace es que si no existe el grupo en el array asociativo lo crea:
-      if (camposPorGrupo[campo.grupo] == null) {
-        camposPorGrupo[campo.grupo] = [];
+      if (this.camposFormularioPorGrupos[campo.grupo] == null) {
+        this.camposFormularioPorGrupos[campo.grupo] = [[]];
       }
       const name = campo.nombre.replace(/ /g, '_').toLowerCase();
       const label = campo.nombre;
-      const value = product ? product[name] : '';
       const tipo_dato = campo.tipo_dato;
-      camposPorGrupo[campo.grupo].push({name, label, value, tipo_dato});
+      const obligatorio = campo.obligatorio;
+      this.camposFormularioPorGrupos[campo.grupo][name].push({name, label , tipo_dato, obligatorio});
     });
 
     const formGroupConfig: any = {};
 
-    Object.keys(this.camposFormulario).forEach(grupo => {
-      this.camposFormularioPorGrupo[grupo].forEach(campo => {
-        formGroupConfig[campo.name] = new FormControl('', Validators.required); // Puedes añadir validadores según sea necesario
+    Object.keys(this.camposFormularioPorGrupos).forEach((grupo: string) => {
+      this.camposFormularioPorGrupos[grupo].forEach((campo :any) => {
+          formGroupConfig[campo.name] =  campo.obligatorio ? new FormControl('', Validators.required) : new FormControl('');
       });
     });
 
@@ -91,8 +99,10 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
     // Crea el FormGroup usando los campos organizados
     this.productForm = this.fb.group(formGroupConfig);
+    this.formIsLoaded = true;
 
   }
+
 
   productKeys(): string[] {
     return this.product ? Object.keys(this.product) : [];
