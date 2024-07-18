@@ -3,13 +3,18 @@
     <header class="form-header">
         <h3>Datos de la sociedad</h3>
     </header>
-    <label for="sociedad" class="input-label">Sociedad</label>
-    <select formControlName="sociedad_id" id="sociedad" class="input-field select">
-        @for(sociedad of sociedades ; track sociedad.id){
-            <option [value]="sociedad.id">{{ sociedad.nombre }}</option>
-        }
-    </select>
-
+    @if(sociedades.length > 0){
+        <label for="sociedad" class="input-label">Sociedad</label>
+        <select formControlName="sociedad_id" id="sociedad" class="input-field select">
+            @for(sociedad of sociedades ; track sociedad.id){
+                <option [value]="sociedad.id">{{ sociedad.nombre }}</option>
+            }
+        </select>
+        <!-- <select formControlName="sociedad_id" id="sociedad" class="input-field select" *ngIf="sociedades.length > 0">
+            <option *ngFor="let sociedad of sociedades" [value]="sociedad.id">{{ sociedad.nombre }}</option>
+        </select> -->
+    }
+    
     <hr class="divider">
 
     <header class="form-header">
@@ -20,16 +25,22 @@
     </header>
     <section>
         <label for="dni_o_cif" class="input-label">DNI o CIF</label>
-        <input id="dni_o_cif" formControlName="dni_o_cif" class="input-field">
+        <input id="dni_o_cif" formControlName="dni" class="input-field">
 
-        <label for="nombre" class="input-label">Nombre</label>
-        <input id="nombre" formControlName="nombre" class="input-field">
-
-        <label for="apellido_1" class="input-label">Apellido 1</label>
-        <input id="apellido_1" formControlName="apellido_1" class="input-field">
-
-        <label for="apellido_2" class="input-label">Apellido 2</label>
-        <input id="apellido_2" formControlName="apellido_2" class="input-field">
+        <fieldset class="input-group">
+            <div class="input-container">
+                <label for="nombre" class="input-label">Nombre</label>
+                <input id="nombre" formControlName="nombre_socio" class="input-field">
+            </div>
+            <div class="input-container">
+                <label for="apellido_1" class="input-label">Apellido 1</label>
+                <input id="apellido_1" formControlName="apellido_1" class="input-field">
+            </div>
+            <div class="input-container">
+                <label for="apellido_2" class="input-label">Apellido 2</label>
+                <input id="apellido_2" formControlName="apellido_2" class="input-field">
+            </div>
+        </fieldset>
 
         <label for="email" class="input-label">Email</label>
         <input id="email" formControlName="email" class="input-field">
@@ -41,10 +52,10 @@
         <input id="sexo" formControlName="sexo" class="input-field">
 
         <label for="direccion" class="input-label">Dirección</label>
-        <input id="direccion" formControlName="direccion" class="input-field">
+        <input id="direccion" formControlName="dirección" class="input-field">
 
         <label for="poblacion" class="input-label">Población</label>
-        <input id="poblacion" formControlName="poblacion" class="input-field">
+        <input id="poblacion" formControlName="población" class="input-field">
 
         <label for="provincia" class="input-label">Provincia</label>
         <input id="provincia" formControlName="provincia" class="input-field">

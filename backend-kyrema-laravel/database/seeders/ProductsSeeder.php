@@ -17,13 +17,13 @@ class ProductsSeeder extends Seeder
     {
         $faker = Faker::create();
         
-        for ($i = 0; $i < 1000; $i++) { // Cambiado a 1000 para más datos
+        for ($i = 0; $i < 100; $i++) { // Cambiado a 1000 para más datos
             $fechaDeNacimiento = $faker->dateTimeBetween('-80 years', '-18 years')->format('Y-m-d');
             $pruebaFecha = $faker->dateTimeBetween('-30 years', 'now')->format('Y-m-d');
             $createdAt = Carbon::now()->toDateTimeString(); // Formato 'Y-m-d H:i:s'
             $updatedAt = Carbon::now()->toDateTimeString(); // Formato 'Y-m-d H:i:s'
 
-            DB::table('excel')->insert([
+            DB::table('pr4')->insert([
                 'sociedad_id' => 1,
                 'sociedad' => 'Admin',
                 'comercial_id' => 1,
@@ -39,6 +39,8 @@ class ProductsSeeder extends Seeder
                 'provincia' => $faker->state,
                 'codigo_postal' => $faker->numerify('#####'),
                 'fecha_de_nacimiento' => $fechaDeNacimiento,
+                'fecha_de_evento' => $pruebaFecha,
+                'numero_evento' => $faker->numerify('###'),
                 'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'
                 'updated_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'
             ]);

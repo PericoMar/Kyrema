@@ -41,23 +41,23 @@ export class ProductConfiguratorComponent {
   constructor(private productService : ProductsService) {}
 
   camposFijos: Campo[] = [
-    { nombre: 'DNI', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
-    { nombre: 'Nombre socio', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' },
-    { nombre: 'Apellido 1', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Apellido 2', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Email', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Telefono', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Sexo', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Dirección', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' },
-    { nombre: 'Población', tipoDato: 'texto',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Provincia', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
-    { nombre: 'Codigo Postal', tipoDato: 'numero', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Fecha de nacimiento', tipoDato: 'fecha', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
+    { nombre: 'DNI', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
+    { nombre: 'Nombre socio', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' },
+    { nombre: 'Apellido 1', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+    { nombre: 'Apellido 2', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+    { nombre: 'Email', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+    { nombre: 'Telefono', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+    { nombre: 'Sexo', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+    { nombre: 'Dirección', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' },
+    { nombre: 'Población', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+    { nombre: 'Provincia', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
+    { nombre: 'Codigo Postal', tipoDato: 'number', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+    { nombre: 'Fecha de nacimiento', tipoDato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
   ];
-  campos: Campo[] = [{ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' }];
+  campos: Campo[] = [{ nombre: '', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' }];
 
   agregarCampo() {
-    this.campos.push({ nombre: '', tipoDato: 'texto', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' });
+    this.campos.push({ nombre: '', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' });
   }
 
   eliminarCampo(index: number) {

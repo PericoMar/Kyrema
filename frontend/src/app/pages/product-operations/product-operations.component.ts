@@ -23,19 +23,7 @@ export class ProductOperationsComponent {
   productUrl! : string;
   columnDefs! : ColDef[];
   rowData! : any[] | null;
-  productSelected : any = {
-    campo: "",
-    campo1: "",
-    campo2: "",
-    campo3: "",
-    campo4: "",
-    campo5: "",
-    campo6: "",
-    campo7: "",
-    campo8: "",
-    campo9: "",
-    campo10: "",
-  };
+  productSelected! : any;
   isProductSelected : boolean = false;
   familyProduct! : any;
   sociedadesBusqueda! : any[];
@@ -71,7 +59,7 @@ export class ProductOperationsComponent {
     
 
     // Añadir el campo id a productSelected y actualizar sus valores
-    this.productSelected = { id: product.id, ...this.camposFormulario };
+    this.productSelected = { ...product };
 
     console.log("Producto seleccionado", this.productSelected);
 
@@ -86,7 +74,6 @@ export class ProductOperationsComponent {
   // Método para cargar los datos del producto
   loadProductData(productUrl: string): void {
     // Aquí puedes implementar la lógica para cargar los datos del producto
-    console.log(`Producto cargado: ${productUrl}`);
     this.familyService.getTipoProductoPorLetras(productUrl).subscribe(
       (data : any) => {
         this.familyProduct = data;
@@ -94,7 +81,6 @@ export class ProductOperationsComponent {
         console.log("Data",this.familyProduct);
         this.camposService.getCamposVisiblesPorTipoProducto(this.familyProduct.id).subscribe(
           data => {
-            console.log(data);
             this.columnDefs = data.map((campo : any) => {
               return { headerName: campo.nombre, field: campo.nombre.replace(/\s/g, '_').toLowerCase() };
             });
@@ -118,7 +104,6 @@ export class ProductOperationsComponent {
         //Recoger todos los valores de la tabla
         this.productsService.getProductosByTipoAndSociedades(this.familyProduct.letras_identificacion, this.idsSociedades).subscribe(
           data => {
-            console.log(data);
             this.rowData = data;
           },
           error => {
@@ -127,10 +112,13 @@ export class ProductOperationsComponent {
         )
 
         //Recoger los campos del formulario
-        this.camposService.getCamposFormularioPorTipoProducto(this.familyProduct.id).subscribe(
+        this.camposService.getCamposPorTipoProducto(this.familyProduct.id).subscribe(
           (camposFormulario:any) => {
 
-            const resultObject : any = {id: ""};
+            const resultObject : any = {
+              id: "",
+              sociedad_id: "",
+            };
 
             // Procesar cada objeto en el array
             camposFormulario.forEach((item : any) => {
@@ -156,7 +144,6 @@ export class ProductOperationsComponent {
               // Asignar el valor al nuevo objeto usando la clave dinámica
               resultObject[key] = value;
             });
-
             this.camposFormulario = camposFormulario;
             this.productSelected = resultObject;
             this.camposLoaded = true;

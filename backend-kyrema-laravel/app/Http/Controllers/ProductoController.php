@@ -12,38 +12,6 @@ use Illuminate\Support\Facades\Log; // Importar la clase Log
 
 class ProductoController extends Controller
 {
-    public function generarPDF($id, Request $request){
-        // Obtener el tipo de producto por su ID
-        $tipoProducto = DB::table('tipo_producto')->find($id);
-
-        if (!$tipoProducto) {
-            abort(404, 'Tipo de producto no encontrado');
-        }
-
-        // Obtener la ruta de la plantilla desde la base de datos
-        $rutaPlantilla = $tipoProducto->plantilla_path;
-
-        // Crear un nuevo objeto Spreadsheet a partir del archivo Excel existente
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load(storage_path('app/public/' . $rutaPlantilla));
-
-        // Obtener la hoja activa del archivo Excel
-        $sheet = $spreadsheet->getActiveSheet();
-
-        // Agregar datos al archivo Excel (ejemplo)
-        $sheet->setCellValue('A1', 'Nombre');
-        $sheet->setCellValue('B1', 'Cantidad');
-        $sheet->setCellValue('A2', 'Producto A');
-        $sheet->setCellValue('B2', 10);
-
-        // Guardar el archivo modificado en una nueva ubicación
-        $nombreArchivoNuevo = 'archivo_modificado.xlsx';
-        $rutaArchivoNuevo = storage_path('app/public/' . $nombreArchivoNuevo);
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($rutaArchivoNuevo);
-
-        // Redirigir a la ruta del archivo descargado
-        return redirect()->route('descargar.pdf', ['nombreArchivo' => $nombreArchivoNuevo]);
-    }
 
     public function crearTipoProducto(Request $request)
     {
@@ -53,7 +21,7 @@ class ProductoController extends Controller
             'letrasIdentificacion' => 'required|string',
             'campos' => 'required|array',
             'campos.*.nombre' => 'required|string',
-            'campos.*.tipoDato' => 'required|string|in:texto,numero,fecha',
+            'campos.*.tipoDato' => 'required|string|in:text,number,date',
         ]);
 
         $nombreProducto = $request->input('nombreProducto');
@@ -75,13 +43,13 @@ class ProductoController extends Controller
             foreach ($campos as $campo) {
                 $nombreCampo = strtolower(str_replace(' ', '_', $campo['nombre']));
                 switch ($campo['tipoDato']) {
-                    case 'texto':
+                    case 'text':
                         $table->string($nombreCampo)->nullable();
                         break;
-                    case 'numero':
-                        $table->integer($nombreCampo)->nullable();
+                    case 'number':
+                        $table->decimal($nombreCampo)->nullable();
                         break;
-                    case 'fecha':
+                    case 'date':
                         $table->date($nombreCampo)->nullable();
                         break;
                 }

@@ -41,6 +41,11 @@ export class SocietyService {
     return sociedades ? JSON.parse(sociedades) : null;
   }
 
+  getSociedadesHijasObservable() : Observable<any>{
+    const sociedades = localStorage.getItem(this.SOCIEDADES_HIJAS_KEY);
+    return of(sociedades ? JSON.parse(sociedades) : null);
+  }
+
   setSociedadLocalStorage(sociedad : any){
     localStorage.setItem(this.SOCIETY_KEY, JSON.stringify(sociedad));
   }

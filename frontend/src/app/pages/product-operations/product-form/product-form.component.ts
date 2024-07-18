@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } 
 import { ProductsService } from '../../../services/products.service';
 import { SocietyService } from '../../../services/society.service';
 import { UserService } from '../../../services/user.service';
+import { error } from 'console';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -33,7 +34,7 @@ interface CampoFormulario{
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css']
 })
-export class ProductFormComponent implements OnInit, OnChanges {
+export class ProductFormComponent implements OnInit, OnChanges{
   @Input() isProductSelected : boolean = false;
   @Input() product!: any | null;
   productForm: FormGroup = this.fb.group({});
@@ -50,22 +51,37 @@ export class ProductFormComponent implements OnInit, OnChanges {
     private societyService: SocietyService,
     private userService: UserService
   ) { 
-    this.isProductSelected = false;
+    
   }
 
   ngOnInit() {
-    this.sociedades = this.societyService.getSociedadesHijas();
-    console.log("Sociedades", this.sociedades);
+    this.productForm = this.fb.group({
+      id: [''],
+      sociedad_id: ['', Validators.required],
+      nombre_socio: ['', Validators.required],
+      apellido_1: ['', Validators.required],
+      apellido_2: ['', Validators.required],
+      dni: ['', Validators.required],
+      telefono: ['', Validators.required],
+      email: ['', Validators.required],
+      sexo: ['', Validators.required],
+      dirección: ['', Validators.required],
+      población: ['', Validators.required],
+      provincia: ['', Validators.required],
+      codigo_postal: ['', Validators.required],
+      fecha_de_nacimiento: ['', Validators.required]
+    });
+
+    // Cargar las sociedades
+    this.loadSociedades();
+    this.createForm(this.campos);
     
-    
-    console.log(this.product);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['product']) {
-      this.isProductSelected = true;
       console.log(this.product);  
-      this.productForm.setValue(this.product);
+      this.productForm.patchValue(this.product);
     }
 
     if(changes['campos']){
@@ -74,112 +90,56 @@ export class ProductFormComponent implements OnInit, OnChanges {
     }
   }
 
+  loadSociedades(): void {
+    this.societyService.getSociedadesHijasObservable().subscribe(
+      data => {
+        this.sociedades = data;
+        console.log("Sociedades hijas", this.sociedades);
+        // Actualiza el formControl sociedad_id con el primer valor disponible en sociedades
+        if (this.sociedades.length > 0) {
+          this.productForm.controls['sociedad_id'].setValue(this.sociedades[0].id);
+        }
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  }
+
   createForm(campos: Campo[]) {
-     // Necesito un array asociativo donde la clave sea el nombre del grupo (Cada campo tiene un grupo asociado),
-    // además el valor de cada grupo será un array con todos los campos donde cada campo será un objeto con la información del campo: 
-    // name (nombre cambiando espacios por _ y en minusculas), label: El nombre "bonito", value el valor del producto que paso por parametro,
-    // tipo_dato es el tipo de dato que le llega del backend.
+
     this.camposFormularioPorGrupos = {};
     campos.forEach((campo : Campo) => {
+
       // Este if lo que hace es que si no existe el grupo en el array asociativo lo crea:
       if (this.camposFormularioPorGrupos[campo.grupo] == null) {
-        this.camposFormularioPorGrupos[campo.grupo] = [[]];
+        this.camposFormularioPorGrupos[campo.grupo] = [];
       }
       const name = campo.nombre.replace(/ /g, '_').toLowerCase();
       const label = campo.nombre;
       const tipo_dato = campo.tipo_dato;
       const obligatorio = campo.obligatorio;
-      this.camposFormularioPorGrupos[campo.grupo][name].push({name, label , tipo_dato, obligatorio});
+
+      // Saltar el procesamiento si el grupo es 'datos_asegurado'
+      if (campo.grupo !== 'datos_asegurado') {
+        this.productForm.addControl(
+          name,
+          obligatorio ? new FormControl('', Validators.required) : new FormControl('')
+        );
+      }
+      
+      this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio});
     });
 
-    const formGroupConfig: any = {};
-
-    Object.keys(this.camposFormularioPorGrupos).forEach((grupo: string) => {
-      this.camposFormularioPorGrupos[grupo].forEach((campo :any) => {
-          formGroupConfig[campo.name] =  campo.obligatorio ? new FormControl('', Validators.required) : new FormControl('');
-      });
-    });
-
-    // Añade el control para 'sociedad_id' como un FormControl
-    formGroupConfig['sociedad_id'] = new FormControl(this.sociedades.length > 0 ? this.sociedades[0].id : '');
-
-    // Crea el FormGroup usando los campos organizados
-    this.productForm = this.fb.group(formGroupConfig);
-    this.formIsLoaded = true;
-
   }
 
-
-  productKeys(): string[] {
-    return this.product ? Object.keys(this.product) : [];
-  }
-
-  getInputType(key: string): string {
-    const value = this.product[key];
-    console.log("Input type", key, "valor", value, "tipo", typeof value);
-    if (typeof value === 'string') {
-      return 'text';
-    } else if (typeof value === 'number') {
-      return 'number';
-    } else if (typeof value === 'boolean') {
-      return 'checkbox';
-    } else if (this.isDate(value)) {
-      return 'date';
-    } else {
-      return 'text';
-    }
-  }
-
-  isDate(value: any): boolean {
-    // Comprobar si el valor es una instancia de Date
-    if (!(value instanceof Date)) {
-        // Intentar convertir el valor a Date
-        value = new Date(value);
-        // Si no se puede convertir a Date, entonces no es una fecha válida
-        if (!(value instanceof Date)) {
-            return false;
-        }
-    }
-
-    // Comprobar si el valor es un objeto Date válido
-    if (isNaN(value.getTime())) {
-        return false;
-    }
-
-    // Si pasa todas las comprobaciones, se considera una fecha válida
-    return true;
-  }
-
-
-  capitalizeFirstLetter(key: string): string {
-    // Reemplazar guiones bajos por espacios y dividir por espacios
-    const words = key.replace(/_/g, ' ').split(' ');
-    
-    // Capitalizar la primera letra de cada palabra
-    const capitalizedWords = words.map(word => {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-    });
-
-    // Unir las palabras capitalizadas con espacios y devolver
-    return capitalizedWords.join(' ');
-  }
 
   eliminateProductSelected() {
-    const emptyProduct: any = {};
-    Object.keys(this.product).forEach(key => {
-      const value = this.product[key];
-      if (typeof value === 'boolean') {
-        emptyProduct[key] = false;
-      } else if (typeof value === 'string') {
-        emptyProduct[key] = '';
-      } else {
-        emptyProduct[key] = null;
-      }
-    });
-    this.product = emptyProduct;
-    this.createForm(this.product);
-    this.isProductSelected = false;
+    this.productForm.reset();
+    this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
   }
+
+
   onSubmit() {
     console.log(this.productForm.value);
 
@@ -197,6 +157,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
     //Si no tiene id se está creando un nuevo producto
     if(this.product.id == null || this.product.id == ''){
+      delete nuevoProducto.id;
       this.productsService.crearProducto(this.tipo_producto, nuevoProducto).subscribe(
         data => {
           console.log(data);

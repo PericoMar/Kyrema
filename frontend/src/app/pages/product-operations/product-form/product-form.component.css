@@ -27,6 +27,19 @@
     margin-bottom: 10px;
 }
 
+.input-group{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    border: none;
+    padding: 0;
+}
+
+.input-container{
+    width: 29%;
+    min-width: 100px;
+}
+
 .select{
     width: 30%;
 }
