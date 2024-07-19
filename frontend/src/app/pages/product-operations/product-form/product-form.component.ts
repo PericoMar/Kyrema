@@ -140,6 +140,16 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
 
+  isFieldRequired(grupo: string, field: string): boolean {
+    const grupoCampos = this.camposFormularioPorGrupos[grupo];
+    if (!grupoCampos) {
+      return false;
+    }
+  
+    const campo = grupoCampos.find((campo: any) => campo.name === field);
+    return campo ? campo.obligatorio : false;
+  }
+
   onSubmit() {
     console.log(this.productForm.value);
 

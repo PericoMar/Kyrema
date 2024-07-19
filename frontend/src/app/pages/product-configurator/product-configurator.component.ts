@@ -7,6 +7,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProductsService } from '../../services/products.service';
+import { FamilyProductService } from '../../services/family-product.service';
+import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { formatWithOptions } from 'util';
 
 
 interface Campo {
@@ -22,11 +26,12 @@ interface Campo {
 @Component({
   selector: 'app-product-configurator',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, MatInputModule, MatSelectModule, MatCheckboxModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, MatInputModule, MatSelectModule, MatCheckboxModule , ErrorDialogComponent],
   templateUrl: './product-configurator.component.html',
   styleUrl: './product-configurator.component.css'
 })
 export class ProductConfiguratorComponent {
+  tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }];
   fileName = '';
   selectedFile! : File;
   nombreProducto = '';
@@ -37,8 +42,20 @@ export class ProductConfiguratorComponent {
     plantilla: null,
     campos: []
   };
+  tiposProductos : any[] = [];
 
-  constructor(private productService : ProductsService) {}
+  constructor(
+    private productService : ProductsService,
+    private familyService : FamilyProductService,
+    public dialog: MatDialog,
+  ) {
+    this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
+      this.tiposProductos = tiposProducto;
+    },
+    (error) => {
+      console.log(error)
+    });
+  }
 
   camposFijos: Campo[] = [
     { nombre: 'DNI', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
@@ -78,25 +95,86 @@ export class ProductConfiguratorComponent {
   }
 
   crearTipoProducto() {
+
+    
     const camposFormulario = [...this.camposFijos, ...this.campos]; // Concatenación de campos fijos y variables
 
-    const nuevoProducto = {
-      nombreProducto: this.nombreProducto,
-      letrasIdentificacion: this.letrasIdentificacion,
-      campos: camposFormulario
-    };
+    const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(camposFormulario);
 
-    console.log(nuevoProducto);
-    
-    this.productService.crearTipoProducto(nuevoProducto).subscribe((res) => {
-      console.log(res);
-      this.productService.subirPlantilla(this.letrasIdentificacion, this.selectedFile).subscribe((res:any) => {
+    if(this.letrasIdentificacionEnUso()) {
+
+      this.showErrorDialog('Las letras de identificación seleccionadas ya están siendo usadas por otro producto');
+
+    }else if(this.plantillaEnUso()) {
+
+      this.showErrorDialog('El nombre de la plantilla seleccionada ya está siendo usado por otro producto');
+
+    } else if(campoFormatoFilasColumnasIncorrecto) {
+
+      this.showErrorDialog('El formato de las filas o columnas no es correcto en el campo: ' + campoFormatoFilasColumnasIncorrecto);
+
+    } else {
+
+
+      const nuevoProducto = {
+        nombreProducto: this.nombreProducto,
+        letrasIdentificacion: this.letrasIdentificacion,
+        campos: camposFormulario
+      };
+
+      console.log(nuevoProducto);
+      
+      this.productService.crearTipoProducto(nuevoProducto).subscribe((res) => {
         console.log(res);
+        this.productService.subirPlantilla(this.letrasIdentificacion, this.selectedFile).subscribe((res:any) => {
+          console.log(res);
+        });
+      },
+      (error) => {
+        console.log(error);
       });
-    },
-    (error) => {
-      console.log(error);
-    });
+
+    }
   }
 
+
+  //Funcion para comprobar que la plantilla no se esté usando ya en otro tipo de producto:
+  private plantillaEnUso() {
+    //Recorremos el array de tipos de productos y comparamos plantilla_path con el nombre del archivo seleccionado  
+    for (let i = 0; i < this.tiposProductos.length; i++) {
+      if (this.tiposProductos[i].plantilla_path === "plantillas/"+this.fileName) {
+        return true;
+      }
+    }
+    return false;  
+  }
+
+  private letrasIdentificacionEnUso() {
+    //Recorremos el array de tipos de productos y comparamos letras_identificacion con el nombre del archivo seleccionado
+    for (let i = 0; i < this.tiposProductos.length; i++) {
+      if (this.tiposProductos[i].letras_identificacion === this.letrasIdentificacion) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private formatoIncorrectoFilasColumnas(camposFormulario: Campo[]): string | boolean {
+    for (const campo of camposFormulario) {
+        // Comprobar si las columnas son solo letras y las filas son solo números (Como en Excel)
+        if (!(/^[a-zA-Z]*$/.test(campo.columna)) || !(/^[0-9]*$/.test(campo.fila))) {
+            return campo.nombre; // Devuelve el nombre del campo con formato incorrecto
+        }
+    }
+    return false; // Devuelve false si todos los campos tienen el formato correcto
+  }
+
+  showErrorDialog(message: string): void {
+    this.dialog.open(ErrorDialogComponent, {
+      width: '300px',
+      data: { message }
+    });
+  }
 }
+
+

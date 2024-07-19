@@ -41,7 +41,8 @@ Route::get('/campos', [CampoController::class, 'getByTipoProducto']);
 
 Route::apiResource('valores', ValorController::class);
 
-Route::apiResource('tipos-producto', TipoProductoController::class);
+
+Route::get('tipos-producto/all', [TipoProductoController::class, 'index']);
 Route::get('tipo-producto/{letras}', [TipoProductoController::class, 'getByLetras']);
 Route::get('tipo-producto/show/{ruta}', [TipoProductoController::class, 'show']);
 

@@ -2,16 +2,30 @@
 :root{
     --main-bg-color: #ebeff2;   
     --dark-green: rgb(3, 99, 3);
+    --form-gap: 20px;
+    --required-color: #c50606;
 }   
 
 body{
     margin:0;
 }
 html, body { 
-    height: 100%;
-    --main-bg-color: #ebeff2;       
+    height: 100%;      
 }
 body { margin: 0; font-family:"IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif }
+
+
+/* Estilos general por clases */
+.section-block{
+    padding: 40px 90px;
+}
+
+/* Media query para que cuando la pantalla sea menor a 768px, el padding sea de 20px */
+@media (max-width: 768px) {
+    .section-block{
+        padding: 40px 20px;
+    }
+}
 
 .content-block{
     border-radius: 8px;

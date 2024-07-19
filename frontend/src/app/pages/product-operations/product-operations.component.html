@@ -1,10 +1,10 @@
 
 <main class="product-page">
-    <section class="listado">
+    <section class="listado section-block">
         <h1>Listado de {{ productName }}</h1>
         <app-table (productSelectedChange)="onProductSelectedChanged($event)" [columnDefs]="columnDefs" [rowData]="rowData"></app-table>
     </section>
-    <section class="datos-producto">
+    <section class="datos-producto section-block">
         @if(camposLoaded){
             <h2>Formulario de gestión</h2>
             <app-product-form [product]="productSelected" [isProductSelected]="isProductSelected" [tipo_producto]="productUrl" [campos]="camposFormulario"></app-product-form>

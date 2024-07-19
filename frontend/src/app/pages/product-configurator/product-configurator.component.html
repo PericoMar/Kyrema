@@ -71,9 +71,9 @@
                   <td class="col-tipo-dato">
                     <div class="center div-select">
                       <select [(ngModel)]="campoFijo.tipoDato" name="tipoDatoFijo{{$index}}" disabled>
-                        <option value="number">Número</option>
-                        <option value="text">Texto</option>
-                        <option value="date">Fecha</option>
+                        @for(tipo of tiposDato ; track $index) {
+                          <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                        }
                       </select>
                     </div>
                   </td>
@@ -147,9 +147,9 @@
                     <td class="col-tipo-dato">
                       <div class="center div-select">
                         <select [(ngModel)]="campo.tipoDato" name="tipoDato{{$index}}">
-                          <option value="number">Número</option>
-                          <option value="text">Texto</option>
-                          <option value="date">Fecha</option>
+                          @for(tipo of tiposDato ; track $index) {
+                            <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                          }
                         </select>
                       </div>
                     </td>

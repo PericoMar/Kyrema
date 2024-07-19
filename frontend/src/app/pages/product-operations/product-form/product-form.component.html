@@ -24,52 +24,53 @@
         }
     </header>
     <section>
-        <label for="dni_o_cif" class="input-label">DNI o CIF</label>
-        <input id="dni_o_cif" formControlName="dni" class="input-field">
+        <label for="dni_o_cif" class="input-label">DNI o CIF <span *ngIf="isFieldRequired('datos_asegurado', 'dni')" class="span-required">*</span></label>
+        <input id="dni_o_cif" formControlName="dni" class="input-field dni">
 
         <fieldset class="input-group">
             <div class="input-container">
-                <label for="nombre" class="input-label">Nombre</label>
+                <label for="nombre" class="input-label">Nombre <span *ngIf="isFieldRequired('datos_asegurado', 'nombre_socio')" class="span-required">*</span></label>
                 <input id="nombre" formControlName="nombre_socio" class="input-field">
             </div>
             <div class="input-container">
-                <label for="apellido_1" class="input-label">Apellido 1</label>
+                <label for="apellido_1" class="input-label">Apellido 1 <span *ngIf="isFieldRequired('datos_asegurado', 'apellido_1')" class="span-required">*</span></label>
                 <input id="apellido_1" formControlName="apellido_1" class="input-field">
             </div>
             <div class="input-container">
-                <label for="apellido_2" class="input-label">Apellido 2</label>
+                <label for="apellido_2" class="input-label">Apellido 2 <span *ngIf="isFieldRequired('datos_asegurado', 'apellido_2')" class="span-required">*</span></label>
                 <input id="apellido_2" formControlName="apellido_2" class="input-field">
             </div>
         </fieldset>
 
-        <label for="email" class="input-label">Email</label>
+        <label for="email" class="input-label">Email <span *ngIf="isFieldRequired('datos_asegurado', 'email')" class="span-required">*</span></label>
         <input id="email" formControlName="email" class="input-field">
 
-        <label for="telefono" class="input-label">Telefono</label>
+        <label for="telefono" class="input-label">Telefono <span *ngIf="isFieldRequired('datos_asegurado', 'telefono')" class="span-required">*</span></label>
         <input id="telefono" formControlName="telefono" class="input-field">
 
-        <label for="sexo" class="input-label">Sexo</label>
+        <label for="sexo" class="input-label">Sexo <span *ngIf="isFieldRequired('datos_asegurado', 'sexo')" class="span-required">*</span></label>
         <input id="sexo" formControlName="sexo" class="input-field">
 
-        <label for="direccion" class="input-label">Dirección</label>
+        <label for="direccion" class="input-label">Dirección <span *ngIf="isFieldRequired('datos_asegurado', 'dirección')" class="span-required">*</span></label>
         <input id="direccion" formControlName="dirección" class="input-field">
 
-        <label for="poblacion" class="input-label">Población</label>
+        <label for="poblacion" class="input-label">Población <span *ngIf="isFieldRequired('datos_asegurado', 'población')" class="span-required">*</span></label>
         <input id="poblacion" formControlName="población" class="input-field">
 
-        <label for="provincia" class="input-label">Provincia</label>
+        <label for="provincia" class="input-label">Provincia <span *ngIf="isFieldRequired('datos_asegurado', 'provincia')" class="span-required">*</span></label>
         <input id="provincia" formControlName="provincia" class="input-field">
 
-        <label for="codigo_postal" class="input-label">Código Postal</label>
+        <label for="codigo_postal" class="input-label">Código Postal <span *ngIf="isFieldRequired('datos_asegurado', 'codigo_postal')" class="span-required">*</span></label>
         <input id="codigo_postal" formControlName="codigo_postal" type="number" class="input-field">
 
-        <label for="fecha_de_nacimiento" class="input-label">Fecha de nacimiento</label>
+        <label for="fecha_de_nacimiento" class="input-label">Fecha de nacimiento <span *ngIf="isFieldRequired('datos_asegurado', 'fecha_de_nacimiento')" class="span-required">*</span></label>
         <input id="fecha_de_nacimiento" formControlName="fecha_de_nacimiento" type="date" class="input-field">
+
 
     </section>
     <hr>
 
-    @if(camposFormularioPorGrupos['datos_producto'].length > 0){
+    @if(camposFormularioPorGrupos['datos_producto'] && camposFormularioPorGrupos['datos_producto'].length > 0){
     <header class="form-header">
         <h3>Datos del producto</h3>
     </header>

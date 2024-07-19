@@ -19,6 +19,7 @@
 }
 
 .input-field {
+    min-width: 100px;
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
@@ -33,11 +34,21 @@
     width: 100%;
     border: none;
     padding: 0;
+    gap: var(--form-gap);
 }
 
 .input-container{
-    width: 29%;
+    flex:1;
     min-width: 100px;
+}
+
+.span-required{
+    color: var(--required-color);
+}
+
+/* Clases especificas */
+.dni{
+    width: 30%;
 }
 
 .select{

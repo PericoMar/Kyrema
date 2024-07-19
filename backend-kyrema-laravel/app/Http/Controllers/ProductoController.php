@@ -21,7 +21,7 @@ class ProductoController extends Controller
             'letrasIdentificacion' => 'required|string',
             'campos' => 'required|array',
             'campos.*.nombre' => 'required|string',
-            'campos.*.tipoDato' => 'required|string|in:text,number,date',
+            'campos.*.tipoDato' => 'required|string|in:text,number,date,decimal',
         ]);
 
         $nombreProducto = $request->input('nombreProducto');
@@ -46,8 +46,12 @@ class ProductoController extends Controller
                     case 'text':
                         $table->string($nombreCampo)->nullable();
                         break;
-                    case 'number':
+                    case 'decimal':
                         $table->decimal($nombreCampo)->nullable();
+                        $campos['tipo'] = 'number';
+                        break;
+                    case 'number':
+                        $table->integer($nombreCampo)->nullable();
                         break;
                     case 'date':
                         $table->date($nombreCampo)->nullable();
@@ -91,12 +95,20 @@ class ProductoController extends Controller
     public function subirPlantilla($letrasIdentificacion, Request $request)
     {
         if ($request->hasFile('plantilla')) {
-        
-            // Guardar la plantilla Excel en el sistema de archivos
+
             $archivoPlantilla = $request->file('plantilla');
-            $rutaPlantilla = Storage::disk('public')->putFileAs('plantillas', $archivoPlantilla, $archivoPlantilla->getClientOriginalName());
-            // Procesar y almacenar la plantilla como sea necesario
-            //Añadimos la ruta de la plantilla a la tabla tipo_producto
+            $nombreArchivo = $archivoPlantilla->getClientOriginalName();
+            $rutaArchivo = 'plantillas/' . $nombreArchivo;
+
+            // Comprobar si ya existe un archivo con el mismo nombre
+            if (Storage::disk('public')->exists($rutaArchivo)) {
+                return response()->json(['error' => 'Ya existe una plantilla con ese nombre'], 400);
+            }
+
+            // Guardar la plantilla Excel en el sistema de archivos
+            $rutaPlantilla = Storage::disk('public')->putFileAs('plantillas', $archivoPlantilla, $nombreArchivo);
+
+            // Añadir la ruta de la plantilla a la tabla tipo_producto
             DB::table('tipo_producto')
                 ->where('letras_identificacion', $letrasIdentificacion)
                 ->update(['plantilla_path' => $rutaPlantilla]);
