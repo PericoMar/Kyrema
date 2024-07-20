@@ -47,7 +47,7 @@ class ProductoController extends Controller
                         $table->string($nombreCampo)->nullable();
                         break;
                     case 'decimal':
-                        $table->decimal($nombreCampo)->nullable();
+                        $table->string($nombreCampo)->nullable();
                         $campo['tipo'] = 'text';
                         break;
                     case 'number':

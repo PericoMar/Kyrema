@@ -107,7 +107,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   createForm(campos: Campo[]) {
-
     this.camposFormularioPorGrupos = {};
     campos.forEach((campo : Campo) => {
 
