@@ -179,25 +179,50 @@ class ProductoController extends Controller
 
     public function crearProducto($letrasIdentificacion, Request $request)
     {
-         // Convertir letras de identificación a nombre de tabla
+        // Obtener el id del tipo_producto basado en las letras_identificacion
+        $tipoProducto = DB::table('tipo_producto')
+                        ->where('letras_identificacion', $letrasIdentificacion)
+                        ->first();
+
+        if (!$tipoProducto) {
+            return response()->json(['error' => 'Tipo de producto no encontrado'], 404);
+        }
+
+        $tipoProductoId = $tipoProducto->id;
+
+        // Obtener los campos relacionados con el tipo_producto_id
+        $camposRelacionados = DB::table('campos')
+                                ->where('tipo_producto_id', $tipoProductoId)
+                                ->get();
+
+        // Convertir letras de identificación a nombre de tabla
         $nombreTabla = strtolower($letrasIdentificacion);
-    
+
         // Validar los datos recibidos
         $request->validate([
             'nuevoProducto' => 'required|array',
         ]);
-        
+
         $datos = $request->input('nuevoProducto');
 
+        // Formatear los campos datetime al formato deseado
+        foreach ($camposRelacionados as $campo) {
+            $nombreCampo = strtolower(str_replace(' ', '_', $campo->nombre));
+            if ($campo->tipo_dato == 'date' && isset($datos[$nombreCampo])) {
+                $datos[$nombreCampo] = Carbon::createFromFormat('Y-m-d', $datos[$nombreCampo])->format('Y-m-d\TH:i:s');
+            }
+        }
+
         // Añadir created_at y updated_at al array de datos
-        $datos['created_at'] = Carbon::now();
-        $datos['updated_at'] = Carbon::now();
-        
+        $datos['created_at'] = Carbon::now()->format('Y-m-d\TH:i:s');
+        $datos['updated_at'] = Carbon::now()->format('Y-m-d\TH:i:s');
+
         // Insertar los datos en la tabla correspondiente
         $id = DB::table($nombreTabla)->insertGetId($datos);
-        
+
         return response()->json(['id' => $id], 201);
     }
+
 
     public function editarProducto($letrasIdentificacion, Request $request){
         // Convertir letras de identificación a nombre de tabla
