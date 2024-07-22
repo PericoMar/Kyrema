@@ -21,8 +21,8 @@ import {
   ɵɵgetInheritedFactory,
   ɵɵinject
 } from "./chunk-FH6MQMEX.js";
-import "./chunk-V2DXGMIT.js";
 import "./chunk-UKEHM6V6.js";
+import "./chunk-V2DXGMIT.js";
 import "./chunk-ZDOIMVJD.js";
 
 // node_modules/ag-grid-community/dist/package/main.esm.mjs
@@ -218,7 +218,6 @@ var ColumnKeyCreator = class {
 };
 var object_exports = {};
 __export(object_exports, {
-  SKIP_JS_BUILTINS: () => SKIP_JS_BUILTINS,
   cloneObject: () => cloneObject,
   deepCloneDefinition: () => deepCloneDefinition,
   getAllValuesInObject: () => getAllValuesInObject,
@@ -228,7 +227,6 @@ __export(object_exports, {
   mergeDeep: () => mergeDeep,
   removeAllReferences: () => removeAllReferences
 });
-var SKIP_JS_BUILTINS = /* @__PURE__ */ new Set(["__proto__", "constructor", "prototype"]);
 function iterateObject(object, callback) {
   if (object == null) {
     return;
@@ -247,9 +245,6 @@ function cloneObject(object) {
   const copy = {};
   const keys2 = Object.keys(object);
   for (let i = 0; i < keys2.length; i++) {
-    if (SKIP_JS_BUILTINS.has(keys2[i])) {
-      continue;
-    }
     const key = keys2[i];
     const value = object[key];
     copy[key] = value;
@@ -263,7 +258,7 @@ function deepCloneDefinition(object, keysToSkip) {
   const obj = object;
   const res = {};
   Object.keys(obj).forEach((key) => {
-    if (keysToSkip && keysToSkip.indexOf(key) >= 0 || SKIP_JS_BUILTINS.has(key)) {
+    if (keysToSkip && keysToSkip.indexOf(key) >= 0) {
       return;
     }
     const value = obj[key];
@@ -297,9 +292,6 @@ function mergeDeep(dest, source, copyUndefined = true, makeCopyOfSimpleObjects =
     return;
   }
   iterateObject(source, (key, sourceValue) => {
-    if (SKIP_JS_BUILTINS.has(key)) {
-      return;
-    }
     let destValue = dest[key];
     if (destValue === sourceValue) {
       return;
@@ -50459,7 +50451,7 @@ __decorateClass([
 ImmutableService = __decorateClass([
   Bean("immutableService")
 ], ImmutableService);
-var VERSION = "31.3.4";
+var VERSION = "31.3.2";
 var ClientSideRowModelModule = {
   version: VERSION,
   moduleName: "@ag-grid-community/client-side-row-model",
@@ -51076,7 +51068,7 @@ __decorateClass2([
 InfiniteRowModel = __decorateClass2([
   Bean("rowModel")
 ], InfiniteRowModel);
-var VERSION2 = "31.3.4";
+var VERSION2 = "31.3.2";
 var InfiniteRowModelModule = {
   version: VERSION2,
   moduleName: "@ag-grid-community/infinite-row-model",
@@ -51769,7 +51761,7 @@ __decorateClass3([
 GridSerializer = __decorateClass3([
   Bean("gridSerializer")
 ], GridSerializer);
-var VERSION3 = "31.3.4";
+var VERSION3 = "31.3.2";
 var CsvExportModule = {
   version: VERSION3,
   moduleName: "@ag-grid-community/csv-export",

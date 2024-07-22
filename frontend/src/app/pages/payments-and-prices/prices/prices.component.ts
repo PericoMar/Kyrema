@@ -13,9 +13,12 @@ import { SpinnerComponent } from '../../../components/spinner/spinner.component'
 import { CommonModule } from '@angular/common';
 import { CdkTableModule } from '@angular/cdk/table';
 
-interface CombinedData {
-  tipoProducto: TipoProducto;
-  tarifa: Tarifa;
+interface TarifasPorTipoProducto {
+  id: string,
+  nombre: string,
+  prima_seguro: string,
+  cuota_asociacion: string,
+  precio_total: string
 }
 
 @Component({
@@ -28,11 +31,10 @@ interface CombinedData {
 export class PricesComponent {
   @Input() infoClass : string = "info-message";
   @Input() infoText : string = "Nota: Los precios que establezca en este formulario se aplicarán únicamente a la sociedad seleccionada.";
-  tarifasForm!: FormGroup;
   tiposProducto!: TipoProducto[];
   tarifas! : Tarifa[];
-  combinedData: CombinedData[] = [];
-  displayedColumns: string[] = ['tipoProducto', 'prima_seguro', 'cuota_asociacion', 'precio_total'];
+  tarifasPorTipoProducto: TarifasPorTipoProducto[] = [];
+  displayedColumns: string[] = ['nombre', 'prima_seguro', 'cuota_asociacion', 'precio_total'];
   @Input() sociedad_id!: string;
 
 
@@ -46,7 +48,6 @@ export class PricesComponent {
     this.familyService.getTiposProductoPorSociedad(this.sociedad_id).subscribe(
       data => {
         this.tiposProducto = data;
-        console.log(this.tiposProducto);
       },
       error => {
         console.error('Error cogiendo los tipos de producto por sociedad', error);
@@ -55,11 +56,8 @@ export class PricesComponent {
     this.ratesService.getTarifasPorSociedad(this.sociedad_id).subscribe(
       data => {
         this.tarifas = data;
-        console.log(this.tarifas);
-        this.combinedData = this.combineArrays(this.tiposProducto, this.tarifas);
-        this.tarifasForm = this.fb.group({
-          tarifas: this.fb.array(this.combinedData.map(data => this.createTarifaGroup(data)))
-        });
+        this.tarifasPorTipoProducto = this.combineArrays(this.tiposProducto, this.tarifas);
+        console.log(this.tarifasPorTipoProducto)
       },
       error => {
         console.error('Error cogiendo las tarifas por sociedad', error);
@@ -67,27 +65,14 @@ export class PricesComponent {
 
   }
 
-  combineArrays(tipoProductos: TipoProducto[], tarifas: Tarifa[]): CombinedData[] {
-    return tipoProductos.map(tipoProducto => {
-      const tarifa = tarifas.find(t => t.tipo_producto_id === tipoProducto.letras_identificacion) || {} as Tarifa;
-      return { tipoProducto, tarifa };
+  combineArrays(tiposProductos: TipoProducto[], tarifas: Tarifa[]): any {
+    return tarifas.map(tarifa => {
+      const tipoProducto = tiposProductos.find(t => t.id === tarifa.tipo_producto_id) || {} as TipoProducto;
+      return { id: tipoProducto.id, nombre: tipoProducto.nombre, prima_seguro: tarifa.prima_seguro, cuota_asociacion: tarifa.cuota_asociacion, precio_total: tarifa.precio_total };
     });
-  }
-
-  createTarifaGroup(data: CombinedData): FormGroup {
-    return this.fb.group({
-      tipo_producto_id: [data.tipoProducto.letras_identificacion],
-      prima_seguro: [data.tarifa.prima_seguro || ''],
-      cuota_asociacion: [data.tarifa.cuota_asociacion || ''],
-      precio_total: [data.tarifa.precio_total || '']
-    });
-  }
-
-  get tarifasFormArray() {
-    return this.tarifasForm.get('tarifas') as FormArray;
   }
 
   onSubmit() {
-    console.log(this.tarifasForm.value.tarifas);
+    console.log(this.tarifasPorTipoProducto);
   }
 }

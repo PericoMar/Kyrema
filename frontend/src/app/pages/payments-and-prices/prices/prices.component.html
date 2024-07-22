@@ -4,57 +4,59 @@
         {{ infoText }}
     </p>
     <main class="content-block">
-      @if(tarifasForm){
-        <form [formGroup]="tarifasForm" (ngSubmit)="onSubmit()">
-          <table mat-table [dataSource]="tarifasFormArray.controls" class="mat-elevation-z8" formArrayName="tarifas">
-
-            <!-- Tipo Producto Column -->
-            <ng-container matColumnDef="tipoProducto">
-              <th mat-header-cell *matHeaderCellDef> Tipo Producto </th>
-              <td mat-cell *matCellDef="let element"> {{ element.tipoProducto.nombre }} </td>
-            </ng-container>
+      @if(tarifasPorTipoProducto){
+        <form (ngSubmit)="onSubmit()" #productForm="ngForm">
+          <table mat-table [dataSource]="tarifasPorTipoProducto" class="mat-elevation-z8 centered-table">
           
-            <!-- Prima Seguro Column -->
-            <ng-container matColumnDef="prima_seguro">
-              <th mat-header-cell *matHeaderCellDef> Prima Seguro </th>
-              <td mat-cell *matCellDef="let element">
-                <mat-form-field>
-                  <input matInput formControlName="prima_seguro" placeholder="€" type="number">
-                  <span matSuffix>€</span>
-                </mat-form-field>
+            <!-- Nombre Column -->
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef class="nombre-header"> Nombre </th>
+              <td mat-cell *matCellDef="let tarifaPorTipoProducto" class="nombre-cell">
+                {{tarifaPorTipoProducto.nombre}}
               </td>
             </ng-container>
-          
-            <!-- Cuota Asociación Column -->
+        
+            <!-- Cuota Asociacion Column -->
             <ng-container matColumnDef="cuota_asociacion">
               <th mat-header-cell *matHeaderCellDef> Cuota Asociación </th>
-              <td mat-cell *matCellDef="let element">
+              <td mat-cell *matCellDef="let tarifaPorTipoProducto; let i = index">
                 <mat-form-field>
-                  <input matInput formControlName="cuota_asociacion" placeholder="€" type="number">
+                  <input matInput [(ngModel)]="tarifaPorTipoProducto.cuota_asociacion" name="cuota_asociacion{{i}}">
                   <span matSuffix>€</span>
                 </mat-form-field>
               </td>
             </ng-container>
-          
+        
             <!-- Precio Total Column -->
             <ng-container matColumnDef="precio_total">
               <th mat-header-cell *matHeaderCellDef> Precio Total </th>
-              <td mat-cell *matCellDef="let element">
+              <td mat-cell *matCellDef="let tarifaPorTipoProducto; let i = index">
                 <mat-form-field>
-                  <input matInput formControlName="precio_total" placeholder="€" type="number">
+                  <input matInput [(ngModel)]="tarifaPorTipoProducto.precio_total" name="precio_total{{i}}">
                   <span matSuffix>€</span>
                 </mat-form-field>
               </td>
             </ng-container>
-          
-            <!-- Header and Row Definitions -->
+        
+            <!-- Prima Seguro Column -->
+            <ng-container matColumnDef="prima_seguro">
+              <th mat-header-cell *matHeaderCellDef> Prima Seguro </th>
+              <td mat-cell *matCellDef="let tarifaPorTipoProducto; let i = index">
+                <mat-form-field>
+                  <input matInput [(ngModel)]="tarifaPorTipoProducto.prima_seguro" name="prima_seguro{{i}}">
+                  <span matSuffix>€</span>
+                </mat-form-field>
+              </td>
+            </ng-container>
+        
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          
           </table>
-          
-          <button mat-raised-button color="primary" type="submit">Submit</button>
-        </form>      
+          <div class="button-container">
+            <button mat-raised-button color="primary" type="submit">Submit</button>
+          </div>
+        </form>
+        
       } @else {
         <div class="center">
           <app-spinner></app-spinner>

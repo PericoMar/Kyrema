@@ -13,7 +13,7 @@
   }
 
   .content-block{
-    padding:40px;
+    padding:40px 80px;
   }
 
   .button-container {
@@ -25,3 +25,37 @@
     margin-top: 20px;
   }
   
+table {
+  width: 100%;
+  border: none;
+  box-shadow: none;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+button {
+  margin-top: 20px;
+}
+
+.nombre-header, .nombre-cell {
+  width: 300px; /* Ajusta el valor según necesites */
+}
+
+
+.centered-table th, 
+.centered-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.mat-form-field {
+  display: flex;
+  justify-content: center;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}

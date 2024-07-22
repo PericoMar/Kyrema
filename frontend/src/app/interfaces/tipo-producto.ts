@@ -1,4 +1,5 @@
 export interface TipoProducto {
+    id: string;
     nombre : string;
     letras_identificacion: string;
     plantilla_path : string;
