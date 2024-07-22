@@ -42,6 +42,7 @@ Route::get('/campos', [CampoController::class, 'getByTipoProducto']);
 Route::apiResource('valores', ValorController::class);
 
 
+Route::get('tipos-producto/sociedad/{id_sociedad}', [TipoProductoController::class, 'getTiposProductoPorSociedad']);
 Route::get('tipos-producto/all', [TipoProductoController::class, 'index']);
 Route::get('tipo-producto/{letras}', [TipoProductoController::class, 'getByLetras']);
 Route::get('tipo-producto/show/{ruta}', [TipoProductoController::class, 'show']);
@@ -60,8 +61,12 @@ Route::apiResource('comercial-comisiones', ComercialComisionController::class);
 Route::apiResource('tipos-anexo', TipoAnexoController::class);
 Route::apiResource('campos-anexo', CampoAnexoController::class);
 Route::apiResource('valores-anexo', ValorAnexoController::class);
+
+Route::get('tarifas-producto/sociedad/{id_sociedad}', [TarifaProductoController::class, 'getTarifaPorSociedad']);
 Route::apiResource('tarifas-producto', TarifaProductoController::class);
 Route::apiResource('tarifas-anexo', TarifaAnexoController::class);
+
+
 Route::apiResource('escalado-anexos', EscaladoAnexoController::class);
 
 Route::get('/nav', [NavegacionController::class, 'getNavegacion']);

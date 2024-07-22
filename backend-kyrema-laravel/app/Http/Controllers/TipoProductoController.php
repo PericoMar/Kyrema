@@ -4,13 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\TipoProducto;
 use Illuminate\Http\Request;
+use App\Models\TipoProductoSociedad;
 
 class TipoProductoController extends Controller
 {
-    public function index()
+
+    public function getTiposProductoPorSociedad($id_sociedad)
     {
-        $tipoProductos = TipoProducto::all();
-        return response()->json($tipoProductos);
+        // Obtener los IDs de TipoProducto asociados con la sociedad
+        $tipoProductoIds = TipoProductoSociedad::where('id_sociedad', $id_sociedad)->pluck('id_tipo_producto');
+
+        // Obtener los TipoProducto basados en los IDs obtenidos
+        $tiposProducto = TipoProducto::whereIn('id', $tipoProductoIds)->get();
+
+        // Devolver los TipoProducto en formato JSON
+        return response()->json($tiposProducto);
     }
 
     public function store(Request $request)

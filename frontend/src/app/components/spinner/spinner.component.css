@@ -1,0 +1,16 @@
+/* SPINNER */
+
+.spinner {
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Borde blanco con transparencia */
+    border-top: 2px solid #435966; /* Borde superior completamente blanco */
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 0.6s linear infinite;
+    display: inline-block;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

@@ -47,7 +47,7 @@ export const routes: Routes = [
         { path: 'comisiones/:sociedad' , component: CommissionsComponent},
         { path: 'comisiones-comerciales/:sociedad' , component: CommercialsCommissionsTableComponent},
         { path: 'comisiones-comercial/:comercial' , component: CommissionsComponent},
-        { path: 'sociedades/pagos/:codigo', component: PaymentsAndPricesComponent, },
+        { path: 'sociedades/pagos/:sociedad', component: PaymentsAndPricesComponent, },
         { path: 'sociedades/productos/:sociedad', component: ProductOperationsComponent },
         { path: 'sociedades/permisos/:sociedad', component: ProductOperationsComponent },
         { path: 'sociedades/modificar/:sociedad', component: ProductOperationsComponent },

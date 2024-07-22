@@ -1,7 +1,6 @@
 main.price-payment-manager{
-    padding: 40px 90px;
+    padding: 40px 90px 100px;
     background-color: var(--main-bg-color);
-    height: 100%;
 }
 
 .payments-content{

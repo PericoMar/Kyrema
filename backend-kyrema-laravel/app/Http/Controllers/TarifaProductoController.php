@@ -2,11 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TarifaProducto;
+use App\Models\TarifasProducto;
 use Illuminate\Http\Request;
 
 class TarifaProductoController extends Controller
 {
+    private $SOCIEDAD_ADMIN_ID = 1;
+    
+    public function getTarifaPorSociedad($id_sociedad)
+    {
+        // Primero, intenta obtener las tarifas asociadas con el id_sociedad proporcionado
+        $tarifas = TarifasProducto::where('id_sociedad', $id_sociedad)->get();
+
+        // Si no hay tarifas para el id_sociedad, obtiene las tarifas con sociedad_id nulo
+        if ($tarifas->isEmpty()) {
+            $tarifas = TarifasProducto::where('id_sociedad', $SOCIEDAD_ADMIN_ID)->get();
+        }
+
+        // Devuelve las tarifas en formato JSON
+        return response()->json($tarifas);
+    }
+
     public function index()
     {
         $tarifaProductos = TarifaProducto::all();
@@ -16,7 +32,7 @@ class TarifaProductoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'producto' => 'required|string|max:255',
+            'tipo_producto_id' => 'required|string|max:255',
             'id_sociedad' => 'required|string|max:255|exists:sociedades,id',
             'prima_seguro' => 'required|numeric',
             'cuota_asociacion' => 'required|numeric',

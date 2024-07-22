@@ -15,7 +15,7 @@ class TarifasProducto extends Model
 
     protected $fillable = [
         'id',
-        'producto',
+        'tipo_producto_id',
         'id_sociedad',
         'prima_seguro',
         'cuota_asociacion',

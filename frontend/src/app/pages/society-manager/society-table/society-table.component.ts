@@ -31,7 +31,7 @@ export class SocietyTableComponent {
   }
 
   public columnDefs: ColDef[] = [
-    { field: 'codigo_sociedad', headerName: 'Código', width: 150 },
+    { field: 'id', headerName: 'ID', width: 150 },
     { field: 'nombre', headerName: 'Sociedad', width: 200 },
     { field: 'poblacion', headerName: 'Población', width: 200, flex:1 },
     { field: 'codigo_postal', headerName: 'Cod. Postal', width: 150, flex:1 },

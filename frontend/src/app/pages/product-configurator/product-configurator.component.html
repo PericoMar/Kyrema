@@ -31,6 +31,68 @@
           </div>
           </header>
 
+          <h2>Datos generales</h2>
+          <hr>
+          <div class="overflow-scroll">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="col-nombre">Nombre del campo</th>
+                <th class="col-tipo-dato">
+                  <div class="center">
+                    Tipo de Dato
+                  </div>
+                </th>
+                <th class="col-posicion">
+                  <div class="center">
+                    Posición en el Certificado
+                  </div>
+                </th>
+                <th class="col-visible">
+                  <div class="center">
+                    Visible en la tabla
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (campoGeneral of camposGenerales; track $index) {
+                <tr>
+                  <td class="col-nombre">
+                    <div class="center">
+                      <input type="text" [placeholder]="campoGeneral.nombre" [(ngModel)]="campoGeneral.nombre" name="nombreGeneral{{$index}}" disabled>
+                    </div>
+                  </td>
+                  <td class="col-tipo-dato">
+                    <div class="center div-select">
+                      <select [(ngModel)]="campoGeneral.tipoDato" name="tipoDatoGeneral{{$index}}" disabled>
+                        @for(tipo of tiposDato ; track $index) {
+                          <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                        }
+                      </select>
+                    </div>
+                  </td>
+                  <td class="col-posicion">
+                    <div class="center" style="gap:4px;">
+                      <div class="small-input">
+                        <input type="text" placeholder="Columna" [(ngModel)]="campoGeneral.columna" name="columna{{$index}}">
+                      </div>
+                      <div class="small-input">
+                        <input type="text" placeholder="Fila" [(ngModel)]="campoGeneral.fila" name="fila{{$index}}">
+                      </div>
+                    </div>
+                  </td>
+                  <td class="col-visible">
+                    <div class="center">
+                      <mat-checkbox [(ngModel)]="campoGeneral.visible" name="visibleGeneral{{$index}}"></mat-checkbox>
+                    </div>
+                  </td>
+                </tr>                
+              }
+            </tbody>
+          </table>
+          </div>
+
           <h2>Datos del asegurado</h2>
           <hr>
           <div class="overflow-scroll">
@@ -61,7 +123,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (campoFijo of camposFijos; track $index) {
+              @for (campoFijo of camposAsegurado; track $index) {
                 <tr>
                   <td class="col-nombre">
                     <div class="center">

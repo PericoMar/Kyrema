@@ -37,7 +37,6 @@ class ProductoController extends Controller
 
             // Agregar campos adicionales
             $table->unsignedBigInteger('sociedad_id')->nullable();
-            $table->string('sociedad')->nullable();
             $table->unsignedBigInteger('comercial_id')->nullable();
 
             foreach ($campos as $campo) {

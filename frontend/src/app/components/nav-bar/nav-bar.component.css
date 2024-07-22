@@ -3,6 +3,7 @@ nav.nav-bar{
     display: flex;
     align-items: center;
     padding: 0px 90px 0px 82px;
+    background-color: var(--nav-bar-color);
 }
 
 ul.nav-options{

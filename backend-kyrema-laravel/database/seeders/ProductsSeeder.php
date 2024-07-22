@@ -27,6 +27,7 @@ class ProductsSeeder extends Seeder
                 'sociedad_id' => 1,
                 'sociedad' => 'Admin',
                 'comercial_id' => 1,
+                'comercial' => 'Admin',
                 'dni' => $faker->unique()->numerify('########') . strtoupper($faker->randomLetter),
                 'nombre_socio' => $faker->firstName,
                 'apellido_1' => $faker->lastName,
@@ -39,8 +40,12 @@ class ProductsSeeder extends Seeder
                 'provincia' => $faker->state,
                 'codigo_postal' => $faker->numerify('#####'),
                 'fecha_de_nacimiento' => $fechaDeNacimiento,
+
+                // Campos variables
                 'deciamal' => $faker->randomFloat(2, 0, 99999),
                 'integer' => $faker->numerify('###'),
+
+                // Timestamps
                 'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'
                 'updated_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'
             ]);

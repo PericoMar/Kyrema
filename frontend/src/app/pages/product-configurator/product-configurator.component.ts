@@ -57,19 +57,29 @@ export class ProductConfiguratorComponent {
     });
   }
 
-  camposFijos: Campo[] = [
+  camposGenerales : Campo[] = [
+    { nombre: 'Codigo producto', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+    { nombre: 'Sociedad', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+    { nombre: 'Comercial', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
+    { nombre: 'Tipo de pago', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+    { nombre: 'Prima del seguro', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
+    { nombre: 'Cuota de asociación', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
+    { nombre: 'Precio Total', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+  ]
+
+  camposAsegurado: Campo[] = [
     { nombre: 'DNI', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
     { nombre: 'Nombre socio', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' },
-    { nombre: 'Apellido 1', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Apellido 2', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+    { nombre: 'Apellido 1', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' },
+    { nombre: 'Apellido 2', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' },
     { nombre: 'Email', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
     { nombre: 'Telefono', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Sexo', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Dirección', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' },
-    { nombre: 'Población', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Provincia', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
-    { nombre: 'Codigo Postal', tipoDato: 'number', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Fecha de nacimiento', tipoDato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
+    { nombre: 'Sexo', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado' },
+    { nombre: 'Dirección', tipoDato: 'text',fila: '',columna: '', visible: false, obligatorio:false, grupo: 'datos_asegurado' },
+    { nombre: 'Población', tipoDato: 'text',fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' },
+    { nombre: 'Provincia', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado'},
+    { nombre: 'Codigo Postal', tipoDato: 'number', fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' },
+    { nombre: 'Fecha de nacimiento', tipoDato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado'},
   ];
   campos: Campo[] = [{ nombre: '', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' }];
 
@@ -97,17 +107,27 @@ export class ProductConfiguratorComponent {
   crearTipoProducto() {
 
     
-    const camposFormulario = [...this.camposFijos, ...this.campos]; // Concatenación de campos fijos y variables
+    const camposFormulario = [...this.camposGenerales, ...this.camposAsegurado, ...this.campos]; // Concatenación de campos fijos y variables
 
     const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(camposFormulario);
 
-    if(this.letrasIdentificacionEnUso()) {
+    const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
+
+    if(this.campoVariableVacio()) {
+        
+      this.showErrorDialog('Hay un campo variable con el nombre vacío');
+  
+    } else if(this.letrasIdentificacionEnUso()) {
 
       this.showErrorDialog('Las letras de identificación seleccionadas ya están siendo usadas por otro producto');
 
     }else if(this.plantillaEnUso()) {
 
       this.showErrorDialog('El nombre de la plantilla seleccionada ya está siendo usado por otro producto');
+
+    } else if(campoUsoCaracteresEspeciales){
+
+      this.showErrorDialog('No está permitido el uso de caracteres especiales. Campo: '+ campoUsoCaracteresEspeciales);
 
     } else if(campoFormatoFilasColumnasIncorrecto) {
 
@@ -168,6 +188,29 @@ export class ProductConfiguratorComponent {
     }
     return false; // Devuelve false si todos los campos tienen el formato correcto
   }
+
+  private usoCaracteresEspeciales(): string | boolean {
+    // Expresión regular para caracteres especiales, permitiendo espacios
+    const caracteresEspeciales = /[!@#\$%\^\&*\)\(+=._-]+/g;
+
+    for (const campo of this.campos) {
+        // Verifica si el campo contiene caracteres especiales (excluyendo espacios)
+        if (caracteresEspeciales.test(campo.nombre)) {
+            return campo.nombre;
+        }
+    }
+    return false;
+  }
+
+  private campoVariableVacio() : boolean {
+    for(const campo of this.campos) {
+      if(campo.nombre === '') {
+        return true;
+      }
+    }
+    return false;
+  }
+
 
   showErrorDialog(message: string): void {
     this.dialog.open(ErrorDialogComponent, {

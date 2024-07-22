@@ -5,52 +5,89 @@ import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSuffix } from '@angular/material/form-field';
+import { TipoProducto } from '../../../interfaces/tipo-producto';
+import { FamilyProductService } from '../../../services/family-product.service';
+import { RatesService } from '../../../services/rates.service';
+import { Tarifa } from '../../../interfaces/tarifa';
+import { SpinnerComponent } from '../../../components/spinner/spinner.component';
+import { CommonModule } from '@angular/common';
+import { CdkTableModule } from '@angular/cdk/table';
+
+interface CombinedData {
+  tipoProducto: TipoProducto;
+  tarifa: Tarifa;
+}
 
 @Component({
   selector: 'app-prices',
   standalone: true,
-  imports: [FormsModule, MatButtonModule, MatTableModule, MatFormFieldModule, ReactiveFormsModule, MatSuffix, MatInputModule],
+  imports: [FormsModule, MatButtonModule, MatTableModule, MatFormFieldModule, ReactiveFormsModule, MatSuffix, MatInputModule , SpinnerComponent, CommonModule, CdkTableModule],
   templateUrl: './prices.component.html',
   styleUrl: './prices.component.css'
 })
 export class PricesComponent {
   @Input() infoClass : string = "info-message";
   @Input() infoText : string = "Nota: Los precios que establezca en este formulario se aplicarán únicamente a la sociedad seleccionada.";
-  insurancePricesForm!: FormGroup;
-  insurancesArray!: FormArray;
-  displayedColumns: string[] = ['type', 'premium', 'associationFee', 'totalPrice'];
-  insurances: { type: string }[] = [
-    { type: 'Seguro 1' },
-    { type: 'Seguro 2' },
-    { type: 'Seguro 3' },
-  ];
-  defaultPrices: { premium: number, associationFee: number, totalPrice: number }[] = [
-    { premium: 100, associationFee: 50, totalPrice: 150 },
-    { premium: 120, associationFee: 60, totalPrice: 180 },
-    { premium: 90, associationFee: 45, totalPrice: 135 },
-  ];
+  tarifasForm!: FormGroup;
+  tiposProducto!: TipoProducto[];
+  tarifas! : Tarifa[];
+  combinedData: CombinedData[] = [];
+  displayedColumns: string[] = ['tipoProducto', 'prima_seguro', 'cuota_asociacion', 'precio_total'];
+  @Input() sociedad_id!: string;
 
-  constructor(private fb: FormBuilder) {}
+
+  constructor(
+    private fb: FormBuilder,
+    private familyService: FamilyProductService,
+    private ratesService : RatesService
+  ) {}
 
   ngOnInit() {
-    this.insurancePricesForm = this.fb.group({
-      insurances: this.fb.array(this.insurances.map((insurance, index) => this.createInsuranceGroup(insurance, index)))
+    this.familyService.getTiposProductoPorSociedad(this.sociedad_id).subscribe(
+      data => {
+        this.tiposProducto = data;
+        console.log(this.tiposProducto);
+      },
+      error => {
+        console.error('Error cogiendo los tipos de producto por sociedad', error);
+      }
+    );
+    this.ratesService.getTarifasPorSociedad(this.sociedad_id).subscribe(
+      data => {
+        this.tarifas = data;
+        console.log(this.tarifas);
+        this.combinedData = this.combineArrays(this.tiposProducto, this.tarifas);
+        this.tarifasForm = this.fb.group({
+          tarifas: this.fb.array(this.combinedData.map(data => this.createTarifaGroup(data)))
+        });
+      },
+      error => {
+        console.error('Error cogiendo las tarifas por sociedad', error);
     });
 
-    this.insurancesArray = this.insurancePricesForm.get('insurances') as FormArray;
   }
 
-  createInsuranceGroup(insurance: { type: string }, index: number): FormGroup {
-    const defaultPrice = this.defaultPrices[index];
-    return this.fb.group({
-      type: [insurance.type],
-      premium: [defaultPrice.premium],
-      associationFee: [defaultPrice.associationFee],
-      totalPrice: [defaultPrice.totalPrice]
+  combineArrays(tipoProductos: TipoProducto[], tarifas: Tarifa[]): CombinedData[] {
+    return tipoProductos.map(tipoProducto => {
+      const tarifa = tarifas.find(t => t.tipo_producto_id === tipoProducto.letras_identificacion) || {} as Tarifa;
+      return { tipoProducto, tarifa };
     });
+  }
+
+  createTarifaGroup(data: CombinedData): FormGroup {
+    return this.fb.group({
+      tipo_producto_id: [data.tipoProducto.letras_identificacion],
+      prima_seguro: [data.tarifa.prima_seguro || ''],
+      cuota_asociacion: [data.tarifa.cuota_asociacion || ''],
+      precio_total: [data.tarifa.precio_total || '']
+    });
+  }
+
+  get tarifasFormArray() {
+    return this.tarifasForm.get('tarifas') as FormArray;
   }
 
   onSubmit() {
-    console.log(this.insurancePricesForm.value);
+    console.log(this.tarifasForm.value.tarifas);
   }
 }

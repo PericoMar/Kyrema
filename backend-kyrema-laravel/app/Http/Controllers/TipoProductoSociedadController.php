@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\TipoProductoSociedad;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class TipoProductoSociedadController extends Controller
 {
+
+
     public function index()
     {
         $tipoProductoSociedades = TipoProductoSociedad::all();

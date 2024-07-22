@@ -9,8 +9,8 @@ import {
   OverlayRef,
   PortalModule,
   TemplatePortal
-} from "./chunk-BSGHGAAR.js";
-import "./chunk-L34KD6VI.js";
+} from "./chunk-F63DNMBW.js";
+import "./chunk-X4JBCZB6.js";
 import {
   animate,
   animateChild,
@@ -23,17 +23,19 @@ import {
 } from "./chunk-XAQ7XJHO.js";
 import {
   A11yModule,
-  Directionality,
   ESCAPE,
   FocusMonitor,
   FocusTrapFactory,
   InteractivityChecker,
   MatCommonModule,
+  hasModifierKey
+} from "./chunk-M7ZJBEYB.js";
+import {
+  Directionality,
   Platform,
   _getFocusedElementPierceShadowDom,
-  coerceNumberProperty,
-  hasModifierKey
-} from "./chunk-HALVTVM2.js";
+  coerceNumberProperty
+} from "./chunk-R27UI6VT.js";
 import {
   DOCUMENT,
   Location
@@ -83,11 +85,11 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-FH6MQMEX.js";
-import "./chunk-UKEHM6V6.js";
 import {
   defer,
   merge
 } from "./chunk-V2DXGMIT.js";
+import "./chunk-UKEHM6V6.js";
 import {
   Subject,
   __spreadProps,

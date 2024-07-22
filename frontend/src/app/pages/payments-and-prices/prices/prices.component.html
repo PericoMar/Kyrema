@@ -1,53 +1,65 @@
 <section>
+  
     <p [class]="infoClass">
         {{ infoText }}
     </p>
     <main class="content-block">
-        <form [formGroup]="insurancePricesForm" (ngSubmit)="onSubmit()" id="insurance-prices-form">
-            <table mat-table [dataSource]="insurancesArray.controls">
-              <ng-container matColumnDef="type">
-                <th mat-header-cell *matHeaderCellDef class="type-column"> Tipos de seguros </th>
-                <td mat-cell *matCellDef="let insurance"> {{ insurance.get('type')?.value }} </td>
-              </ng-container>
+      @if(tarifasForm){
+        <form [formGroup]="tarifasForm" (ngSubmit)="onSubmit()">
+          <table mat-table [dataSource]="tarifasFormArray.controls" class="mat-elevation-z8" formArrayName="tarifas">
+
+            <!-- Tipo Producto Column -->
+            <ng-container matColumnDef="tipoProducto">
+              <th mat-header-cell *matHeaderCellDef> Tipo Producto </th>
+              <td mat-cell *matCellDef="let element"> {{ element.tipoProducto.nombre }} </td>
+            </ng-container>
           
-              <ng-container matColumnDef="premium">
-                <th mat-header-cell *matHeaderCellDef> Prima del seguro </th>
-                <td mat-cell *matCellDef="let insurance" [formGroup]="insurance">
-                  <mat-form-field>
-                    <input matInput formControlName="premium" placeholder="€" type="number">
-                    <span matSuffix>€</span>
-                  </mat-form-field>
-                </td>
-              </ng-container>
+            <!-- Prima Seguro Column -->
+            <ng-container matColumnDef="prima_seguro">
+              <th mat-header-cell *matHeaderCellDef> Prima Seguro </th>
+              <td mat-cell *matCellDef="let element">
+                <mat-form-field>
+                  <input matInput formControlName="prima_seguro" placeholder="€" type="number">
+                  <span matSuffix>€</span>
+                </mat-form-field>
+              </td>
+            </ng-container>
           
-              <ng-container matColumnDef="associationFee">
-                <th mat-header-cell *matHeaderCellDef> Cuota de asociación </th>
-                <td mat-cell *matCellDef="let insurance" [formGroup]="insurance">
-                  <mat-form-field>
-                    <input matInput formControlName="associationFee" placeholder="€" type="number">
-                    <span matSuffix>€</span>
-                  </mat-form-field>
-                </td>
-              </ng-container>
+            <!-- Cuota Asociación Column -->
+            <ng-container matColumnDef="cuota_asociacion">
+              <th mat-header-cell *matHeaderCellDef> Cuota Asociación </th>
+              <td mat-cell *matCellDef="let element">
+                <mat-form-field>
+                  <input matInput formControlName="cuota_asociacion" placeholder="€" type="number">
+                  <span matSuffix>€</span>
+                </mat-form-field>
+              </td>
+            </ng-container>
           
-              <ng-container matColumnDef="totalPrice">
-                <th mat-header-cell *matHeaderCellDef> Precio total </th>
-                <td mat-cell *matCellDef="let insurance" [formGroup]="insurance">
-                  <mat-form-field>
-                    <input matInput formControlName="totalPrice" placeholder="€" type="number">
-                    <span matSuffix>€</span>
-                  </mat-form-field>
-                </td>
-              </ng-container>
+            <!-- Precio Total Column -->
+            <ng-container matColumnDef="precio_total">
+              <th mat-header-cell *matHeaderCellDef> Precio Total </th>
+              <td mat-cell *matCellDef="let element">
+                <mat-form-field>
+                  <input matInput formControlName="precio_total" placeholder="€" type="number">
+                  <span matSuffix>€</span>
+                </mat-form-field>
+              </td>
+            </ng-container>
           
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
+            <!-- Header and Row Definitions -->
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           
-            <div class="button-container">
-              <button mat-raised-button color="primary" type="submit">Guardar</button>
-            </div>
-          </form>
+          </table>
           
+          <button mat-raised-button color="primary" type="submit">Submit</button>
+        </form>      
+      } @else {
+        <div class="center">
+          <app-spinner></app-spinner>
+        </div>
+      }
+      
     </main>
 </section>
