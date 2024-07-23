@@ -48,6 +48,7 @@ export class PricesComponent {
     this.familyService.getTiposProductoPorSociedad(this.sociedad_id).subscribe(
       data => {
         this.tiposProducto = data;
+        console.log(this.tiposProducto)
       },
       error => {
         console.error('Error cogiendo los tipos de producto por sociedad', error);
@@ -56,6 +57,7 @@ export class PricesComponent {
     this.ratesService.getTarifasPorSociedad(this.sociedad_id).subscribe(
       data => {
         this.tarifas = data;
+        console.log(this.tarifas)
         this.tarifasPorTipoProducto = this.combineArrays(this.tiposProducto, this.tarifas);
         console.log(this.tarifasPorTipoProducto)
       },

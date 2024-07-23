@@ -16,14 +16,36 @@ class ProductsSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
+        $tableName = 'SE';
+        $tableDatePrefix = Carbon::now()->format('mY');
         
         for ($i = 0; $i < 100; $i++) { // Cambiado a 1000 para más datos
             $fechaDeNacimiento = $faker->dateTimeBetween('-80 years', '-18 years')->format('Y-m-d');
             $pruebaFecha = $faker->dateTimeBetween('-30 years', 'now')->format('Y-m-d');
-            $createdAt = Carbon::now()->toDateTimeString(); // Formato 'Y-m-d H:i:s'
-            $updatedAt = Carbon::now()->toDateTimeString(); // Formato 'Y-m-d H:i:s'
+            $createdAt = Carbon::now()->toDateTimeString();
+            $updatedAt = Carbon::now()->toDateTimeString();
+            
+            // Obtener el último código de producto generado
+            $lastProduct = DB::table('se')
+                ->where('codigo_producto', 'like', $tableDatePrefix . $tableName . '%')
+                ->orderBy('codigo_producto', 'desc')
+                ->first();
+            
+            // Calcular el siguiente número secuencial
+            $lastNumber = $lastProduct ? intval(substr($lastProduct->codigo_producto, -6)) : 0;
+            $newNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
+            
+            // Generar el nuevo código de producto
+            $newCodigoProducto = $tableDatePrefix . $tableName . $newNumber;
 
-            DB::table('tst1')->insert([
+            DB::table('se')->insert([
+                // Campos fijos
+                'codigo_producto' => $newCodigoProducto,
+                'tipo_de_pago' => $faker->randomElement(['Mensual', 'Trimestral', 'Semestral', 'Anual']),
+                'tipo_de_pago_id' => $faker->randomElement([1, 2, 3, 4]),
+                'prima_del_seguro' => $faker->randomFloat(2, 0, 99999),
+                'cuota_de_asociación' => $faker->randomFloat(2, 0, 99999),
+                'precio_total' => $faker->randomFloat(2, 0, 99999),
                 'sociedad_id' => 1,
                 'sociedad' => 'Admin',
                 'comercial_id' => 1,
@@ -42,8 +64,7 @@ class ProductsSeeder extends Seeder
                 'fecha_de_nacimiento' => $fechaDeNacimiento,
 
                 // Campos variables
-                'deciamal' => $faker->randomFloat(2, 0, 99999),
-                'integer' => $faker->numerify('###'),
+                'fecha_evento' => $pruebaFecha,
 
                 // Timestamps
                 'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'

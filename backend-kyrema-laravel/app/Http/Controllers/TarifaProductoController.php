@@ -7,16 +7,46 @@ use Illuminate\Http\Request;
 
 class TarifaProductoController extends Controller
 {
-    private $SOCIEDAD_ADMIN_ID = 1;
+    const SOCIEDAD_ADMIN_ID = '1';
     
     public function getTarifaPorSociedad($id_sociedad)
     {
         // Primero, intenta obtener las tarifas asociadas con el id_sociedad proporcionado
         $tarifas = TarifasProducto::where('id_sociedad', $id_sociedad)->get();
 
-        // Si no hay tarifas para el id_sociedad, obtiene las tarifas con sociedad_id nulo
+        // Si no hay tarifas para el id_sociedad, obtiene las tarifas con sociedad_id SOCIEDAD_ADMIN_ID 
         if ($tarifas->isEmpty()) {
-            $tarifas = TarifasProducto::where('id_sociedad', $SOCIEDAD_ADMIN_ID)->get();
+            $tarifas = TarifasProducto::where('id_sociedad', self::SOCIEDAD_ADMIN_ID)->get();
+        }
+
+        // Devuelve las tarifas en formato JSON
+        return response()->json($tarifas);
+    }
+
+    public function getTarifaPorProducto($id_producto)
+    {
+        // Intenta obtener las tarifas asociadas con el id_producto proporcionado
+        $tarifas = TarifasProducto::where('id_producto', $id_producto)->get();
+
+        // Si no hay tarifas para el id_producto, obtiene las tarifas con producto_id nulo
+        if ($tarifas->isEmpty()) {
+            $tarifas = TarifasProducto::where('id_producto', null)->get();
+        }
+
+        // Devuelve las tarifas en formato JSON
+        return response()->json($tarifas);
+    }
+
+    public function getTarifaPorSociedadAndTipoProducto($id_sociedad, Request $request){
+        // Primero obtenemos de la request el id del tipo de producto
+        $id_tipo_producto = $request->input('tipo_producto_id');
+
+        // Intenta obtener las tarifas asociadas con el id_sociedad y el id_tipo_producto proporcionados
+        $tarifas = TarifasProducto::where('id_sociedad', $id_sociedad)->where('tipo_producto_id', $id_tipo_producto)->get();
+
+        // Si no hay tarifas para el id_sociedad y el id_tipo_producto, obtiene las tarifas con sociedad_id SOCIEDAD_ADMIN_ID y el tipo_producto_id proporcionado
+        if ($tarifas->isEmpty()) {
+            $tarifas = TarifasProducto::where('id_sociedad', self::SOCIEDAD_ADMIN_ID)->where('tipo_producto_id', $id_tipo_producto)->get();
         }
 
         // Devuelve las tarifas en formato JSON

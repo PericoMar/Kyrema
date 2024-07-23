@@ -8,6 +8,11 @@ use App\Models\TipoProductoSociedad;
 
 class TipoProductoController extends Controller
 {
+    public function index()
+    {
+        $tiposProducto = TipoProducto::all();
+        return response()->json($tiposProducto);
+    }
 
     public function getTiposProductoPorSociedad($id_sociedad)
     {

@@ -43,6 +43,26 @@ export class ProductConfiguratorComponent {
     campos: []
   };
   tiposProductos : any[] = [];
+  tarifas : any[] = [
+    {
+      id: 1,
+      nombre : "Prima del seguro",
+      codigo: "prima_del_seguro",
+      valor: ""
+    },
+    {
+      id: 2,
+      nombre : "Cuota de asociación",
+      codigo: "cuota_de_asociacion",
+      valor: ""
+    },
+    {
+      id: 3,
+      nombre : "Precio Total",
+      codigo: "precio_total",
+      valor: ""
+    }
+  ];
 
   constructor(
     private productService : ProductsService,

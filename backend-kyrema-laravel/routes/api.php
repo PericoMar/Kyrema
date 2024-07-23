@@ -28,6 +28,8 @@ use App\Http\Controllers\ExportController;
 Route::get('/productos/{letrasIdentificacion}', [ProductoController::class, 'getProductosByTipoAndSociedades']);
 
 Route::post('/crear-producto/{letrasIdentificacion}', [ProductoController::class, 'crearProducto']);
+Route::post('/editar-producto/{letrasIdentificacion}', [ProductoController::class, 'editarProducto']);
+Route::delete('/eliminar-producto/{letrasIdentificacion}', [ProductoController::class, 'eliminarProducto']);
 
 Route::post('/crear-tipo-producto', [ProductoController::class, 'crearTipoProducto']);
 Route::post('/subir-plantilla/{letrasIdentificacion}', [ProductoController::class, 'subirPlantilla']);
@@ -38,8 +40,6 @@ Route::get('/descargar-plantilla/{letrasIdentificacion}', [ExportController::cla
 
 Route::apiResource('campos', CampoController::class);
 Route::get('/campos', [CampoController::class, 'getByTipoProducto']);
-
-Route::apiResource('valores', ValorController::class);
 
 
 Route::get('tipos-producto/sociedad/{id_sociedad}', [TipoProductoController::class, 'getTiposProductoPorSociedad']);
@@ -62,7 +62,10 @@ Route::apiResource('tipos-anexo', TipoAnexoController::class);
 Route::apiResource('campos-anexo', CampoAnexoController::class);
 Route::apiResource('valores-anexo', ValorAnexoController::class);
 
-Route::get('tarifas-producto/sociedad/{id_sociedad}', [TarifaProductoController::class, 'getTarifaPorSociedad']);
+// Todas las tarifas por sociedad
+Route::get('tarifas/sociedad/{id_sociedad}', [TarifaProductoController::class, 'getTarifaPorSociedad']);
+// Tarifa por tipoProducto y Sociedad
+Route::get('tarifas-producto/sociedad/{id_sociedad}', [TarifaProductoController::class, 'getTarifaPorSociedadAndTipoProducto']);
 Route::apiResource('tarifas-producto', TarifaProductoController::class);
 Route::apiResource('tarifas-anexo', TarifaAnexoController::class);
 

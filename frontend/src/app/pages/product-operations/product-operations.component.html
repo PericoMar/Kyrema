@@ -7,7 +7,7 @@
     <section class="datos-producto section-block">
         @if(camposLoaded){
             <h2>Formulario de gestión</h2>
-            <app-product-form [product]="productSelected" [isProductSelected]="isProductSelected" [tipo_producto]="productUrl" [campos]="camposFormulario"></app-product-form>
+            <app-product-form [product]="productSelected" [letras_identificacion]="productUrl" [campos]="camposFormulario"></app-product-form>
         } @else {
             <div>
                 <p>Cargando...</p>

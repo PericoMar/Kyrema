@@ -10,6 +10,7 @@ import { SocietyService } from '../../services/society.service';
 import { ActionButtonsComponent } from '../society-manager/society-table/action-buttons/action-buttons.component';
 import { ComisionButtonsComponent } from '../society-manager/society-table/comision-buttons/comision-buttons.component';
 import { ProductActionButtonsComponent } from '../../components/product-action-buttons/product-action-buttons.component';
+import { ProductNotificationService } from '../../services/product-notification.service';
 
 @Component({
   selector: 'app-product-operations',
@@ -39,7 +40,8 @@ export class ProductOperationsComponent {
     private camposService : CamposService,
     private productsService : ProductsService,
     private societyService : SocietyService,
-    private router : Router
+    private router : Router,
+    private productNotificationService: ProductNotificationService
   ) {
     this.sociedadesBusqueda = this.societyService.getSociedadesHijas();
     this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
@@ -52,6 +54,12 @@ export class ProductOperationsComponent {
       this.productUrl = params.get('product')!;
       this.loadProductData(this.productUrl);
     });
+
+    this.productNotificationService.productNotification$.subscribe(
+      () => {
+        this.loadRowData();
+      }
+    );
   }
 
   public onProductSelectedChanged(product: any) {
@@ -101,15 +109,7 @@ export class ProductOperationsComponent {
           }
         )
 
-        //Recoger todos los valores de la tabla
-        this.productsService.getProductosByTipoAndSociedades(this.familyProduct.letras_identificacion, this.idsSociedades).subscribe(
-          data => {
-            this.rowData = data;
-          },
-          error => {
-            console.log(error); 
-          }
-        )
+        this.loadRowData();
 
         //Recoger los campos del formulario
         this.camposService.getCamposPorTipoProducto(this.familyProduct.id).subscribe(
@@ -159,6 +159,18 @@ export class ProductOperationsComponent {
         console.log(error);
       }
     );   
+  }
+
+  loadRowData() {
+    //Recoger todos los valores de la tabla
+    this.productsService.getProductosByTipoAndSociedades(this.familyProduct.letras_identificacion, this.idsSociedades).subscribe(
+      data => {
+        this.rowData = data;
+      },
+      error => {
+        console.log(error); 
+      }
+    )
   }
 
   getCellRenderer(route: string) {

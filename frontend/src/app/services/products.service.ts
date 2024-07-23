@@ -63,4 +63,9 @@ export class ProductsService {
   editarProducto(tipo_producto: any, productoEditado : any): Observable<any>{
     return this.http.post<any>(`${this.apiUrl}/editar-producto${tipo_producto}`, {productoEditado});
   }
+
+  //Esto elimina una fila en la tabla del producto
+  deleteProduct(tipo_producto: any, id: any): Observable<any>{
+    return this.http.delete<any>(`${this.apiUrl}/eliminar-producto/${tipo_producto}?id=${id}`);
+  }
 }

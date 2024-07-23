@@ -53,6 +53,17 @@
     align-items: flex-start;
 }
 
+.input-suffix-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.input-suffix {
+    margin-left: -20px; /* Ajusta el valor según sea necesario */
+    padding-left: 5px;
+}
+
 .span-required{
     color: var(--required-color);
 }
@@ -91,6 +102,10 @@
 .codigo_postal{
     min-width: 110px;
     width: 10%;
+}
+
+.inputs-pago{
+    width: 70%;
 }
 
 .select{

@@ -5,6 +5,9 @@ import { ProductsService } from '../../../services/products.service';
 import { SocietyService } from '../../../services/society.service';
 import { UserService } from '../../../services/user.service';
 import { error } from 'console';
+import { RatesService } from '../../../services/rates.service';
+import { FamilyProductService } from '../../../services/family-product.service';
+import { ProductNotificationService } from '../../../services/product-notification.service';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -35,21 +38,30 @@ interface CampoFormulario{
   styleUrls: ['./product-form.component.css']
 })
 export class ProductFormComponent implements OnInit, OnChanges{
-  @Input() isProductSelected : boolean = false;
   @Input() product!: any | null;
+  isLoadingProduct: boolean = false;
   productForm: FormGroup = this.fb.group({});
-  @Input() tipo_producto!: any;
+  @Input() letras_identificacion!: any;
+  tipo_producto!: any;
   sociedades: any;
-  @Input() campos!: Campo[];
+  @Input() campos! : Campo[];
   camposFormularioPorGrupos!: any;
   formIsLoaded : boolean = false;
+  tiposPago : {id:string, nombre:string}[] = [
+    {id: '1', nombre: 'Tarjeta de crédito'},
+    {id: '2', nombre: 'Transferencia bancaria'},
+    {id: '3', nombre: 'Domiciliación bancaria'}
+  ];
 
 
   constructor(
     private fb: FormBuilder,
     private productsService: ProductsService,
     private societyService: SocietyService,
-    private userService: UserService
+    private userService: UserService,
+    private rateService : RatesService,
+    private familyService: FamilyProductService,
+    private productNotificationService: ProductNotificationService
   ) { 
     
   }
@@ -69,25 +81,51 @@ export class ProductFormComponent implements OnInit, OnChanges{
       población: ['', Validators.required],
       provincia: ['', Validators.required],
       codigo_postal: ['', Validators.required],
-      fecha_de_nacimiento: ['', Validators.required]
+      fecha_de_nacimiento: ['', Validators.required],
+      prima_del_seguro: [{value: '', disabled: true}, Validators.required],
+      cuota_de_asociación: [{value: '', disabled: true}, Validators.required],
+      precio_total: [{value: '', disabled: true}, Validators.required],
+      tipo_de_pago_id: ['', Validators.required],
     });
+
+    this.familyService.getTipoProductoPorLetras(this.letras_identificacion).subscribe(
+      data => {
+        this.tipo_producto = data;
+        this.loadPago(this.societyService.getCurrentSociety().id);
+      },
+      error => {
+        console.error(error);
+      }
+    );
 
     // Cargar las sociedades
     this.loadSociedades();
     this.createForm(this.campos);
+
+    this.productForm.get('sociedad_id')!.valueChanges.subscribe(value => {
+      if(!this.isLoadingProduct){
+        this.onSociedadChange(value);
+      }
+    });
     
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['product']) {
+      this.isLoadingProduct = true;
       console.log(this.product);  
       this.productForm.patchValue(this.product);
+      this.isLoadingProduct = false
     }
 
     if(changes['campos']){
       console.log("Campos", this.campos);
       this.createForm(this.campos);
     }
+  }
+
+  onSociedadChange(sociedad_id: string) {
+    this.loadPago(sociedad_id);
   }
 
   loadSociedades(): void {
@@ -104,6 +142,20 @@ export class ProductFormComponent implements OnInit, OnChanges{
         console.error(error);
       }
     );
+  }
+
+  loadPago(id_sociedad : string) : void{
+    this.rateService.getTarifasPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
+      data => {
+        console.log("Tarifas", data);
+        this.productForm.controls['prima_del_seguro'].setValue(data[0].prima_seguro);
+        this.productForm.controls['cuota_de_asociación'].setValue(data[0].cuota_asociacion);
+        this.productForm.controls['precio_total'].setValue(data[0].precio_total);
+        this.productForm.controls['tipo_de_pago_id'].setValue(this.tiposPago[0].id);
+      },
+      error => {
+        console.error(error);
+      });
   }
 
   createForm(campos: Campo[]) {
@@ -135,6 +187,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   eliminateProductSelected() {
     this.productForm.reset();
+    console.log(this.productForm.value);
     this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
   }
 
@@ -150,6 +203,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   onSubmit() {
+    this.productForm.get('prima_del_seguro')?.enable();
+    this.productForm.get('cuota_de_asociación')?.enable();
+    this.productForm.get('precio_total')?.enable();
     console.log(this.productForm.value);
 
     // Hacer las comprobaciones correspondientes antes de enviar el formulario
@@ -164,12 +220,19 @@ export class ProductFormComponent implements OnInit, OnChanges{
     const comercial_id = this.userService.getCurrentUser().id;
     nuevoProducto.comercial_id = comercial_id;
 
+    const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
+    nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
+
     //Si no tiene id se está creando un nuevo producto
-    if(this.product.id == null || this.product.id == ''){
+    if(this.productForm.value.id == null || this.productForm.value.id == ''){
       delete nuevoProducto.id;
-      this.productsService.crearProducto(this.tipo_producto, nuevoProducto).subscribe(
+      this.productsService.crearProducto(this.letras_identificacion, nuevoProducto).subscribe(
         data => {
           console.log(data);
+          this.productForm.get('prima_del_seguro')?.disable();
+          this.productForm.get('cuota_de_asociación')?.disable();
+          this.productForm.get('precio_total')?.disable();
+          this.productNotificationService.notifyChangesOnProducts();
         },
         error => {
           console.log(error);
@@ -177,7 +240,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       )
     } else {
       //Si tiene id se está editando un producto
-      this.productsService.editarProducto(this.tipo_producto, nuevoProducto).subscribe(
+      this.productsService.editarProducto(this.letras_identificacion, nuevoProducto).subscribe(
         data => {
           console.log(data);
         },

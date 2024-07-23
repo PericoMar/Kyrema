@@ -37,6 +37,7 @@ class ProductoController extends Controller
 
             // Agregar campos adicionales
             $table->unsignedBigInteger('sociedad_id')->nullable();
+            $table->unsignedBigInteger('tipo_de_pago_id')->nullable();
             $table->unsignedBigInteger('comercial_id')->nullable();
 
             foreach ($campos as $campo) {
@@ -118,39 +119,6 @@ class ProductoController extends Controller
         }
     }
 
-    public function getProductosPorTipo($tipo_producto_id)
-    {
-        // Obtener los campos visibles para el tipo de producto
-        $camposVisibles = DB::table('campos')
-            ->where('tipo_producto_id', $tipo_producto_id)
-            ->where('visible', true)
-            ->get(['id', 'nombre']);
-    
-        // Obtener los valores de esos campos para todos los productos del tipo especificado, ordenados por fecha de creación
-        $valores = DB::table('valores')
-            ->whereIn('campo_id', $camposVisibles->pluck('id'))
-            ->orderBy('created_at', 'asc') // Ordenar por fecha de creación de forma ascendente
-            ->get();
-    
-        // Formatear los datos
-        $productos = [];
-    
-        foreach ($valores as $valor) {
-            $campo = $camposVisibles->firstWhere('id', $valor->campo_id);
-            $campoNombre = strtolower(str_replace(' ', '_', $campo->nombre));
-    
-            if (!isset($productos[$valor->producto_id])) {
-                $productos[$valor->producto_id] = [];
-            }
-    
-            $productos[$valor->producto_id][$campoNombre] = $valor->valor;
-        }
-    
-        // Convertir a array de productos
-        $result = array_values($productos);
-    
-        return response()->json($result);
-    }
 
     public function getProductosByTipoAndSociedades($letrasIdentificacion, Request $request)
     {
@@ -212,6 +180,23 @@ class ProductoController extends Controller
             }
         }
 
+        // Obtener el último código de producto generado
+        $tableDatePrefix = Carbon::now()->format('mY');
+        $lastProduct = DB::table($nombreTabla)
+            ->where('codigo_producto', 'like', $tableDatePrefix . '%')
+            ->orderBy('codigo_producto', 'desc')
+            ->first();
+
+        // Calcular el siguiente número secuencial
+        $lastNumber = $lastProduct ? intval(substr($lastProduct->codigo_producto, -6)) : 0;
+        $newNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
+
+        // Generar el nuevo código de producto
+        $newCodigoProducto = $tableDatePrefix . strtoupper($letrasIdentificacion) . $newNumber;
+
+        // Añadir el código de producto al array de datos
+        $datos['codigo_producto'] = $newCodigoProducto;
+
         // Añadir created_at y updated_at al array de datos
         $datos['created_at'] = Carbon::now()->format('Y-m-d\TH:i:s');
         $datos['updated_at'] = Carbon::now()->format('Y-m-d\TH:i:s');
@@ -221,6 +206,7 @@ class ProductoController extends Controller
 
         return response()->json(['id' => $id], 201);
     }
+
 
 
     public function editarProducto($letrasIdentificacion, Request $request){
@@ -242,6 +228,18 @@ class ProductoController extends Controller
             ->update($datos);
         
         return response()->json(['message' => 'Producto actualizado con éxito'], 200);
+    }
+
+    public function eliminarProducto($letrasIdentificacion, Request $request){
+        // Convertir letras de identificación a nombre de tabla
+        $nombreTabla = strtolower($letrasIdentificacion);
+
+        $id = $request->input('id');
+        
+        // Eliminar el producto de la tabla correspondiente
+        DB::table($nombreTabla)->where('id', $id)->delete();
+        
+        return response()->json(['message' => 'Producto eliminado con éxito'], 200);
     }
     
 }

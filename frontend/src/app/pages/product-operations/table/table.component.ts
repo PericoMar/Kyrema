@@ -104,7 +104,8 @@ export class TableComponent {
     export: 'Exportar',
     csvExport: 'Exportar a CSV',
     excelExport: 'Exportar a Excel',
-  };  
+  };
+
 
   public onRowClicked(event: any) {
     this.productSelected = event.data; // Actualiza productSelected con los datos de la fila

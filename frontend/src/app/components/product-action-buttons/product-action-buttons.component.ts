@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductsService } from '../../services/products.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-product-action-buttons',
@@ -16,7 +18,8 @@ export class ProductActionButtonsComponent {
 
   constructor (
     private productsService: ProductsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) {
 
   }
@@ -55,6 +58,18 @@ export class ProductActionButtonsComponent {
       error: (error: any) => {
         console.error('Error downloading the file', error);
       }
+    });
+  }
+
+  openDeleteDialog(data : any){
+    this.dialog.open(DeleteDialogComponent, {
+      width: '400px',
+      data : {
+        id: data.id,
+        message: '¿Estás seguro que deseas eliminar el siguiente producto?',
+        codigo_producto: data.codigo_producto,
+        tipo_producto: this.letrasIdentificacion,
+      },
     });
   }
 }
