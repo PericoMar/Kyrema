@@ -26,9 +26,6 @@ export class SocietyTableComponent {
     private societyService: SocietyService,
   ){}
 
-  sociedad : any = {
-    nombre : "kyrema"
-  }
 
   public columnDefs: ColDef[] = [
     { field: 'id', headerName: 'ID', width: 150 },

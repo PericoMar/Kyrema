@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Tarifa } from '../interfaces/tarifa';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +18,9 @@ export class RatesService {
 
   getTarifasPorSociedadAndTipoProducto(id_sociedad: string, tipo_producto_id:string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}tarifas-producto/sociedad/${id_sociedad}?tipo_producto_id=${tipo_producto_id}`);
+  }
+
+  setTarifasPorSociedadAndTipoProducto(tarifaProducto : Tarifa): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}tarifa-producto/sociedad`, tarifaProducto);
   }
 }

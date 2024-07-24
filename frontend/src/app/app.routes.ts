@@ -12,6 +12,7 @@ import { authGuard } from './auth.guard';
 import { TarifasComponent } from './pages/tarifas/tarifas.component';
 import { CommissionsComponent } from './pages/commissions/commissions.component';
 import { CommercialsCommissionsTableComponent } from './pages/commercials-commissions-table/commercials-commissions-table.component';
+import { CreateSocietyComponent } from './pages/create-society/create-society.component';
 
 export const routes: Routes = [
     {
@@ -48,8 +49,9 @@ export const routes: Routes = [
         { path: 'comisiones-comerciales/:sociedad' , component: CommercialsCommissionsTableComponent},
         { path: 'comisiones-comercial/:comercial' , component: CommissionsComponent},
         { path: 'sociedades/pagos/:sociedad', component: PaymentsAndPricesComponent, },
+        { path: 'sociedades/crear/:sociedad', component: CreateSocietyComponent },
         { path: 'sociedades/productos/:sociedad', component: ProductOperationsComponent },
-        { path: 'sociedades/permisos/:sociedad', component: ProductOperationsComponent },
+        { path: 'sociedades/anexos/:sociedad', component: ProductOperationsComponent },
         { path: 'sociedades/modificar/:sociedad', component: ProductOperationsComponent },
         { path: 'gestion-productos' , component: ProductsManagerComponent, },
         { path: 'configurador-productos' , component: ProductConfiguratorComponent},

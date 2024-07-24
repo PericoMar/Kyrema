@@ -14,7 +14,7 @@
               <label for="nombre_producto">Letras de identificación</label>
               <input type="text" class="nombre-producto" [(ngModel)]="letrasIdentificacion" name="letrasIdentificacion" placeholder="Escriba aquí las letras de identificación">
             </div>
-            <div>
+            <div class="input-file">
               <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
                 (change)="onFileSelected($event)" #fileUpload>
 
@@ -262,7 +262,7 @@
               <div class="input-container prima_del_seguro">
                 <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
                 <div class="input-suffix-container">
-                  <input [id]="tarifa.codigo" [(ngModel)]="tarifa.value" type="text" class="input-field" name="tarifa{{tarifa.id}}">
+                  <input [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
                   <span class="input-suffix">€</span>
                 </div>
               </div>

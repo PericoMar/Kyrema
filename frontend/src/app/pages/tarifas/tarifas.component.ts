@@ -8,6 +8,10 @@ import { PricesComponent } from '../payments-and-prices/prices/prices.component'
   styleUrl: './tarifas.component.css'
 })
 export class TarifasComponent {
+  sociedad_admin_id = '1';
+
   infoText : string = "Nota: Los precios que establezca en este formulario se aplicarán en todas las sociedades.";
   infoClass : string = "info-message alert";
+
+
 }

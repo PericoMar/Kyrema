@@ -1,0 +1,183 @@
+<section class="create-society-section">
+    <header>
+        <h1>Crear sociedad</h1>
+    </header>
+    <main class="content-block">
+        <form>
+            <div class="space-between">
+            <h3 class="form-section-title">Datos generales</h3>
+            <div class="input-file">
+                <input type="file" class="file-input" accept=".png, .jpg, .jpeg, .svg"
+                  (change)="onFileSelected($event)" #fileUpload>
+  
+                  <div class="file-upload">
+  
+                  {{fileName || "No has añadido ningun logo aún."}}
+  
+                    <button type="button" mat-mini-fab color="primary" class="upload-btn"
+                      (click)="fileUpload.click()">
+                        <mat-icon>attach_file</mat-icon>
+                    </button>
+                  </div>
+              </div>
+            </div>
+
+            <fieldset class="input-group">
+                
+                <!-- Nombre (obligatorio) -->
+                <div class="input-container nombre">
+                    <label for="nombre" class="input-label">Nombre <span class="span-required">*</span></label>
+                    <input id="nombre" formControlName="nombre" class="input-field" placeholder="Ej: Sociedad Anónima" required>
+                </div>
+
+                <!-- CIF (opcional) -->
+                <div class="input-container cif">
+                    <label for="cif" class="input-label">CIF</label>
+                    <input id="cif" formControlName="cif" class="input-field" placeholder="Ej: A12345678">
+                </div>
+            
+                <!-- Correo Electrónico (obligatorio) -->
+                <div class="input-container correo_electronico">
+                    <label for="correo_electronico" class="input-label">Correo Electrónico <span class="span-required">*</span></label>
+                    <input id="correo_electronico" formControlName="correo_electronico" type="email" class="input-field" placeholder="Ej: ejemplo@dominio.com" required>
+                </div>
+
+                
+            </fieldset>
+            
+            <fieldset class="input-group">
+                <!-- Tipo de Sociedad (obligatorio) -->
+                <div class="input-container tipo_sociedad">
+                    <label for="tipo_sociedad" class="input-label">Tipo de Sociedad <span class="span-required">*</span></label>
+                    <input id="tipo_sociedad" formControlName="tipo_sociedad" class="input-field" placeholder="Ej: Sociedad Anónima" required>
+                </div>
+
+                <!-- Código Sociedad (opcional) -->
+                <div class="input-container codigo_sociedad">
+                    <label for="codigo_sociedad" class="input-label">Código Sociedad</label>
+                    <input id="codigo_sociedad" formControlName="codigo_sociedad" class="input-field" placeholder="Ej: SOC123456">
+                </div>
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Dirección</h3>
+            
+            <fieldset class="input-group">
+                
+                <!-- Dirección (opcional) -->
+                <div class="input-container direccion">
+                    <label for="direccion" class="input-label">Dirección</label>
+                    <input id="direccion" formControlName="direccion" class="input-field" placeholder="Ej: Calle Mayor, 10">
+                </div>
+            
+                <!-- Población (opcional) -->
+                <div class="input-container poblacion">
+                    <label for="poblacion" class="input-label">Población <span class="span-required">*</span></label>
+                    <input id="poblacion" formControlName="poblacion" class="input-field" placeholder="Ej: Madrid">
+                </div>
+            
+                <!-- País (opcional) -->
+                <div class="input-container pais">
+                    <label for="pais" class="input-label">País</label>
+                    <input id="pais" formControlName="pais" class="input-field" placeholder="Ej: España">
+                </div>
+            
+                <!-- Código Postal (opcional) -->
+                <div class="input-container codigo_postal">
+                    <label for="codigo_postal" class="input-label">Código Postal</label>
+                    <input id="codigo_postal" formControlName="codigo_postal" type="number" class="input-field" placeholder="Ej: 28001">
+                </div>
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Contacto</h3>
+            
+            <fieldset class="input-group">
+                <!-- Teléfono (opcional) -->
+                <div class="input-container telefono">
+                    <label for="telefono" class="input-label">Teléfono</label>
+                    <input id="telefono" formControlName="telefono" class="input-field" placeholder="Ej: 912345678">
+                </div>
+            
+                <!-- Fax (opcional) -->
+                <div class="input-container fax">
+                    <label for="fax" class="input-label">Fax</label>
+                    <input id="fax" formControlName="fax" class="input-field" placeholder="Ej: 912345679">
+                </div>
+            
+                <!-- Móvil (opcional) -->
+                <div class="input-container movil">
+                    <label for="movil" class="input-label">Móvil</label>
+                    <input id="movil" formControlName="movil" class="input-field" placeholder="Ej: 600123456">
+                </div>
+
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Datos bancarios</h3>
+            
+            <!-- IBAN (opcional) -->
+            <div class="input-container iban">
+                <label for="iban" class="input-label">IBAN</label>
+                <input id="iban" formControlName="iban" class="input-field" placeholder="Ej: ES1234567890123456789012">
+            </div>
+
+            <fieldset class="input-group">
+                
+            
+                <!-- Banco (opcional) -->
+                <div class="input-container banco">
+                    <label for="banco" class="input-label">Banco</label>
+                    <input id="banco" formControlName="banco" class="input-field" placeholder="Ej: Banco de España">
+                </div>
+            
+                <!-- Sucursal (opcional) -->
+                <div class="input-container sucursal">
+                    <label for="sucursal" class="input-label">Sucursal</label>
+                    <input id="sucursal" formControlName="sucursal" class="input-field" placeholder="Ej: 1234">
+                </div>
+            
+                <!-- DC (opcional) -->
+                <div class="input-container dc">
+                    <label for="dc" class="input-label">DC</label>
+                    <input id="dc" formControlName="dc" class="input-field" placeholder="Ej: 12">
+                </div>
+            
+                <!-- Número de Cuenta (opcional) -->
+                <div class="input-container numero_cuenta">
+                    <label for="numero_cuenta" class="input-label">Número de Cuenta</label>
+                    <input id="numero_cuenta" formControlName="numero_cuenta" class="input-field" placeholder="Ej: 12345678901234567890">
+                </div>
+            
+                <!-- SWIFT (opcional) -->
+                <div class="input-container swift">
+                    <label for="swift" class="input-label">SWIFT</label>
+                    <input id="swift" formControlName="swift" class="input-field" placeholder="Ej: BBVAESMMXXX">
+                </div>
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Otros</h3>
+            
+            <fieldset class="input-group">
+                <!-- Dominio (opcional) -->
+                <div class="input-container dominio">
+                    <label for="dominio" class="input-label">Dominio</label>
+                    <input id="dominio" formControlName="dominio" class="input-field" placeholder="Ej: ejemplo.com">
+                </div>
+            
+                <!-- Observaciones (opcional) -->
+                <div class="input-container observaciones">
+                    <label for="observaciones" class="input-label">Observaciones</label>
+                    <textarea id="observaciones" formControlName="observaciones" class="input-field" placeholder="Observaciones adicionales"></textarea>
+                </div>
+            </fieldset>
+
+            <footer class="form-footer">
+                <button type="submit" class="submit-button">
+                    Crear sociedad
+                </button>
+            </footer>
+        </form>
+    </main>
+</section>

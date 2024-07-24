@@ -61,15 +61,13 @@ class ProductoController extends Controller
             $table->timestamps();
         });
 
-        // Insertar información del tipo de producto en la tabla correspondiente
-        DB::table('tipo_producto')->insert([
+        // Insertar información del tipo de producto en la tabla correspondiente y obtener el ID
+        $tipoProductoId = DB::table('tipo_producto')->insertGetId([
             'letras_identificacion' => $letrasIdentificacion,
             'nombre' => $nombreProducto,
             'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
         ]);
-        // Obtener el ID del tipo de producto recién creado
-        $tipoProductoId = DB::getPdo()->lastInsertId();
 
         // Insertar información de los campos en la tabla 'campos'
         foreach ($campos as $campo) {
@@ -89,7 +87,10 @@ class ProductoController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Producto creado con éxito'], 200);
+        return response()->json([
+            'message' => 'Producto creado con éxito',
+            'id' => $tipoProductoId
+        ], 200);
     }
 
     public function subirPlantilla($letrasIdentificacion, Request $request)

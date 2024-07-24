@@ -4,7 +4,7 @@
         {{ infoText }}
     </p>
     <main class="content-block">
-      @if(tarifasPorTipoProducto){
+      @if(tarifasPorTipoProducto.length > 0) {
         <form (ngSubmit)="onSubmit()" #productForm="ngForm">
           <table mat-table [dataSource]="tarifasPorTipoProducto" class="mat-elevation-z8 centered-table">
           
@@ -53,7 +53,7 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           </table>
           <div class="button-container">
-            <button mat-raised-button color="primary" type="submit">Submit</button>
+            <button mat-raised-button color="primary" type="submit">Guardar</button>
           </div>
         </form>
         

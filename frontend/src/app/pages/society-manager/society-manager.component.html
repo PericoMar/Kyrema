@@ -1,6 +1,9 @@
 <section class="society-manager">
-    <header>
+    <header class="space-between">
         <h1>Gestión de sociedades</h1>
+        @if(currentSociety.sociedad_padre_id == null || currentSociety.sociedad_padre_id == '1'){
+            <a [routerLink]="['/sociedades/crear', currentSociety.id]" routerLinkActive="active" class="button-crear">Crear nueva sociedad</a>
+        }   
     </header>
     <main class="society-list">
         <app-society-table></app-society-table>

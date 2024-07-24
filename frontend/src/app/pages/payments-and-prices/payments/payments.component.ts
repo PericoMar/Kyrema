@@ -13,9 +13,11 @@ import { CommonModule } from '@angular/common';
   styleUrl: './payments.component.css'
 })
 export class PaymentsComponent {
+  
   pricesForm: FormGroup;
   insurances = ['Seguro 1', 'Seguro 2', 'Seguro 3']; // Ejemplo de seguros
-  paymentTypes = ['Pago 1', 'Pago 2', 'Pago 3']; // Ejemplo de tipos de pago
+
+  paymentTypes = ['No completado', 'Banco', 'En mano', 'PayPal', 'Tarjeta de crédito']; // Ejemplo de tipos de pago
   displayedColumns: string[];
 
   constructor(private fb: FormBuilder) {

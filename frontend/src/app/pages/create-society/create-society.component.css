@@ -1,0 +1,32 @@
+.create-society-section{
+    padding: var(--section-padding);
+}
+
+.content-block{
+    padding:40px 80px;
+}
+
+.file-input {
+    display: none;
+  }
+
+.cif{
+    width: 20%;
+}
+
+.correo_electronico{
+    width: 20%;
+}
+
+hr{
+    margin-bottom: 20px;
+}
+
+.form-section-title{
+    font-weight: 500;
+}
+
+.form-footer{
+    display: flex;
+    justify-content: flex-end;
+}

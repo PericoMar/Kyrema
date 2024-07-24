@@ -166,6 +166,12 @@ input[disabled], select[disabled] {
   margin-bottom: 10px;
 }
 
+.input-file{
+  width: 25%;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .input-group{
   display: flex;
   justify-content: flex-start;

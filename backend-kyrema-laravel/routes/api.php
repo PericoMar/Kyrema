@@ -51,7 +51,8 @@ Route::get('sociedad/{id}', [SociedadController::class, 'show']);
 Route::get('sociedad/hijas/{id}', [SociedadController::class, 'getSociedadesHijas']);
 
 
-Route::apiResource('tipo-producto-sociedad', TipoProductoSociedadController::class);
+// Gestiona todas las solicitudes de la conexion entre TipoProducto y Sociedad
+Route::post('tipo-producto-sociedad', [TipoProductoSociedadController::class, 'store']);
 
 Route::apiResource('comerciales', ComercialController::class);
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -66,6 +67,9 @@ Route::apiResource('valores-anexo', ValorAnexoController::class);
 Route::get('tarifas/sociedad/{id_sociedad}', [TarifaProductoController::class, 'getTarifaPorSociedad']);
 // Tarifa por tipoProducto y Sociedad
 Route::get('tarifas-producto/sociedad/{id_sociedad}', [TarifaProductoController::class, 'getTarifaPorSociedadAndTipoProducto']);
+// Set tarifa por sociedad y tipoProducto
+Route::post('tarifa-producto/sociedad', [TarifaProductoController::class, 'store']);
+
 Route::apiResource('tarifas-producto', TarifaProductoController::class);
 Route::apiResource('tarifas-anexo', TarifaAnexoController::class);
 

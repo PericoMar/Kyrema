@@ -11,6 +11,9 @@ import { FamilyProductService } from '../../services/family-product.service';
 import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { formatWithOptions } from 'util';
+import { RatesService } from '../../services/rates.service';
+import { Tarifa } from '../../interfaces/tarifa';
+import { SocietyService } from '../../services/society.service';
 
 
 interface Campo {
@@ -31,6 +34,7 @@ interface Campo {
   styleUrl: './product-configurator.component.css'
 })
 export class ProductConfiguratorComponent {
+  private readonly SOCIEDAD_ADMIN_ID = '1';
   tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }];
   fileName = '';
   selectedFile! : File;
@@ -68,6 +72,8 @@ export class ProductConfiguratorComponent {
     private productService : ProductsService,
     private familyService : FamilyProductService,
     public dialog: MatDialog,
+    private ratesService : RatesService,
+    private societyService : SocietyService
   ) {
     this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
       this.tiposProductos = tiposProducto;
@@ -153,6 +159,10 @@ export class ProductConfiguratorComponent {
 
       this.showErrorDialog('El formato de las filas o columnas no es correcto en el campo: ' + campoFormatoFilasColumnasIncorrecto);
 
+    } else if(this.tarifasVacias()) {
+
+      this.showErrorDialog('Hay tarifas sin rellenar');
+
     } else {
 
 
@@ -165,8 +175,28 @@ export class ProductConfiguratorComponent {
       console.log(nuevoProducto);
       
       this.productService.crearTipoProducto(nuevoProducto).subscribe((res) => {
+        // La respuesta contiene la información del nuevo tipo de producto
+        const id_tipo_producto = res.id.toString();
         console.log(res);
         this.productService.subirPlantilla(this.letrasIdentificacion, this.selectedFile).subscribe((res:any) => {
+          console.log(res);
+        });
+        //'tipo_producto_id' => 'required|string|max:255',
+        // 'id_sociedad' => 'required|string|max:255|exists:sociedades,id',
+        // 'prima_seguro' => 'required|numeric',
+        // 'cuota_asociacion' => 'required|numeric',
+        // 'precio_total' => 'required|numeric',
+        const tarifaNuevoProducto : Tarifa = {
+          tipo_producto_id: id_tipo_producto,
+          id_sociedad: this.SOCIEDAD_ADMIN_ID,
+          prima_seguro: this.tarifas[0].valor,
+          cuota_asociacion: this.tarifas[1].valor,
+          precio_total: this.tarifas[2].valor
+        };
+        this.ratesService.setTarifasPorSociedadAndTipoProducto(tarifaNuevoProducto).subscribe((res:any) => {
+          console.log(res);
+        });
+        this.societyService.connectSocietyWithTipoProducto(this.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
           console.log(res);
         });
       },
@@ -225,6 +255,15 @@ export class ProductConfiguratorComponent {
   private campoVariableVacio() : boolean {
     for(const campo of this.campos) {
       if(campo.nombre === '') {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private tarifasVacias() : boolean {
+    for(const tarifa of this.tarifas) {
+      if(tarifa.valor === '') {
         return true;
       }
     }
