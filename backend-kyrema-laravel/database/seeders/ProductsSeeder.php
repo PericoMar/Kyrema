@@ -26,7 +26,7 @@ class ProductsSeeder extends Seeder
             $updatedAt = Carbon::now()->toDateTimeString();
             
             // Obtener el último código de producto generado
-            $lastProduct = DB::table('se')
+            $lastProduct = DB::table($tableName)
                 ->where('codigo_producto', 'like', $tableDatePrefix . $tableName . '%')
                 ->orderBy('codigo_producto', 'desc')
                 ->first();
@@ -38,7 +38,7 @@ class ProductsSeeder extends Seeder
             // Generar el nuevo código de producto
             $newCodigoProducto = $tableDatePrefix . $tableName . $newNumber;
 
-            DB::table('se')->insert([
+            DB::table($tableName)->insert([
                 // Campos fijos
                 'codigo_producto' => $newCodigoProducto,
                 'tipo_de_pago' => $faker->randomElement(['Mensual', 'Trimestral', 'Semestral', 'Anual']),
@@ -64,7 +64,7 @@ class ProductsSeeder extends Seeder
                 'fecha_de_nacimiento' => $fechaDeNacimiento,
 
                 // Campos variables
-                'fecha_evento' => $pruebaFecha,
+                'fecha_de_evento' => $pruebaFecha,
 
                 // Timestamps
                 'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'

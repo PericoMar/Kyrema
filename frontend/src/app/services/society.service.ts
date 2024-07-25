@@ -68,4 +68,7 @@ export class SocietyService {
     return this.http.post<any>(`${this.apiUrl}/sociedad`, sociedad);
   }
 
+  updateSociety(id: any, sociedad: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/sociedad/${id}`, sociedad);
+  }
 }

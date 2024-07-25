@@ -72,7 +72,6 @@ class ProductoController extends Controller
         // Insertar información de los campos en la tabla 'campos'
         foreach ($campos as $campo) {
             DB::table('campos')->insert([
-                'id' => uniqid(),
                 'nombre' => $campo['nombre'],
                 'tipo_producto_id' => $tipoProductoId,
                 'columna' => $campo['columna'] ?? null,
@@ -80,7 +79,6 @@ class ProductoController extends Controller
                 'tipo_dato' => $campo['tipoDato'],
                 'visible' => $campo['visible'] ?? false,
                 'obligatorio' => $campo['obligatorio'] ?? false,
-                'aparece_formulario' => $campo['formulario'] ?? false,
                 'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d\TH:i:s'),
                 'grupo' => $campo['grupo'] ?? null,
@@ -222,6 +220,8 @@ class ProductoController extends Controller
         
         $datos = $request->input('productoEditado');
         $id = $datos['id'];
+
+        $datos['updated_at'] = Carbon::now()->format('Y-m-d\TH:i:s');
         
         // Actualizar los datos en la tabla correspondiente
         DB::table($nombreTabla)

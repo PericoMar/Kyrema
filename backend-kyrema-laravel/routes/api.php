@@ -20,6 +20,7 @@ use App\Http\Controllers\CPFamiliaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\NavController;
 
 
 
@@ -78,6 +79,6 @@ Route::apiResource('tarifas-anexo', TarifaAnexoController::class);
 
 Route::apiResource('escalado-anexos', EscaladoAnexoController::class);
 
-Route::get('/nav', [NavegacionController::class, 'getNavegacion']);
+Route::get('/nav/{id_sociedad}', [NavController::class, 'getNavegacion']);
 
 Route::apiResource('cp-familia', CPFamiliaController::class);

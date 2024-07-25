@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { NavService } from '../../services/nav.service';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +24,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,  
+    private navService : NavService
   ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -39,9 +41,20 @@ export class LoginComponent {
       this.loadingLogin = true;
       const { username, password } = this.loginForm.value;
       this.authService.loginUser(username, password).subscribe(
-        success => {
-          if (success) {
-            this.router.navigate(['/operaciones/1']); // Cambia esto por la ruta de tu dashboard
+        comercial => {
+          if (comercial) {
+            this.navService.getNavegation(comercial.id_sociedad).subscribe(
+              data => {
+                console.log(data[data.length - 1].children);
+                //Navega a la primera pagina dentro de operaciones:
+                if(data.length > 0 && data[data.length - 1].children.length > 0){
+                  this.router.navigate([`${data[data.length - 1].children[0].link}`]);  
+                } else {
+                  this.router.navigate(['/operaciones/1']);
+                }
+                
+              }
+            );
           } else {
             this.errorMessage = 'Credenciales incorrectas';
             this.loadingLogin = false;

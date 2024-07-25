@@ -6,13 +6,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-create-society',
+  selector: 'app-society-form',
   standalone: true,
   imports: [MatIconModule,MatButtonModule, ReactiveFormsModule],
-  templateUrl: './create-society.component.html',
-  styleUrl: './create-society.component.css'
+  templateUrl: './society-form.component.html',
+  styleUrl: './society-form.component.css'
 })
-export class CreateSocietyComponent {
+export class SocietyFormComponent {
+  id_sociedad_formulario!: string;
   sociedad! : Society;
   societyForm!: FormGroup;
   tiposDeSociedad = ['Sociedad de caza', 'Sociedad dependiente'];
@@ -27,6 +28,10 @@ export class CreateSocietyComponent {
     private societyService: SocietyService
   ) {
     this.sociedad_padre_id = this.societyService.getCurrentSociety().id || '';
+
+    this.societyService.getSociedadesHijas();
+
+    this.id_sociedad_formulario = this.societyService.getSociedadIdPorUrl();
   }
 
   ngOnInit(): void {
@@ -76,17 +81,34 @@ export class CreateSocietyComponent {
   onSubmit() {
     if (this.societyForm.valid) {
       const nuevaSociedad: Society = this.societyForm.value;
-      this.societyService.createSociety(nuevaSociedad).subscribe(response => {
-        console.log('Sociedad creada:', response);
-        this.societyService.getSociedadAndHijas(this.sociedad_padre_id).subscribe(response => {
-          this.societyService.guardarSociedadesEnLocalStorage(response);
+      if(this.id_sociedad_formulario == ''){
+        this.societyService.createSociety(nuevaSociedad).subscribe(response => {
+          console.log('Sociedad creada:', response);
+          this.societyService.getSociedadAndHijas(this.sociedad_padre_id).subscribe(response => {
+            this.societyService.guardarSociedadesEnLocalStorage(response);
+          });
+          // Conectar los tipos de producto de la sociedad padre con la nueva sociedad.
+          
+        }, 
+        error => {
+          console.error('Error al crear la sociedad:', error);
         });
-      }, 
-      error => {
-        console.error('Error al crear la sociedad:', error);
-      });
+      } else {
+        this.societyService.updateSociety(this.id_sociedad_formulario, nuevaSociedad).subscribe(response => {
+          console.log('Sociedad actualizada:', response);
+          this.societyService.getSociedadAndHijas(this.sociedad_padre_id).subscribe(response => {
+            this.societyService.guardarSociedadesEnLocalStorage(response);
+          });
+        }, 
+        error => {
+          console.error('Error al actualizar la sociedad:', error);
+        });
+      }
+      
     } else {
       console.log('Formulario no válido');
     }
   }
 }
+
+

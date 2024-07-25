@@ -14,8 +14,7 @@ class SociedadSeeder extends Seeder
      */
     public function run()
     {
-        Sociedad::create([  
-            'id' => '1',
+        Sociedad::create([ 
             'nombre' => 'Admin',
             'codigo_postal' => '0000',
             'poblacion' => 'Admin',

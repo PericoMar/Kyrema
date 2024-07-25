@@ -263,6 +263,7 @@ div.center{
 }
 
 .form-footer button{
+  width: 195px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
   padding:10px;
   background-color:rgb(18, 18, 193);
@@ -274,5 +275,20 @@ div.center{
 .form-footer button:hover{
   background-color: rgb(8, 8, 135);
   cursor: pointer;
+}
+
+.spinner {
+  border: 2px solid white; /* Borde blanco con transparencia */
+  border-top: 2px solid #435966; /* Borde superior completamente blanco */
+  border-radius: 50%;
+  width: 13.5px;
+  height: 13.5px;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 

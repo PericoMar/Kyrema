@@ -73,12 +73,8 @@ class TarifaProductoController extends Controller
             'precio_total' => 'required|numeric',
         ]);
 
-        // Generar un nuevo ID único
-        $newId = $this->generateUniqueId();
-
         // Crear el nuevo registro en la base de datos con el ID generado
         $tarifaProducto = TarifasProducto::create([
-            'id' => $newId,
             'tipo_producto_id' => $request->input('tipo_producto_id'),
             'id_sociedad' => $request->input('id_sociedad'),
             'prima_seguro' => $request->input('prima_seguro'),
@@ -87,13 +83,6 @@ class TarifaProductoController extends Controller
         ]);
 
         return response()->json($tarifaProducto, 201);
-    }
-
-    private function generateUniqueId()
-    {
-        // Puedes personalizar la lógica de generación del ID según sea necesario
-        // Aquí se genera un ID basado en la fecha actual y un número aleatorio
-        return strtoupper(uniqid('ID_', true));
     }
 
     public function show($id)

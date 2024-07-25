@@ -14,7 +14,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  loginUser(usuario: string, contraseña: string): Observable<boolean> {
+  loginUser(usuario: string, contraseña: string): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.post<any>(`${this.loginUrl}/api/auth/login`, { usuario, contraseña }, { headers })
       .pipe(
@@ -40,7 +40,7 @@ export class AuthService {
             localStorage.setItem(this.USER_KEY, JSON.stringify(comercial));
             localStorage.setItem(this.TOKEN_KEY, response.token);
         
-            return true;
+            return comercial;
         }
           return false;
         }),

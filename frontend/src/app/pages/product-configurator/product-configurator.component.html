@@ -270,7 +270,11 @@
           </fieldset>
 
           <footer class="form-footer">
-            <button>Crear nuevo tipo de producto</button>
+            @if(cargandoNuevoProducto){
+              <button class="button-disabled"><div class="spinner"></div></button>
+            }@else {
+              <button>Crear nuevo tipo de producto</button>
+            }
           </footer>
         </form>
     </main>

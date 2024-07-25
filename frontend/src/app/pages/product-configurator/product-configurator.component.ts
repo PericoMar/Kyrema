@@ -14,6 +14,7 @@ import { formatWithOptions } from 'util';
 import { RatesService } from '../../services/rates.service';
 import { Tarifa } from '../../interfaces/tarifa';
 import { SocietyService } from '../../services/society.service';
+import { SpinnerComponent } from '../../components/spinner/spinner.component';
 
 
 interface Campo {
@@ -29,7 +30,7 @@ interface Campo {
 @Component({
   selector: 'app-product-configurator',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, MatInputModule, MatSelectModule, MatCheckboxModule , ErrorDialogComponent],
+  imports: [SpinnerComponent, CommonModule, FormsModule, MatIconModule, MatButtonModule, MatInputModule, MatSelectModule, MatCheckboxModule , ErrorDialogComponent],
   templateUrl: './product-configurator.component.html',
   styleUrl: './product-configurator.component.css'
 })
@@ -46,6 +47,8 @@ export class ProductConfiguratorComponent {
     plantilla: null,
     campos: []
   };
+
+  cargandoNuevoProducto : boolean = false;
   tiposProductos : any[] = [];
   tarifas : any[] = [
     {
@@ -164,7 +167,7 @@ export class ProductConfiguratorComponent {
       this.showErrorDialog('Hay tarifas sin rellenar');
 
     } else {
-
+      this.cargandoNuevoProducto = true;
 
       const nuevoProducto = {
         nombreProducto: this.nombreProducto,
@@ -175,17 +178,13 @@ export class ProductConfiguratorComponent {
       console.log(nuevoProducto);
       
       this.productService.crearTipoProducto(nuevoProducto).subscribe((res) => {
+
         // La respuesta contiene la información del nuevo tipo de producto
         const id_tipo_producto = res.id.toString();
         console.log(res);
         this.productService.subirPlantilla(this.letrasIdentificacion, this.selectedFile).subscribe((res:any) => {
           console.log(res);
         });
-        //'tipo_producto_id' => 'required|string|max:255',
-        // 'id_sociedad' => 'required|string|max:255|exists:sociedades,id',
-        // 'prima_seguro' => 'required|numeric',
-        // 'cuota_asociacion' => 'required|numeric',
-        // 'precio_total' => 'required|numeric',
         const tarifaNuevoProducto : Tarifa = {
           tipo_producto_id: id_tipo_producto,
           id_sociedad: this.SOCIEDAD_ADMIN_ID,
@@ -195,9 +194,11 @@ export class ProductConfiguratorComponent {
         };
         this.ratesService.setTarifasPorSociedadAndTipoProducto(tarifaNuevoProducto).subscribe((res:any) => {
           console.log(res);
-        });
-        this.societyService.connectSocietyWithTipoProducto(this.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
-          console.log(res);
+          this.societyService.connectSocietyWithTipoProducto(this.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
+            console.log(res);
+            // Recargar la pagina:
+            window.location.reload();
+          });
         });
       },
       (error) => {

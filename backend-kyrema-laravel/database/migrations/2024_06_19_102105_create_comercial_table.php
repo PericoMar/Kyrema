@@ -18,21 +18,21 @@ return new class extends Migration
             $table->foreign('id_sociedad')->references('id')->on('sociedad')->onDelete('cascade');
             // Además: DNI, Sexo, Fecha de nacimiento, Fecha de alta, Referido, Direccion, Población, Provincia, Cod. Postal , Telefono, Fax, path Licencia de cazador, path_DNI, path justificante IBAN, path_otros
             $table->string('dni');
-            $table->string('sexo');
-            $table->date('fecha_nacimiento');
-            $table->date('fecha_alta');
-            $table->string('referido');
-            $table->string('direccion');
-            $table->string('poblacion');
-            $table->string('provincia');
-            $table->string('cod_postal');
-            $table->string('telefono');
-            $table->string('fax');
-            $table->string('path_licencia_cazador');
-            $table->string('path_dni');
-            $table->string('path_justificante_iban');
-            $table->string('path_otros');
-            $table->string('path_foto');
+            $table->string('sexo')->nullable();
+            $table->date('fecha_nacimiento')->nullable();
+            $table->date('fecha_alta')->nullable();
+            $table->string('referido')->nullable();
+            $table->string('direccion')->nullable();
+            $table->string('poblacion')->nullable();
+            $table->string('provincia')->nullable();
+            $table->string('cod_postal')->nullable();
+            $table->string('telefono')->nullable();
+            $table->string('fax')->nullable();
+            $table->string('path_licencia_cazador')->nullable();
+            $table->string('path_dni')->nullable();
+            $table->string('path_justificante_iban')->nullable();
+            $table->string('path_otros')->nullable();
+            $table->string('path_foto')->nullable();
             $table->timestamps();
         });
     }

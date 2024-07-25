@@ -56,7 +56,7 @@ export class LayoutMainComponent {
 
   ngOnInit(): void {
     this.user = this.userService.getCurrentUser();
-    this.navService.getNavegation(this.user.nivel).subscribe(
+    this.navService.getNavegation(this.user.id_sociedad).subscribe(
       data => {
         this.navigation = data;
         console.log(this.navigation)

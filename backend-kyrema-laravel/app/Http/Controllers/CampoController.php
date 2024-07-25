@@ -36,7 +36,7 @@ class CampoController extends Controller
             'tipo_producto_id' => 'nullable|string|max:255',
             'visible' => 'required|boolean',
             'obligatorio' => 'required|boolean',
-            'aparece_formulario' => 'required|boolean',
+            'grupo' => 'nullable|string|max:255',
         ]);
 
         $campo = Campos::create($request->all());
@@ -63,7 +63,7 @@ class CampoController extends Controller
             'tipo_producto_id' => 'nullable|string|max:255',
             'visible' => 'boolean',
             'obligatorio' => 'boolean',
-            'aparece_formulario' => 'boolean',
+            'grupo' => 'nullable|string|max:255',
         ]);
 
         $campo = Campos::findOrFail($id);

@@ -61,6 +61,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 
+.button-disabled{
+    cursor: not-allowed;
+}
+
 /* Estilos generales formulario*/
 .input-label {
     margin-bottom: 5px;

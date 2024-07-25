@@ -7,3 +7,9 @@ main.products-manager{
 .products-table{
     padding:40px;
 }
+
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+}
