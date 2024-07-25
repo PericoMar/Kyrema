@@ -16,7 +16,7 @@ class EscaladoAnexoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'anexo_id' => 'required|string|max:255|exists:tipo_anexos,id',
+            'anexo_id' => 'required|numeric|exists:tipo_anexos,id',
             'desde' => 'required|numeric',
             'hasta' => 'required|numeric',
             'precio' => 'required|numeric',

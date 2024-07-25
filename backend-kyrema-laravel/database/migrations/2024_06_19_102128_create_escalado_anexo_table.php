@@ -9,7 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('escalado_anexo', function (Blueprint $table) {
-            $table->string('anexo_id');
+            $table->id();
+            $table->unsignedBigInteger('anexo_id');
             $table->decimal('desde', 10, 2);
             $table->decimal('hasta', 10, 2);
             $table->decimal('precio', 10, 2);

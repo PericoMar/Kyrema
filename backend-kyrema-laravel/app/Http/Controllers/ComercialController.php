@@ -17,7 +17,7 @@ class ComercialController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'id_sociedad' => 'required|string|max:255|exists:sociedades,id',
+            'id_sociedad' => 'required|numeric|exists:sociedad,id',
             'usuario' => 'required|string|max:255',
             'contraseña' => 'required|string|max:255',
         ]);
@@ -43,7 +43,7 @@ class ComercialController extends Controller
     {
         $request->validate([
             'nombre' => 'string|max:255',
-            'id_sociedad' => 'string|max:255|exists:sociedades,id',
+            'id_sociedad' => 'numeric|exists:sociedad,id',
             'usuario' => 'string|max:255',
             'contraseña' => 'string|max:255',
         ]);

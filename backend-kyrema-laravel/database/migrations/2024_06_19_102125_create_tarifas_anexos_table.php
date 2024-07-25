@@ -9,12 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tarifas_anexos', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
             $table->string('anexo');
             $table->boolean('tiene_escala');
-            $table->string('id_producto');
+            $table->unsignedBigInteger('id_tipo_producto');
             $table->decimal('precio', 10, 2);
-            $table->foreign('id_producto')->references('id')->on('tarifas_producto')->onDelete('cascade');
+            $table->foreign('id_tipo_producto')->references('id')->on('tarifas_producto')->onDelete('cascade');
             $table->timestamps();
         });
     }

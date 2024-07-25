@@ -102,7 +102,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .input-suffix {
-    margin-left: -20px; /* Ajusta el valor según sea necesario */
+    margin-left: -20px; 
     padding-left: 5px;
 }
 

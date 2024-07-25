@@ -9,15 +9,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('campos', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
             $table->string('nombre');
+            $table->string('nombre_columna')->nullable();
             $table->string('tipo_producto_id')->nullable();
             $table->string('columna')->nullable();
             $table->string('fila')->nullable();
             $table->string('tipo_dato');
             $table->boolean('visible');
             $table->boolean('obligatorio');
-            $table->boolean('aparece_formulario');
+            $table->string('grupo')->nullable();
             $table->timestamps();
         });
     }

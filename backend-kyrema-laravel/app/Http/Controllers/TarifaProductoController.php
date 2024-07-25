@@ -66,8 +66,8 @@ class TarifaProductoController extends Controller
     {
         // Validar los datos recibidos
         $request->validate([
-            'tipo_producto_id' => 'required|string|max:255',
-            'id_sociedad' => 'required|string|max:255',
+            'tipo_producto_id' => 'required|numeric',
+            'id_sociedad' => 'required|numeric',
             'prima_seguro' => 'required|numeric',
             'cuota_asociacion' => 'required|numeric',
             'precio_total' => 'required|numeric',
@@ -105,8 +105,8 @@ class TarifaProductoController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'producto' => 'string|max:255',
-            'id_sociedad' => 'string|max:255|exists:sociedades,id',
+            'tipo_producto_id' => 'numeric|exists:tipo_producto,id',
+            'id_sociedad' => 'numeric|exists:sociedad,id',
             'prima_seguro' => 'numeric',
             'cuota_asociacion' => 'numeric',
             'precio_total' => 'numeric',

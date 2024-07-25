@@ -19,8 +19,8 @@ class TipoProductoSociedadController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_sociedad' => 'required|string|max:255|exists:sociedad,id',
-            'id_tipo_producto' => 'required|string|max:255|exists:tipo_producto,id',
+            'id_sociedad' => 'required|numeric|exists:sociedad,id',
+            'id_tipo_producto' => 'required|numeric|exists:tipo_producto,id',
         ]);
         
 
@@ -38,8 +38,8 @@ class TipoProductoSociedadController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'id_sociedad' => 'string|max:255|exists:sociedades,id',
-            'id_tipo_producto' => 'string|max:255|exists:tipo_productos,id',
+            'id_sociedad' => 'numeric|exists:sociedades,id',
+            'id_tipo_producto' => 'numeric|exists:tipo_productos,id',
         ]);
 
         $tipoProductoSociedad = TipoProductoSociedad::findOrFail($id);

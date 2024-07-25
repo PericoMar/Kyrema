@@ -18,7 +18,7 @@ class TarifaAnexoController extends Controller
         $request->validate([
             'anexo' => 'required|string|max:255|exists:tipo_anexos,id',
             'tiene_escala' => 'required|boolean',
-            'id_producto' => 'required|string|max:255|exists:tarifa_productos,id',
+            'id_tipo_producto' => 'required|numeric|exists:tarifa_productos,id',
             'precio' => 'required|numeric',
         ]);
 
@@ -38,7 +38,7 @@ class TarifaAnexoController extends Controller
         $request->validate([
             'anexo' => 'string|max:255|exists:tipo_anexos,id',
             'tiene_escala' => 'boolean',
-            'id_producto' => 'string|max:255|exists:tarifa_productos,id',
+            'id_tipo_producto' => 'numeric|exists:tarifa_productos,id',
             'precio' => 'numeric',
         ]);
 

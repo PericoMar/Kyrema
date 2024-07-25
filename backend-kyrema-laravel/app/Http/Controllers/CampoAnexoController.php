@@ -16,8 +16,8 @@ class CampoAnexoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'campo_id' => 'required|string|max:255|exists:campos,id',
-            'tipo_anexo' => 'required|string|max:255|exists:tipo_anexos,id',
+            'campo_id' => 'required|numeric|exists:campos,id',
+            'tipo_anexo' => 'required|numeric|exists:tipo_anexos,id',
             'obligatorio' => 'required|boolean',
         ]);
 
@@ -35,8 +35,8 @@ class CampoAnexoController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'campo_id' => 'string|max:255|exists:campos,id',
-            'tipo_anexo' => 'string|max:255|exists:tipo_anexos,id',
+            'campo_id' => 'numeric|exists:campos,id',
+            'tipo_anexo' => 'numeric|exists:tipo_anexos,id',
             'obligatorio' => 'boolean',
         ]);
 

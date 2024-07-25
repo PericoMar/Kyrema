@@ -16,7 +16,7 @@ class ComercialComisionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_comercial' => 'required|string|max:255|exists:comerciales,id',
+            'id_comercial' => 'required|numeric|exists:comercial,id',
             'porcentual' => 'required|boolean',
             'comision' => 'required|numeric',
         ]);

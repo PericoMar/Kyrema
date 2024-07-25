@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('sociedad', function (Blueprint $table) {
-            $table->string('id', 255)->primary(); // Clave primaria
+            $table->id(); // Clave primaria
             $table->string('nombre', 255)->nullable(false);
             $table->string('codigo_postal', 10)->nullable();
             $table->string('codigo_sociedad', 10)->nullable();
@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('tipo_sociedad', 255)->nullable();
             $table->integer('nivel_sociedad')->nullable();
             $table->binary('logo')->nullable();
-            $table->string('sociedad_padre_id', 255)->nullable(); // Clave foránea auto-referencial
+            $table->unsignedBigInteger('sociedad_padre_id')->nullable(); // Clave foránea auto-referencial
 
             $table->timestamps(); // Añade los campos 'created_at' y 'updated_at'
         });
@@ -24,11 +24,12 @@ return new class extends Migration {
         // Agregar restricción de clave externa con ON DELETE NO ACTION
         Schema::table('sociedad', function (Blueprint $table) {
             $table->foreign('sociedad_padre_id')
-                  ->references('id')
-                  ->on('sociedad')
-                  ->onDelete('no action');
+                ->references('id')
+                ->on('sociedad')
+                ->onDelete('no action');
         });
     }
+
 
     public function down()
     {

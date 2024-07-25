@@ -47,8 +47,10 @@ Route::get('tipos-producto/all', [TipoProductoController::class, 'index']);
 Route::get('tipo-producto/{letras}', [TipoProductoController::class, 'getByLetras']);
 Route::get('tipo-producto/show/{ruta}', [TipoProductoController::class, 'show']);
 
+
 Route::get('sociedad/{id}', [SociedadController::class, 'show']);
 Route::get('sociedad/hijas/{id}', [SociedadController::class, 'getSociedadesHijas']);
+Route::post('sociedad', [SociedadController::class, 'store']);
 
 
 // Gestiona todas las solicitudes de la conexion entre TipoProducto y Sociedad

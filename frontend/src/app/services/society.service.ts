@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable,of, tap } from 'rxjs';
+import { Society } from '../interfaces/society';
 
 @Injectable({
   providedIn: 'root'

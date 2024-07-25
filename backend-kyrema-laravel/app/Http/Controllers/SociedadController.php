@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Sociedad;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class SociedadController extends Controller
 {
@@ -17,14 +19,31 @@ class SociedadController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'codigo_postal' => 'nullable|string|max:10',
+            'cif' => 'nullable|string|max:255',
+            'correo_electronico' => 'required|string|email|max:255',
+            'tipo_sociedad' => 'required|string|max:255',
+            'direccion' => 'nullable|string|max:255',
             'poblacion' => 'nullable|string|max:255',
-            'tipo_sociedad' => 'nullable|string|max:255',
-            'nivel_sociedad' => 'nullable|integer',
-            'sociedad_padre_id' => 'nullable|string|max:255|exists:sociedades,id',
+            'pais' => 'nullable|string|max:255',
+            'codigo_postal' => 'nullable|string|max:10',
+            'codigo_sociedad' => 'nullable|string|max:255',
+            'telefono' => 'nullable|string|max:20',
+            'fax' => 'nullable|string|max:20',
+            'movil' => 'nullable|string|max:20',
+            'iban' => 'nullable|string|max:34',
+            'banco' => 'nullable|string|max:255',
+            'sucursal' => 'nullable|string|max:255',
+            'dc' => 'nullable|string|max:2',
+            'numero_cuenta' => 'nullable|string|max:20',
+            'swift' => 'nullable|string|max:11',
+            'dominio' => 'nullable|string|max:255',
+            'observaciones' => 'nullable|string|max:255',
+            'logo' => 'nullable|string|max:255',
+            'sociedad_padre_id' => 'nullable|numeric|exists:sociedad,id',
         ]);
 
         $sociedad = Sociedad::create($request->all());
+
 
         return response()->json($sociedad, 201);
     }
@@ -55,11 +74,27 @@ class SociedadController extends Controller
     {
         $request->validate([
             'nombre' => 'string|max:255',
-            'codigo_postal' => 'nullable|string|max:10',
+            'cif' => 'nullable|string|max:255',
+            'correo_electronico' => 'string|email|max:255',
+            'tipo_sociedad' => 'string|max:255',
+            'direccion' => 'nullable|string|max:255',
             'poblacion' => 'nullable|string|max:255',
-            'tipo_sociedad' => 'nullable|string|max:255',
-            'nivel_sociedad' => 'nullable|integer',
-            'sociedad_padre_id' => 'nullable|string|max:255|exists:sociedades,id',
+            'pais' => 'nullable|string|max:255',
+            'codigo_postal' => 'nullable|string|max:10',
+            'codigo_sociedad' => 'nullable|string|max:255',
+            'telefono' => 'nullable|string|max:20',
+            'fax' => 'nullable|string|max:20',
+            'movil' => 'nullable|string|max:20',
+            'iban' => 'nullable|string|max:34',
+            'banco' => 'nullable|string|max:255',
+            'sucursal' => 'nullable|string|max:255',
+            'dc' => 'nullable|string|max:2',
+            'numero_cuenta' => 'nullable|string|max:20',
+            'swift' => 'nullable|string|max:11',
+            'dominio' => 'nullable|string|max:255',
+            'observaciones' => 'nullable|string|max:255',
+            'logo' => 'nullable|string|max:255',
+            'sociedad_padre_id' => 'nullable|numeric|exists:sociedad,id',
         ]);
 
         $sociedad = Sociedad::findOrFail($id);

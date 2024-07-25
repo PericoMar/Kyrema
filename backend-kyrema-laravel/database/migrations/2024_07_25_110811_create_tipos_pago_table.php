@@ -6,21 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('tipos_anexos', function (Blueprint $table) {
+        Schema::create('tipos_pago', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            // Nombre cambiado para poder hacerle referencia
+            $table->string('nonbre');
             $table->string('codigo');
-            $table->string('id_tipo_producto')->nullable();
-
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('tipos_anexos');
+        Schema::dropIfExists('tipos_pago');
     }
 };

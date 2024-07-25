@@ -3,7 +3,7 @@
         <h1>Crear sociedad</h1>
     </header>
     <main class="content-block">
-        <form>
+        <form [formGroup]="societyForm" (ngSubmit)="onSubmit()">
             <div class="space-between">
             <h3 class="form-section-title">Datos generales</h3>
             <div class="input-file">

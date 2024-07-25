@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Society } from '../../interfaces/society';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SocietyService } from '../../services/society.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-create-society',
   standalone: true,
-  imports: [MatIconModule,MatButtonModule],
+  imports: [MatIconModule,MatButtonModule, ReactiveFormsModule],
   templateUrl: './create-society.component.html',
   styleUrl: './create-society.component.css'
 })
@@ -26,7 +26,7 @@ export class CreateSocietyComponent {
     private formBuilder: FormBuilder,
     private societyService: SocietyService
   ) {
-    this.sociedad_padre_id = this.societyService.getSociedadIdPorUrl();
+    this.sociedad_padre_id = this.societyService.getCurrentSociety().id || '';
   }
 
   ngOnInit(): void {
@@ -78,6 +78,12 @@ export class CreateSocietyComponent {
       const nuevaSociedad: Society = this.societyForm.value;
       this.societyService.createSociety(nuevaSociedad).subscribe(response => {
         console.log('Sociedad creada:', response);
+        this.societyService.getSociedadAndHijas(this.sociedad_padre_id).subscribe(response => {
+          this.societyService.guardarSociedadesEnLocalStorage(response);
+        });
+      }, 
+      error => {
+        console.error('Error al crear la sociedad:', error);
       });
     } else {
       console.log('Formulario no válido');

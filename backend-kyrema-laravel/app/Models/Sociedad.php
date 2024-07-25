@@ -16,13 +16,31 @@ class Sociedad extends Model
     protected $fillable = [
         'id',
         'nombre',
-        'codigo_postal',
-        'poblacion',
+        'cif',
+        'correo_electronico',
         'tipo_sociedad',
-        'nivel_sociedad',
+        'direccion',
+        'poblacion',
+        'pais',
+        'codigo_postal',
+        'codigo_sociedad',
+        'telefono',
+        'fax',
+        'movil',
+        'iban',
+        'banco',
+        'sucursal',
+        'dc',
+        'numero_cuenta',
+        'swift',
+        'dominio',
+        'observaciones',
+        'logo',
         'sociedad_padre_id',
+        'created_at',
+        'updated_at',
     ];
-
+    
     public function getSociedadesHijasRecursivo($id, &$results = [])
     {
         $sociedades = Sociedad::where('sociedad_padre_id', $id)->get();

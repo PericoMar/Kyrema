@@ -55,7 +55,7 @@ img{
     border-color: var(--dark-green);
   }
   
-  .input-group {
+  .input-pass {
     display: flex;
     align-items: center;
   }
