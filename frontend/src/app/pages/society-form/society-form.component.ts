@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { SocietyService } from '../../services/society.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-society-form',
@@ -25,7 +26,8 @@ export class SocietyFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private societyService: SocietyService
+    private societyService: SocietyService,
+    private router : Router
   ) {
     this.sociedad_padre_id = this.societyService.getCurrentSociety().id || '';
 
@@ -84,10 +86,17 @@ export class SocietyFormComponent {
       if(this.id_sociedad_formulario == ''){
         this.societyService.createSociety(nuevaSociedad).subscribe(response => {
           console.log('Sociedad creada:', response);
+
           this.societyService.getSociedadAndHijas(this.sociedad_padre_id).subscribe(response => {
             this.societyService.guardarSociedadesEnLocalStorage(response);
+    
+            this.router.navigate(['/sociedades']);
+
           });
           // Conectar los tipos de producto de la sociedad padre con la nueva sociedad.
+          this.societyService.connectTipoProductoFromSocietyToAnother(this.sociedad_padre_id, response.id).subscribe(response => {
+            console.log('Tipos de producto conectados:', response);
+          });
           
         }, 
         error => {

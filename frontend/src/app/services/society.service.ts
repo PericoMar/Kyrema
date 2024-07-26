@@ -71,4 +71,8 @@ export class SocietyService {
   updateSociety(id: any, sociedad: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/sociedad/${id}`, sociedad);
   }
+
+  connectTipoProductoFromSocietyToAnother(sociedad_padre_id : string, sociedad_hija_id : string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/sociedad/${sociedad_padre_id}/hija/${sociedad_hija_id}`, {});
+  }
 }

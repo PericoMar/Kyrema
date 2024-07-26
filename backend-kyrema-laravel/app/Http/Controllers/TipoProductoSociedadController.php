@@ -8,7 +8,19 @@ use Illuminate\Http\JsonResponse;
 
 class TipoProductoSociedadController extends Controller
 {
+    public function transferirTiposProductos($id_sociedad_padre, $id_sociedad_hija)
+    {
+        $tipoProductoSociedades = TipoProductoSociedad::where('id_sociedad', $id_sociedad_padre)->get();
 
+        foreach ($tipoProductoSociedades as $tipoProductoSociedad) {
+            $nuevoTipoProductoSociedad = $tipoProductoSociedad->replicate();
+            $nuevoTipoProductoSociedad->id_sociedad = $id_sociedad_hija;
+            $nuevoTipoProductoSociedad->save();
+        }
+
+        return response()->json(['message' => 'Productos transferidos con éxito'], 201);
+
+    }
 
     public function index()
     {

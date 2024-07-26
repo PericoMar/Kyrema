@@ -41,12 +41,17 @@ class SociedadController extends Controller
             'logo' => 'nullable|string|max:255',
             'sociedad_padre_id' => 'nullable|numeric|exists:sociedad,id',
         ]);
-
+    
+        // Crear la sociedad con los datos recibidos
         $sociedad = Sociedad::create($request->all());
-
-
-        return response()->json($sociedad, 201);
+    
+        return response()->json([
+            'id' => $sociedad->id,
+            'message' => 'Sociedad creada con éxito',
+            'sociedad' => $sociedad,
+        ], 201);
     }
+    
 
     public function getSociedadesHijas($id)
     {

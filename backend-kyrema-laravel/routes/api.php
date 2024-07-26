@@ -56,6 +56,7 @@ Route::post('sociedad', [SociedadController::class, 'store']);
 
 // Gestiona todas las solicitudes de la conexion entre TipoProducto y Sociedad
 Route::post('tipo-producto-sociedad', [TipoProductoSociedadController::class, 'store']);
+Route::post('sociedad/{sociedad_padre_id}/hija/{sociedad_hija_id}', [TipoProductoSociedadController::class, 'transferirTiposProductos']);
 
 Route::apiResource('comerciales', ComercialController::class);
 Route::post('/auth/login', [AuthController::class, 'login']);

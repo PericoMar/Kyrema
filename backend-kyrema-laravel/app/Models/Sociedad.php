@@ -4,41 +4,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+//Carbon
+use Carbon\Carbon;
 
 class Sociedad extends Model
 {
     protected $table = 'sociedad';
     protected $primaryKey = 'id';
-    public $incrementing = false;
-    protected $keyType = 'string';
     public $timestamps = false;
 
     protected $fillable = [
-        'id',
-        'nombre',
-        'cif',
-        'correo_electronico',
-        'tipo_sociedad',
-        'direccion',
-        'poblacion',
-        'pais',
-        'codigo_postal',
-        'codigo_sociedad',
-        'telefono',
-        'fax',
-        'movil',
-        'iban',
-        'banco',
-        'sucursal',
-        'dc',
-        'numero_cuenta',
-        'swift',
-        'dominio',
-        'observaciones',
-        'logo',
-        'sociedad_padre_id',
-        'created_at',
-        'updated_at',
+        'nombre', 'cif', 'correo_electronico', 'tipo_sociedad', 'direccion', 
+        'poblacion', 'pais', 'codigo_postal', 'codigo_sociedad', 'telefono', 
+        'fax', 'movil', 'iban', 'banco', 'sucursal', 'dc', 'numero_cuenta', 
+        'swift', 'dominio', 'observaciones', 'logo', 'sociedad_padre_id'
     ];
     
     public function getSociedadesHijasRecursivo($id, &$results = [])
