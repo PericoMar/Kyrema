@@ -141,6 +141,8 @@ export class ProductConfiguratorComponent {
 
     const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
 
+    const campoFilaColumnaRepetida = this.filaColumnaYaEnUso(camposFormulario);
+
     if(this.campoVariableVacio()) {
         
       this.showErrorDialog('Hay un campo variable con el nombre vacío');
@@ -165,7 +167,11 @@ export class ProductConfiguratorComponent {
 
       this.showErrorDialog('Hay tarifas sin rellenar');
 
-    } else {
+    } else if(campoFilaColumnaRepetida){
+
+      this.showErrorDialog('La fila y columna del campo: ' + campoFilaColumnaRepetida + ' ya están siendo usadas');
+
+    } else  {
       this.cargandoNuevoProducto = true;
 
       const nuevoProducto = {
@@ -237,6 +243,20 @@ export class ProductConfiguratorComponent {
         }
     }
     return false; // Devuelve false si todos los campos tienen el formato correcto
+  }
+
+  private filaColumnaYaEnUso(camposFormulario: Campo[]): string | boolean {
+    const campos = camposFormulario.filter(campo => campo.fila !== '' && campo.columna !== '');
+    const camposUnicos = new Set();
+    for (const campo of campos) {
+        const filaColumna = campo.fila + campo.columna;
+        // Comprueba si la fila y columna ya están siendo usadas
+        if (camposUnicos.has(filaColumna)) {
+            return campo.nombre; // Devuelve el nombre del campo con fila y columna repetidas
+        }
+        camposUnicos.add(filaColumna);
+    }
+    return false; // Devuelve false si no hay filas y columnas repetidas
   }
 
   private usoCaracteresEspeciales(): string | boolean {

@@ -31,9 +31,9 @@ export class ProductActionButtonsComponent {
     });
   }
 
-  descargarSeguro(id : any) {
-    console.log('Descargando: ',id)
-    this.productsService.downloadPlantilla(this.letrasIdentificacion, id).subscribe({
+  descargarSeguro(producto : any) {
+    console.log('Descargando: ',producto.id)
+    this.productsService.downloadPlantilla(this.letrasIdentificacion, producto.id).subscribe({
       next: (response: Blob) => {
         const blob = new Blob([response], { type: 'application/pdf' });
   
@@ -44,7 +44,7 @@ export class ProductActionButtonsComponent {
         a.href = url;
   
         // Establecer el nombre de archivo para la descarga
-        const nombreArchivo = 'documento.pdf';
+        const nombreArchivo = producto.codigo_producto + '_' + producto.nombre_socio + '_' + producto.apellido_1 + '_' + producto.apellido_2 + '.pdf';
         a.download = nombreArchivo;
   
         // Adjuntar el enlace al cuerpo del documento y simular clic en el enlace

@@ -12,6 +12,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
   templateUrl: './table.component.html',
   styleUrl: './table.component.css'
 })
+
 export class TableComponent {
   themeClass = "ag-theme-quartz";
   @Output() productSelectedChange: EventEmitter<any> = new EventEmitter<any>();

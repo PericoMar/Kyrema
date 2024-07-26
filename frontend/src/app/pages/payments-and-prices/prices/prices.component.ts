@@ -12,13 +12,16 @@ import { Tarifa } from '../../../interfaces/tarifa';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { CommonModule } from '@angular/common';
 import { CdkTableModule } from '@angular/cdk/table';
+import { MatDialog } from '@angular/material/dialog';
+import { ErrorDialogComponent } from '../../../components/error-dialog/error-dialog.component';
 
 interface TarifasPorTipoProducto {
   id: string,
   nombre: string,
   prima_seguro: string,
   cuota_asociacion: string,
-  precio_total: string
+  precio_total: string,
+  tarifa_sociedad: string
 }
 
 @Component({
@@ -41,7 +44,8 @@ export class PricesComponent {
   constructor(
     private fb: FormBuilder,
     private familyService: FamilyProductService,
-    private ratesService : RatesService
+    private ratesService : RatesService,
+    public dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -70,11 +74,56 @@ export class PricesComponent {
   combineArrays(tiposProductos: TipoProducto[], tarifas: Tarifa[]): any {
     return tarifas.map(tarifa => {
       const tipoProducto = tiposProductos.find(t => t.id === tarifa.tipo_producto_id) || {} as TipoProducto;
-      return { id: tipoProducto.id, nombre: tipoProducto.nombre, prima_seguro: tarifa.prima_seguro, cuota_asociacion: tarifa.cuota_asociacion, precio_total: tarifa.precio_total };
+      return { id: tipoProducto.id, nombre: tipoProducto.nombre, prima_seguro: tarifa.prima_seguro, cuota_asociacion: tarifa.cuota_asociacion, precio_total: tarifa.precio_total , tarifa_sociedad: tarifa.id_sociedad};
     });
   }
 
   onSubmit() {
-    console.log(this.tarifasPorTipoProducto);
+    if(this.todosLosPreciosFormatoCorrecto()) {
+
+      console.log(this.tarifasPorTipoProducto);
+
+      this.tarifasPorTipoProducto.forEach(tarifa => {
+        console.log(tarifa);
+        if(tarifa.tarifa_sociedad != this.sociedad_id){
+          //Nuevos campos
+        } else {
+          //Actualizar campos
+          // this.ratesService.updateTarifasPorSociedad(this.sociedad_id, tarifa).subscribe(
+          //   data => {
+          //     console.log('Tarifa actualizada correctamente');
+          //   },
+          //   error => {
+          //     console.error('Error actualizando tarifa', error);
+          //   }
+          // );
+        }
+      });
+
+    } else {
+      this.showErrorDialog('Formato de precios incorrecto. Por favor, asegúrese de que todos los precios son números.');
+    }
+    
+  }
+
+  private todosLosPreciosFormatoCorrecto(): boolean {
+    //Hay que comprobar que todos sean numeros: prima_seguro, cuota_asociacion, precio_total
+    return this.tarifasPorTipoProducto.every(tarifa => {
+      return !isNaN(Number(tarifa.prima_seguro)) && !isNaN(Number(tarifa.cuota_asociacion)) && !isNaN(Number(tarifa.precio_total));
+    });
+  }
+
+  tarifasPorTipoProductoVacio(): boolean {
+    //Tengo que comrpobar que ni id ni nombre ni precio total estén vacios:
+    return this.tarifasPorTipoProducto.every(tarifa => {
+      return tarifa.id === '' || tarifa.nombre === '' || tarifa.precio_total === '';
+    });
+  }
+
+  showErrorDialog(message: string): void {
+    this.dialog.open(ErrorDialogComponent, {
+      width: '300px',
+      data: { message }
+    });
   }
 }

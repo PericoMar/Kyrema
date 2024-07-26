@@ -23,4 +23,8 @@ export class RatesService {
   setTarifasPorSociedadAndTipoProducto(tarifaProducto : Tarifa): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}tarifa-producto/sociedad`, tarifaProducto);
   }
+
+  updateTarifasPorSociedad(sociedad: any, tarifa: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}tarifas/sociedad`, {});
+  }
 }
