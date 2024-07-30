@@ -1,26 +1,34 @@
 <section class="permission-section">
-    <form class="content-block permission-form">
-        <table>
-            <thead>
-                <tr>
-                    <th>Sociedad</th>
-                    @for(tipoProducto of tiposProductos ; track tipoProducto.id){
-                        <th>{{tipoProducto.nombre}}</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @for(sociedad of sociedades ; track sociedad.id){
-                    <tr>
-                        <td>{{sociedad.nombre}}</td>
-                        @for(tipoProductoPorSociedad of sociedad.tiposProductoPorSociedad ; track tipoProductoPorSociedad.id){
-                            <td>
-                                <mat-checkbox [(ngModel)]="sociedad.tipoProductosPorSociedad.tienePermisos" name="permisos{{$index}}"></mat-checkbox>
-                            </td>
-                        }
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <form class="content-block permission-form" (ngSubmit)="onSubmit()">
+        @if(tiposProductos?.length == 0){
+            <div class="center sociedades-spinner">
+                <app-spinner></app-spinner>
+            </div>
+        } @else{
+            <table>
+                <thead>
+                    <tr>    
+                        <th>Permiso</th>
+                        <th>Tipo de Producto</th>
+                        
+                      </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr *ngFor="let tipoProducto of tiposProductos">
+                        <td>
+                            <!-- Mat-checkbox con NgModule -->
+                            <mat-checkbox [(ngModel)]="tipoProducto.tienePermisos" color="primary" name="tipoProducto{{tipoProducto.id}}"></mat-checkbox>
+                        </td>
+                        <td>{{ tipoProducto.nombre }}</td>
+                      </tr>
+                    
+                </tbody>
+            </table>
+            <div class="form-footer">
+                <button mat-raised-button color="primary">Cambiar permisos</button>
+            </div>
+        }
+        
     </form>
 </section>

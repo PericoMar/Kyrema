@@ -3,5 +3,38 @@
 }
 
 form.permission-form{
-    height: 400px;
+    min-height: 300px;
+    padding:40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+
+}
+
+th, td {
+    border: 1px solid #dddddd; /* Borde de 1px en color gris claro */
+    padding: 8px; /* Espaciado interno */
+    text-align: center;
+  }
+
+  td{
+    font-weight: 400;
+  }
+  
+
+.sociedades-spinner{
+    width: 100%;
+    height: 100%;
+}
+
+.form-footer{
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }

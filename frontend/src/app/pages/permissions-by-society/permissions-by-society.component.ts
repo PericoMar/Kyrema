@@ -5,51 +5,59 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SocietyService } from '../../services/society.service';
 import { ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { SpinnerComponent } from '../../components/spinner/spinner.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-permissions-by-society',
   standalone: true,
-  imports: [MatCheckboxModule, FormsModule, CommonModule],
+  imports: [MatCheckboxModule, FormsModule, CommonModule, SpinnerComponent, MatButtonModule],
   templateUrl: './permissions-by-society.component.html',
   styleUrl: './permissions-by-society.component.css'
 })
 export class PermissionsBySocietyComponent {
-  tiposProductos! : any[];
-  sociedades: any;
-  currentSociedadId: any;
+  todosLosTiposProductos! : any[];
+  tiposProductos!: { id: string, nombre: string, tienePermisos: boolean }[];
+  sociedadId!: string;
 
   constructor(
     private familyService: FamilyProductService,
     private societyService: SocietyService,
     private route: ActivatedRoute
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.currentSociedadId = params.get('sociedad') || '';
-      this.sociedades = this.societyService.getSociedadesHijas();
-      this.familyService.getTiposProductoPorSociedad(this.currentSociedadId).subscribe((response) => {
-        this.tiposProductos = response
-        console.log(this.tiposProductos);
-        console.log(this.sociedades);
-        this.loadSociedadPorTipoProductoArray();
-        console.log(this.sociedades);
-      });
+      this.sociedadId = params.get('sociedad') || '';
+      this.loadTiposProductos();
     });
-    
   }
 
-  loadSociedadPorTipoProductoArray(){
-    let tiposProductosPorSociedad : any[] = [];
-    this.sociedades = this.sociedades.map((society : any) => {
-      this.familyService.getTiposProductoPorSociedad(society.id).subscribe(
-        (response) => {
-          tiposProductosPorSociedad = response;
-        }
-      );
-      return {
-        id: society.id,
-        nombre: society.nombre,
-        tiposProductosPorSociedad : tiposProductosPorSociedad
-      }
-    });
+  loadTiposProductos() {
+    this.familyService.getTiposProductoPorSociedad(this.societyService.getCurrentSociety().id)
+      .subscribe((response) => {
+        this.todosLosTiposProductos = response;
+        const tiposProductosDisponibles = response;
+        this.loadPermisosPorSociedad(tiposProductosDisponibles);
+      });
+  }
+
+  loadPermisosPorSociedad(tiposProductosDisponibles: any[]) {
+    this.familyService.getTiposProductoPorSociedad(this.sociedadId)
+      .subscribe((response) => {
+        const tiposProductosSociedad = response;
+        this.tiposProductos = tiposProductosDisponibles.map((tipoProducto: any) => {
+          const tienePermisos = tiposProductosSociedad.some((tpSociedad : any)=> tpSociedad.id === tipoProducto.id);
+          return {
+            ...tipoProducto,
+            tienePermisos
+          };
+        });
+      });
+  }
+
+  onSubmit() {
+    console.log(this.tiposProductos);
   }
 }

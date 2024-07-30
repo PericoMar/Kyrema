@@ -8,6 +8,7 @@ import { ActionButtonsComponent } from './action-buttons/action-buttons.componen
 import { ComisionButtonsComponent } from './comision-buttons/comision-buttons.component';
 import { SocietyService } from '../../../services/society.service';
 import { ProductActionButtonsComponent } from '../../../components/product-action-buttons/product-action-buttons.component';
+import { SocietyNotificationService } from '../../../services/society-notification.service';
 
 
 @Component({
@@ -24,8 +25,22 @@ export class SocietyTableComponent {
   
   constructor(private router: Router,
     private societyService: SocietyService,
+    private societyNotificationService: SocietyNotificationService
   ){}
 
+  ngOnInit(): void {
+    this.societyNotificationService.societyNotification$.subscribe(
+      () => {
+        console.log("Society Notification");
+        this.societyService.getSociedadAndHijas(this.societyService.getCurrentSociety().id).subscribe(
+          (response) => {
+            this.rowData = response;
+            this.societyService.guardarSociedadesEnLocalStorage(response);
+          }
+        );
+      }
+    );
+  }
 
   public columnDefs: ColDef[] = [
     { field: 'id', headerName: 'ID', width: 150 },

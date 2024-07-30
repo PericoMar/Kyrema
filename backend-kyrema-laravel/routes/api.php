@@ -52,6 +52,7 @@ Route::get('tipo-producto/show/{ruta}', [TipoProductoController::class, 'show'])
 Route::get('sociedad/{id}', [SociedadController::class, 'show']);
 Route::get('sociedad/hijas/{id}', [SociedadController::class, 'getSociedadesHijas']);
 Route::post('sociedad', [SociedadController::class, 'store']);
+Route::delete('sociedad/{id}', [SociedadController::class, 'destroy']);
 
 
 // Gestiona todas las solicitudes de la conexion entre TipoProducto y Sociedad

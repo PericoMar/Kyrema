@@ -1,0 +1,162 @@
+import { Component } from '@angular/core';
+import { FamilyProductService } from '../../services/family-product.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { SocietyService } from '../../services/society.service';
+import { ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { SpinnerComponent } from '../../components/spinner/spinner.component';
+import { MatButtonModule } from '@angular/material/button';
+
+@Component({
+  selector: 'app-permissions-by-society',
+  standalone: true,
+  imports: [MatCheckboxModule, FormsModule, CommonModule, SpinnerComponent, MatButtonModule],
+  templateUrl: './permissions-by-society.component.html',
+  styleUrl: './permissions-by-society.component.css'
+})
+export class PermissionsBySocietyComponent {
+  tiposProductos! : any[];
+  sociedades: any;
+  sociedadesConTipoProducto: any[] = [];
+  currentSociedadId: any;
+
+  constructor(
+    private familyService: FamilyProductService,
+    private societyService: SocietyService,
+    private route: ActivatedRoute
+  ) {
+    this.route.paramMap.subscribe(params => {
+      this.currentSociedadId = params.get('sociedad') || '';
+      this.sociedades = this.societyService.getSociedadesHijas();
+      this.familyService.getTiposProductoPorSociedad(this.currentSociedadId).subscribe((response) => {
+        this.tiposProductos = response
+        console.log(this.tiposProductos);
+        console.log(this.sociedades);
+        this.loadSociedadPorTipoProductoArray();
+        
+      });
+    });
+    
+  }
+
+  loadSociedadPorTipoProductoArray() {
+    const tiposProductosRequests = this.sociedades.map((society: any) =>
+      this.familyService.getTiposProductoPorSociedad(society.id)
+    );
+  
+    forkJoin(tiposProductosRequests).subscribe(
+      (responses: any) => {
+        const sociedadesConTipoProducto = this.sociedades.map((society: any, index: number) => {
+          const tiposProductosPorSociedad = responses[index].map((tipoProducto: any) => tipoProducto.id);
+          
+          // Crear una lista de todos los tipos de productos con permisos según si están en la respuesta
+          const tiposProductos = this.tiposProductos.map((tipoProducto: any) => ({
+            id: tipoProducto.id,
+            tienePermisos: tiposProductosPorSociedad.includes(tipoProducto.id)
+          }));
+  
+          return {
+            id: society.id,
+            nombre: society.nombre,
+            tiposProductosPorSociedad: tiposProductos
+          };
+        });
+        this.sociedadesConTipoProducto = sociedadesConTipoProducto;
+        console.log(this.sociedadesConTipoProducto);
+      },
+      (error) => {
+        console.error('Error al cargar los tipos de productos por sociedad', error);
+      }
+    );
+  }
+
+  onSubmit(){
+    console.log(this.sociedadesConTipoProducto);
+  }
+}
+
+
+
+
+<section class="permission-section">
+    <form class="content-block permission-form" (ngSubmit)="onSubmit()">
+        @if(sociedadesConTipoProducto.length == 0){
+            <div class="center sociedades-spinner">
+                <app-spinner></app-spinner>
+            </div>
+        } @else{
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sociedad</th>
+                        @for(tipoProducto of tiposProductos ; track tipoProducto.id){
+                            <th>{{tipoProducto.nombre}}</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr *ngFor="let sociedad of sociedadesConTipoProducto">
+                        <td>{{ sociedad.nombre }}</td>
+                        <td *ngFor="let tipoProductoPorSociedad of sociedad.tiposProductosPorSociedad">
+                            <div class="center">
+                                <mat-checkbox [(ngModel)]="tipoProductoPorSociedad.tienePermisos" name="permisos{{sociedad.id}}-{{tipoProductoPorSociedad.id}}"></mat-checkbox>
+                            </div>
+                        </td>
+                      </tr>
+                    
+                </tbody>
+            </table>
+            <div class="form-footer">
+                <button mat-raised-button color="primary">Cambiar permisos</button>
+            </div>
+        }
+        
+    </form>
+</section>
+
+
+
+
+.permission-section {
+    padding: 40px 90px;
+}
+
+form.permission-form{
+    min-height: 300px;
+    padding:40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+
+}
+
+th, td {
+    border: 1px solid #dddddd; /* Borde de 1px en color gris claro */
+    padding: 8px; /* Espaciado interno */
+    text-align: center;
+  }
+
+  td{
+    font-weight: 400;
+  }
+  
+
+.sociedades-spinner{
+    width: 100%;
+    height: 100%;
+}
+
+.form-footer{
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
