@@ -1,0 +1,26 @@
+<section class="permission-section">
+    <form class="content-block permission-form">
+        <table>
+            <thead>
+                <tr>
+                    <th>Sociedad</th>
+                    @for(tipoProducto of tiposProductos ; track tipoProducto.id){
+                        <th>{{tipoProducto.nombre}}</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for(sociedad of sociedades ; track sociedad.id){
+                    <tr>
+                        <td>{{sociedad.nombre}}</td>
+                        @for(tipoProductoPorSociedad of sociedad.tiposProductoPorSociedad ; track tipoProductoPorSociedad.id){
+                            <td>
+                                <mat-checkbox [(ngModel)]="sociedad.tipoProductosPorSociedad.tienePermisos" name="permisos{{$index}}"></mat-checkbox>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+</section>

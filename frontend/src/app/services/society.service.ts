@@ -19,6 +19,11 @@ export class SocietyService {
     });
   }
 
+  
+  getSociedadIdPorUrl(){
+    return this.sociedad;
+  }
+
   getSocietyById(id_sociedad: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/sociedad/${id_sociedad}`).pipe(
       tap(response => {
@@ -29,9 +34,6 @@ export class SocietyService {
     );
   }
 
-  getSociedadIdPorUrl(){
-    return this.sociedad;
-  }
 
   getSociedadAndHijas(id_sociedad: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/sociedad/hijas/${id_sociedad}`);

@@ -13,6 +13,7 @@ import { TarifasComponent } from './pages/tarifas/tarifas.component';
 import { CommissionsComponent } from './pages/commissions/commissions.component';
 import { CommercialsCommissionsTableComponent } from './pages/commercials-commissions-table/commercials-commissions-table.component';
 import { SocietyFormComponent } from './pages/society-form/society-form.component';
+import { PermissionsBySocietyComponent } from './pages/permissions-by-society/permissions-by-society.component';
 
 export const routes: Routes = [
     {
@@ -51,7 +52,7 @@ export const routes: Routes = [
         { path: 'sociedades/pagos/:sociedad', component: PaymentsAndPricesComponent, },
         { path: 'sociedad', component: SocietyFormComponent },
         { path: 'sociedad/:sociedad', component: SocietyFormComponent },
-        { path: 'sociedades/productos/:sociedad', component: ProductOperationsComponent },
+        { path: 'sociedades/productos/:sociedad', component: PermissionsBySocietyComponent },
         { path: 'sociedades/anexos/:sociedad', component: ProductOperationsComponent },
         { path: 'sociedades/modificar/:sociedad', component: ProductOperationsComponent },
         { path: 'gestion-productos' , component: ProductsManagerComponent, },
