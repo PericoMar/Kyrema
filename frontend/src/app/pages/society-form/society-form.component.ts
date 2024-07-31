@@ -45,7 +45,7 @@ export class SocietyFormComponent {
       nombre: ['', Validators.required],
       cif: [''],
       correo_electronico: ['', [Validators.required, Validators.email]],
-      tipo_sociedad: ['', Validators.required],
+      tipo_sociedad: [this.tiposDeSociedad[0], Validators.required],
       direccion: [''],
       poblacion: [''],
       pais: [''],

@@ -6,6 +6,8 @@ use App\Models\Sociedad;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 
 class SociedadController extends Controller
 {
@@ -111,46 +113,47 @@ class SociedadController extends Controller
     public function updatePermisos(Request $request, $id)
     {
         $request->validate([
-            'permisos' => 'required|array',
+            'permisosTiposProductos' => 'required|array',
         ]);
-    
+
         $sociedad = Sociedad::findOrFail($id);
-    
+
         // Array de permisos que contiene los tipos_productos (ids) y un booleano tienePermisos
-        $permisos = $request->input('permisos');
-    
+        $permisos = $request->input('permisosTiposProductos');
+
         // Iterar sobre los permisos para agregar o quitar según el valor de tienePermisos
         foreach ($permisos as $permiso) {
             $tipoProductoId = $permiso['id'];
             $tienePermisos = $permiso['tienePermisos'];
-    
+
             // Verificar si ya existe una relación entre la sociedad y el tipo de producto
             $existingPermiso = DB::table('tipo_producto_sociedad')
-                ->where('sociedad_id', $sociedad->id)
-                ->where('tipo_producto_id', $tipoProductoId)
+                ->where('id_sociedad', $sociedad->id)
+                ->where('id_tipo_producto', $tipoProductoId)
                 ->first();
-    
+
             if ($tienePermisos) {
                 if (!$existingPermiso) {
                     // Si no existe la relación y tienePermisos es true, la creamos
                     DB::table('tipo_producto_sociedad')->insert([
-                        'sociedad_id' => $sociedad->id,
-                        'tipo_producto_id' => $tipoProductoId,
+                        'id_sociedad' => $sociedad->id,
+                        'id_tipo_producto' => $tipoProductoId,
                     ]);
                 }
             } else {
                 if ($existingPermiso) {
                     // Si existe la relación y tienePermisos es false, la eliminamos
                     DB::table('tipo_producto_sociedad')
-                        ->where('sociedad_id', $sociedad->id)
-                        ->where('tipo_producto_id', $tipoProductoId)
+                        ->where('id_sociedad', $sociedad->id)
+                        ->where('id_tipo_producto', $tipoProductoId)
                         ->delete();
                 }
             }
         }
 
-        return response()->json($sociedad);
+        return response()->json(['message' => 'Permisos actualizados con éxito', 'sociedad' => $sociedad], 200);
     }
+
 
     public function destroy($id)
     {

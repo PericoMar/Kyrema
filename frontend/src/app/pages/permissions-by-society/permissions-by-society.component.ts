@@ -4,10 +4,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SocietyService } from '../../services/society.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { MatButtonModule } from '@angular/material/button';
+import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-permissions-by-society',
@@ -18,18 +20,24 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class PermissionsBySocietyComponent {
   todosLosTiposProductos! : any[];
-  tiposProductos!: { id: string, nombre: string, tienePermisos: boolean }[];
+  tiposProductos: { id: string, nombre: string, tienePermisos: boolean }[] = [];
   sociedadId!: string;
+  sociedadNombre: any;
 
   constructor(
     private familyService: FamilyProductService,
     private societyService: SocietyService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.sociedadId = params.get('sociedad') || '';
+      this.societyService.getSocietyById(this.sociedadId).subscribe((response) => {
+        this.sociedadNombre = response.nombre;
+      });
       this.loadTiposProductos();
     });
   }
@@ -39,6 +47,7 @@ export class PermissionsBySocietyComponent {
       .subscribe((response) => {
         this.todosLosTiposProductos = response;
         const tiposProductosDisponibles = response;
+        console.log(tiposProductosDisponibles);
         this.loadPermisosPorSociedad(tiposProductosDisponibles);
       });
   }
@@ -50,14 +59,38 @@ export class PermissionsBySocietyComponent {
         this.tiposProductos = tiposProductosDisponibles.map((tipoProducto: any) => {
           const tienePermisos = tiposProductosSociedad.some((tpSociedad : any)=> tpSociedad.id === tipoProducto.id);
           return {
-            ...tipoProducto,
+            id: tipoProducto.id,
+            nombre: tipoProducto.nombre,
             tienePermisos
           };
         });
+        console.log(this.tiposProductos);
       });
   }
 
   onSubmit() {
-    console.log(this.tiposProductos);
+    if(!this.tienePermisosAlmenosUnTipoProducto()) {
+      this.showErrorDialog('Debe tener permisos para al menos un tipo de producto.');
+    } else {
+      this.societyService.updateSocietyPermissions(this.sociedadId, this.tiposProductos).subscribe((response) => {
+        console.log(response);
+        this.router.navigate(['/sociedades']);
+      });
+    }
+  }
+
+  offActiveAll(){
+    this.tiposProductos.forEach((tipoProducto) => tipoProducto.tienePermisos = false);
+  }
+
+  tienePermisosAlmenosUnTipoProducto() {
+    return this.tiposProductos.some((tp) => tp.tienePermisos);
+  }
+
+  showErrorDialog(message: string): void {
+    this.dialog.open(ErrorDialogComponent, {
+      width: '300px',
+      data: { message }
+    });
   }
 }

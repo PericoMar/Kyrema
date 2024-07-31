@@ -48,8 +48,14 @@
             <fieldset class="input-group">
                 <!-- Tipo de Sociedad (obligatorio) -->
                 <div class="input-container tipo_sociedad">
+                    <!-- Cambiar por un select -->
+
                     <label for="tipo_sociedad" class="input-label">Tipo de Sociedad <span class="span-required">*</span></label>
-                    <input id="tipo_sociedad" formControlName="tipo_sociedad" class="input-field" placeholder="Ej: Sociedad Anónima" required>
+                    <select formControlName="tipo_sociedad" class="input-field">
+                        @for(tipoSociedad of tiposDeSociedad ; track tipoSociedad){
+                            <option value="{{tipoSociedad}}">{{tipoSociedad}}</option>
+                        }
+                    </select>
                 </div>
 
                 <!-- Código Sociedad (opcional) -->

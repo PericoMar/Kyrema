@@ -81,4 +81,8 @@ export class SocietyService {
   deleteSociety(sociedad_id : any): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/sociedad/${sociedad_id}`);
   }
+
+  updateSocietyPermissions(sociedad_id: string, permisosTiposProductos: any[]): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/sociedad/${sociedad_id}/permisos`, { permisosTiposProductos });
+  }
 }

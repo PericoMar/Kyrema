@@ -54,7 +54,18 @@ class TarifaProductoController extends Controller
         return response()->json($tarifas);
     }
 
+    public function updateTarifaPorSociedad($sociedad_id, Request $request)
+    {
+        // Coge la tarifa de la resquest donde estara el id del tipo_producto y los precios
+        $tarifa = $request->input('tarifa');
 
+        // Cambia los datos de esta sociedad y el id de dentro de $tarifa con los datos de $tarifa.
+        TarifasProducto::where('id_sociedad', $sociedad_id)->update($tarifa);
+
+        // Devuelve un mensaje de éxito
+        return response()->json(['message' => 'Tarifa actualizada con éxito'], 200);
+
+    }
 
     public function index()
     {

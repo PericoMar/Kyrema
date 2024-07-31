@@ -72,12 +72,20 @@ export class PricesComponent {
   }
 
   combineArrays(tiposProductos: TipoProducto[], tarifas: Tarifa[]): any {
-    return tarifas.map(tarifa => {
-      const tipoProducto = tiposProductos.find(t => t.id === tarifa.tipo_producto_id) || {} as TipoProducto;
-      return { id: tipoProducto.id, nombre: tipoProducto.nombre, prima_seguro: tarifa.prima_seguro, cuota_asociacion: tarifa.cuota_asociacion, precio_total: tarifa.precio_total , tarifa_sociedad: tarifa.id_sociedad};
-    });
-  }
-
+    return tarifas
+        .filter(tarifa => tiposProductos.some(t => t.id === tarifa.tipo_producto_id))  // Filtrar las tarifas que tienen un tipoProducto correspondiente
+        .map(tarifa => {
+            const tipoProducto = tiposProductos.find(t => t.id === tarifa.tipo_producto_id) as TipoProducto;
+            return {
+                id: tipoProducto.id,
+                nombre: tipoProducto.nombre,
+                prima_seguro: tarifa.prima_seguro,
+                cuota_asociacion: tarifa.cuota_asociacion,
+                precio_total: tarifa.precio_total,
+                tarifa_sociedad: tarifa.id_sociedad
+            };
+        });
+}
   onSubmit() {
     if(this.todosLosPreciosFormatoCorrecto()) {
 
@@ -87,16 +95,24 @@ export class PricesComponent {
         console.log(tarifa);
         if(tarifa.tarifa_sociedad != this.sociedad_id){
           //Nuevos campos
+          this.ratesService.createTarifaPorSociedad(this.sociedad_id, tarifa).subscribe(
+            data => {
+              console.log('Tarifa creada correctamente');
+            },
+            error => {
+              console.error('Error creando tarifa', error);
+            }
+          );
         } else {
           //Actualizar campos
-          // this.ratesService.updateTarifasPorSociedad(this.sociedad_id, tarifa).subscribe(
-          //   data => {
-          //     console.log('Tarifa actualizada correctamente');
-          //   },
-          //   error => {
-          //     console.error('Error actualizando tarifa', error);
-          //   }
-          // );
+          this.ratesService.updateTarifasPorSociedad(this.sociedad_id, tarifa).subscribe(
+            data => {
+              console.log('Tarifa actualizada correctamente');
+            },
+            error => {
+              console.error('Error actualizando tarifa', error);
+            }
+          );
         }
       });
 

@@ -2,6 +2,17 @@
     padding: 40px 90px;
 }
 
+.permission-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.permission-section-header h2 {
+    margin: 0;
+}
+
 form.permission-form{
     min-height: 300px;
     padding:40px;
@@ -10,17 +21,40 @@ form.permission-form{
     justify-content: space-between;
 }
 
-table{
+table {
     width: 100%;
     border-collapse: collapse;
-
 }
 
 th, td {
-    border: 1px solid #dddddd; /* Borde de 1px en color gris claro */
-    padding: 8px; /* Espaciado interno */
-    text-align: center;
-  }
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th {
+    background-color: #e7e7e7;
+}
+
+.small-column {
+    width: 50px; /* Ajusta este valor según sea necesario */
+}
+
+.has-permission {
+    background-color: #e0f2e0; /* Fondo verde casi apreciable */
+}
+
+/* Estilos adicionales para mejorar la apariencia */
+table {
+    font-family: Arial, sans-serif;
+    margin: 20px 0;
+}
+
+thead th {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+
 
   td{
     font-weight: 400;

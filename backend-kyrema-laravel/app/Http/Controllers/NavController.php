@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TipoProducto;
 use Illuminate\Http\Request;
 use App\Models\TipoProductoSociedad;
+use App\Models\Sociedad;
 
 class NavController extends Controller
 {   
@@ -110,7 +111,7 @@ class NavController extends Controller
         ];
         $navegacion[2]["children"] = $tiposProducto->map(function($tipoProducto){
             return [
-                "label" => "Seguros " . $tipoProducto->nombre,
+                "label" => $tipoProducto->nombre,
                 "link" => "/operaciones/" . $tipoProducto->letras_identificacion
             ];
         })->toArray();
@@ -119,6 +120,13 @@ class NavController extends Controller
         if($id_sociedad != self::SOCIEDAD_ADMIN_ID){
             // Borrar la parte de gestion:
             unset($navegacion[1]);
+        } else if(Sociedad::find($id_sociedad)->sociedadPadre == self::SOCIEDAD_ADMIN_ID){
+            // Si la sociedad tiene una sociedad padre, borrar la parte de gestion
+            $navegacion[1]["children"] = array_filter($navegacion[1]["children"], function($child) {
+                return $child["label"] !== "Sociedades" && $child["label"] !== "Comisiones";
+            });
+            // Reindexar el array para mantener la estructura correcta
+            $navegacion[1]["children"] = array_values($navegacion[1]["children"]);
         }
 
         return response()->json($navegacion);

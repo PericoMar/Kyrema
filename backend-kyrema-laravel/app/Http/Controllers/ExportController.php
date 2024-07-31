@@ -57,7 +57,15 @@ class ExportController extends Controller
                 // Convertir el nombre del campo a minúsculas y reemplazar espacios por guiones bajos
                 $nombreCampo = strtolower(str_replace(' ', '_', $campo->nombre));
                 $valor = $valores->{$nombreCampo}; 
-                $sheet->setCellValue($celda, $valor);
+                
+                // Obtener el contenido existente de la celda
+                $contenidoExistente = $sheet->getCell($celda)->getValue();
+                
+                // Concatenar el contenido existente con el nuevo valor
+                $nuevoContenido = $contenidoExistente . ' ' . $valor;
+                
+                // Establecer el nuevo contenido en la celda
+                $sheet->setCellValue($celda, $nuevoContenido);
                 
             }
 
