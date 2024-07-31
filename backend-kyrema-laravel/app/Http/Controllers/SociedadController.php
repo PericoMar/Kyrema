@@ -108,6 +108,50 @@ class SociedadController extends Controller
         return response()->json($sociedad);
     }
 
+    public function updatePermisos(Request $request, $id)
+    {
+        $request->validate([
+            'permisos' => 'required|array',
+        ]);
+    
+        $sociedad = Sociedad::findOrFail($id);
+    
+        // Array de permisos que contiene los tipos_productos (ids) y un booleano tienePermisos
+        $permisos = $request->input('permisos');
+    
+        // Iterar sobre los permisos para agregar o quitar según el valor de tienePermisos
+        foreach ($permisos as $permiso) {
+            $tipoProductoId = $permiso['id'];
+            $tienePermisos = $permiso['tienePermisos'];
+    
+            // Verificar si ya existe una relación entre la sociedad y el tipo de producto
+            $existingPermiso = DB::table('tipo_producto_sociedad')
+                ->where('sociedad_id', $sociedad->id)
+                ->where('tipo_producto_id', $tipoProductoId)
+                ->first();
+    
+            if ($tienePermisos) {
+                if (!$existingPermiso) {
+                    // Si no existe la relación y tienePermisos es true, la creamos
+                    DB::table('tipo_producto_sociedad')->insert([
+                        'sociedad_id' => $sociedad->id,
+                        'tipo_producto_id' => $tipoProductoId,
+                    ]);
+                }
+            } else {
+                if ($existingPermiso) {
+                    // Si existe la relación y tienePermisos es false, la eliminamos
+                    DB::table('tipo_producto_sociedad')
+                        ->where('sociedad_id', $sociedad->id)
+                        ->where('tipo_producto_id', $tipoProductoId)
+                        ->delete();
+                }
+            }
+        }
+
+        return response()->json($sociedad);
+    }
+
     public function destroy($id)
     {
         $sociedad = Sociedad::findOrFail($id);

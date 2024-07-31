@@ -1,2 +1,12 @@
-node_modules
-*.tsbuildinfo
+/node_modules
+/dist
+/tmp
+/out-tsc
+/.angular
+/.vscode
+*.log
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+vite/
