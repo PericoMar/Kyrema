@@ -39,6 +39,14 @@ class ComercialController extends Controller
             'path_foto' => 'nullable|string|max:255',
         ]);
 
+        // Cambiar el formato de las fechas 'Y-m-d\TH:i:s'
+        if ($request->fecha_nacimiento) {
+            $request->fecha_nacimiento = date('Y-m-d\TH:i:s', strtotime($request->fecha_nacimiento));
+        }
+        if ($request->fecha_alta) {
+            $request->fecha_alta = date('Y-m-d\TH:i:s', strtotime($request->fecha_alta));
+        }
+
         $comercial = Comercial::create($request->all());
 
         return response()->json($comercial, 201);
@@ -62,8 +70,33 @@ class ComercialController extends Controller
             'nombre' => 'string|max:255',
             'id_sociedad' => 'numeric|exists:sociedad,id',
             'usuario' => 'string|max:255',
+            'email' => 'string|email|max:255',
             'contraseña' => 'string|max:255',
+            'dni' => 'string|max:255',
+            'sexo' => 'string|max:10',
+            'fecha_nacimiento' => 'date',
+            'fecha_alta' => 'date',
+            'referido' => 'string|max:255',
+            'direccion' => 'string|max:255',
+            'poblacion' => 'string|max:255',
+            'provincia' => 'string|max:255',
+            'cod_postal' => 'string|max:10',
+            'telefono' => 'string|max:20',
+            'fax' => 'string|max:20',
+            'path_licencia_cazador' => 'string|max:255',
+            'path_dni' => 'string|max:255',
+            'path_justificante_iban' => 'string|max:255',
+            'path_otros' => 'string|max:255',
+            'path_foto' => 'string|max:255',
         ]);
+
+        // Cambiar el formato de las fechas 'Y-m-d\TH:i:s'
+        if ($request->fecha_nacimiento) {
+            $request->fecha_nacimiento = date('Y-m-d\TH:i:s', strtotime($request->fecha_nacimiento));
+        }
+        if ($request->fecha_alta) {
+            $request->fecha_alta = date('Y-m-d\TH:i:s', strtotime($request->fecha_alta));
+        }
 
         $comercial = Comercial::findOrFail($id);
         $comercial->update($request->all());

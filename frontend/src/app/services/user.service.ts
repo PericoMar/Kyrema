@@ -7,13 +7,13 @@ import { Observable, catchError, map, of } from 'rxjs';
 })
 export class UserService {
   private readonly USER_KEY = 'currentUser';
-  private apiUrl = 'http://localhost:8000';
+  private apiUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient){}
 
 
   getComercialById(id_sociedad: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/comercial/${id_sociedad}`)
+    return this.http.get<any>(`${this.apiUrl}/comercial/${id_sociedad}`)
     .pipe(
       map(response => {
         // Extraer los datos específicos del objeto response.comercial
@@ -38,7 +38,7 @@ export class UserService {
   }
 
   getComercialesPorSociedad(id_sociedad : any){
-    return this.http.get<any>(`${this.apiUrl}/api/comerciales/${id_sociedad}`);
+    return this.http.get<any>(`${this.apiUrl}/comerciales/${id_sociedad}`);
   }
 
   getCurrentUser() {
@@ -47,7 +47,7 @@ export class UserService {
   }
 
   deleteComercial(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/api/comercial/${id}`);
+    return this.http.delete<any>(`${this.apiUrl}/comercial/${id}`);
   }
 
   logout() {
@@ -56,11 +56,11 @@ export class UserService {
   }
 
   createCommercial(commercial: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/api/comercial`, commercial);
+    return this.http.post<any>(`${this.apiUrl}/comercial`, commercial);
   }
 
   updateCommercial(commercial_id: any, commercial: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/api/comercial/${commercial.id}`, commercial);
+    return this.http.put<any>(`${this.apiUrl}/comercial/${commercial_id}`, commercial);
   }
 }
 

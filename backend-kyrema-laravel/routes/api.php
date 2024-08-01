@@ -66,6 +66,8 @@ Route::delete('comercial/{id}', [ComercialController::class, 'destroy']);
 
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/comercial/{id}', [ComercialController::class, 'show']);
+Route::put('/comercial/{id}', [ComercialController::class, 'update']);
+Route::post('/comercial', [ComercialController::class, 'store']);
 
 Route::apiResource('comercial-comisiones', ComercialComisionController::class);
 Route::apiResource('tipos-anexo', TipoAnexoController::class);

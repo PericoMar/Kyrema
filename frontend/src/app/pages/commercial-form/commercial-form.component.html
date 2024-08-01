@@ -1,4 +1,4 @@
-<section>
+<section class="commercial-section">
     <header>
         <h1>Formulario comerciales</h1>
     </header>
@@ -29,7 +29,7 @@
                 <!-- Nombre (obligatorio) -->
                 <div class="input-container nombre">
                     <label for="nombre" class="input-label">Nombre <span class="span-required">*</span></label>
-                    <input id="nombre" formControlName="nombre" class="input-field" placeholder="Ej: Sociedad Anónima" required>
+                    <input id="nombre" formControlName="nombre" class="input-field" placeholder="Ej: Manuel" required>
                 </div>
 
                 <!-- dni (opcional) -->
@@ -79,7 +79,7 @@
 
                 <div class="input-container sexo">
                     <label for="sexo" class="input-label">Sexo<span class="span-required">*</span></label>
-                    <input id="sexo" formControlName="sexo" class="input-field">
+                    <input id="sexo" formControlName="sexo" class="input-field" placeholder="M/F">
                 </div>
             </fieldset>
 
@@ -101,9 +101,9 @@
                 </div>
             
                 <!-- País (opcional) -->
-                <div class="input-container pais">
-                    <label for="pais" class="input-label">Provincia</label>
-                    <input id="pais" formControlName="pais" class="input-field" placeholder="Ej: España">
+                <div class="input-container provincia">
+                    <label for="provincia" class="input-label">Provincia</label>
+                    <input id="provincia" formControlName="provincia" class="input-field" placeholder="Ej: Madrid">
                 </div>
             
                 <!-- Código Postal (opcional) -->
@@ -126,10 +126,12 @@
                 <!-- Fax (opcional) -->
                 <div class="input-container fax">
                     <label for="fax" class="input-label">Fax</label>
-                    <input id="fax" formControlName="fax" class="input-field" placeholder="Ej: 912345679">
+                    <input id="fax" formControlName="fax" class="input-field" placeholder="Ej: ">
                 </div>
             
             </fieldset>
+
+            <hr>
             
 
             <footer class="form-footer">

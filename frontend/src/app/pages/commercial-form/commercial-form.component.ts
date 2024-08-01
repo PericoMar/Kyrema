@@ -49,26 +49,26 @@ export class CommercialFormComponent {
   private initializeForm() {
     this.comercialForm = this.formBuilder.group({
       nombre: ['', Validators.required],
-      id_sociedad: [this.sociedad.id, Validators.required],
+      id_sociedad: [this.sociedad.id],
       usuario: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       contraseña: ['', Validators.required],
       dni: ['', Validators.required],
-      sexo: ['', Validators.required],
-      fecha_nacimiento: ['', Validators.required],
-      fecha_alta: ['', Validators.required],
-      referido: ['', Validators.required],
-      direccion: ['', Validators.required],
-      poblacion: ['', Validators.required],
-      provincia: ['', Validators.required],
-      cod_postal: ['', Validators.required],
-      telefono: ['', Validators.required],
-      fax: ['', Validators.required],
-      path_licencia_cazador: ['', Validators.required],
-      path_dni: ['', Validators.required],
-      path_justificante_iban: ['', Validators.required],
-      path_otros: ['', Validators.required],
-      path_foto: ['', Validators.required]
+      sexo: [''],
+      fecha_nacimiento: [''],
+      fecha_alta: [''],
+      referido: [''],
+      direccion: [''],
+      poblacion: [''],
+      provincia: [''],
+      cod_postal: [''],
+      telefono: [''],
+      fax: [''],
+      path_licencia_cazador: [''],
+      path_dni: [''],
+      path_justificante_iban: [''],
+      path_otros: [''],
+      path_foto: ['']
     });
 
     if(this.comercial){

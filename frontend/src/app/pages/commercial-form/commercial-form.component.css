@@ -1,0 +1,32 @@
+.commercial-section{
+    padding: var(--section-padding);
+}
+
+.content-block{
+    padding:40px 40px;
+}
+
+.file-input {
+    display: none;
+  }
+
+  .datos-header{
+    margin-bottom: 10px;
+}
+
+.datos-header h3{
+    margin: 0;
+}
+
+hr{
+    margin-bottom: 20px;
+}
+
+.sexo{
+    width: 5%;
+}
+
+.form-footer{
+    display: flex;
+    justify-content: flex-end;
+}
