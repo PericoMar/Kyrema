@@ -105,7 +105,7 @@ export class PricesComponent {
           );
         } else {
           //Actualizar campos
-          this.ratesService.updateTarifasPorSociedad(this.sociedad_id, tarifa).subscribe(
+          this.ratesService.updateTarifaPorSociedad(this.sociedad_id, tarifa).subscribe(
             data => {
               console.log('Tarifa actualizada correctamente');
             },

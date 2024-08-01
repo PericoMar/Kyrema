@@ -11,10 +11,19 @@ use Illuminate\Support\Facades\DB;
 
 class SociedadController extends Controller
 {
+    const SOCIEDAD_ADMIN_ID = 1;
+
     public function index()
     {
         $sociedades = Sociedad::all();
         return response()->json($sociedades);
+    }
+
+    public function getSociedadesPadres()
+    {
+        // Cuando la sociedad padre sea el admin o no tenga padre, se considera sociedad padre
+        $sociedadesPadres = Sociedad::where('sociedad_padre_id', null)->orWhere('sociedad_padre_id', self::SOCIEDAD_ADMIN_ID)->get();
+        return response()->json($sociedadesPadres);
     }
 
     public function store(Request $request)

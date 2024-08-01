@@ -6,6 +6,18 @@ main{
     box-sizing: border-box;
 }
 
+
+.button-crear{
+    background-color: #5b4cff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: 16px;
+}
+
 .table-container{
     background-color: white;
     border-radius: 4px;

@@ -243,6 +243,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.productsService.editarProducto(this.letras_identificacion, nuevoProducto).subscribe(
         data => {
           console.log(data);
+          this.productForm.get('prima_del_seguro')?.disable();
+          this.productForm.get('cuota_de_asociación')?.disable();
+          this.productForm.get('precio_total')?.disable();
+          this.productNotificationService.notifyChangesOnProducts();
         },
         error => {
           console.log(error);

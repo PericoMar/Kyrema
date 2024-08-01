@@ -4,16 +4,17 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community'; 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { Router, RouterModule } from '@angular/router';
-import { CommercialCommissionButtonComponent } from './commercial-commission-button/commercial-commission-button.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { TableComponent } from '../product-operations/table/table.component';
+import { SocietyService } from '../../services/society.service';
+import { ComercialNotificationService } from '../../services/comercial-notification.service';
+import { CommercialCommissionButtonComponent } from './commercial-commission-button/commercial-commission-button.component';
 
 @Component({
   selector: 'app-commercials-commissions-table',
   standalone: true,
-  imports: [AgGridModule, AgGridAngular, TableComponent],
+  imports: [AgGridModule, AgGridAngular, TableComponent, RouterModule],
   templateUrl: './commercials-commissions-table.component.html',
   styleUrl: './commercials-commissions-table.component.css'
 })
@@ -35,15 +36,26 @@ export class CommercialsCommissionsTableComponent {
   ];
   sociedad! : any;
   rowData! : any[];
+  currentSociety: any;
 
   constructor (
     private comercialService : UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private societyService: SocietyService,
+    private comercialNotificationService: ComercialNotificationService
   ) {
     this.route.paramMap.subscribe(params => {
       this.sociedad = params.get('sociedad');
       this.initComercialTable();      
     });
+
+    this.comercialNotificationService.comercialNotification$.subscribe(
+      () => {
+        this.initComercialTable();
+      }
+    );
+
+    this.currentSociety = this.societyService.getCurrentSociety();
   }
 
   initComercialTable(){

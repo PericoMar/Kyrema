@@ -1,0 +1,148 @@
+<section>
+    <header>
+        <h1>Formulario comerciales</h1>
+    </header>
+    <main class="content-block">
+        <form [formGroup]="comercialForm" (ngSubmit)="onSubmit()">
+            <header class="space-between datos-header">
+                <h3 class="form-section-title">Datos generales</h3>
+
+                <div class="input-file">
+                    <input type="file" class="file-input" accept=".png, .jpg, .jpeg, .svg"
+                    (change)="onFileSelected($event)" #fileUpload>
+    
+                    <div class="file-upload">
+    
+                    {{fileName || "No has añadido ninguna foto de perfil aún."}}
+    
+                        <button type="button" mat-mini-fab color="primary" class="upload-btn"
+                        (click)="fileUpload.click()">
+                            <mat-icon>attach_file</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <hr>
+
+            <fieldset class="input-group">
+                
+                <!-- Nombre (obligatorio) -->
+                <div class="input-container nombre">
+                    <label for="nombre" class="input-label">Nombre <span class="span-required">*</span></label>
+                    <input id="nombre" formControlName="nombre" class="input-field" placeholder="Ej: Sociedad Anónima" required>
+                </div>
+
+                <!-- dni (opcional) -->
+                <div class="input-container dni">
+                    <label for="dni" class="input-label">DNI</label>
+                    <input id="dni" formControlName="dni" class="input-field" placeholder="Ej: A12345678">
+                </div>
+            
+                <!-- Correo Electrónico (obligatorio) -->
+                <div class="input-container email">
+                    <label for="email" class="input-label">Correo Electrónico <span class="span-required">*</span></label>
+                    <input id="email" formControlName="email" type="email" class="input-field" placeholder="Ej: ejemplo@dominio.com" required>
+                </div>
+    
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Datos cuenta</h3>
+
+            <fieldset class="input-group">
+                <!-- Usuario (obligatorio) -->
+                <div class="input-container usuario">
+                    <label for="usuario" class="input-label">Usuario<span class="span-required">*</span></label>
+                    <input id="usuario" formControlName="usuario" class="input-field" placeholder="Ej: usuario12canama">
+                </div>
+
+                <!-- Contraseña (opcional) -->
+                <div class="input-container contraseña">
+                    <label for="contraseña" class="input-label">Contraseña</label>
+                    <input id="contraseña" formControlName="contraseña" class="input-field" placeholder="******">
+                </div>
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Datos adicionales</h3>
+
+            <fieldset class="input-group">
+                <div class="input-container fecha_nacimiento">
+                    <label for="fecha_nacimiento" class="input-label">Fecha de nacimiento<span class="span-required">*</span></label>
+                    <input id="fecha_nacimiento" formControlName="fecha_nacimiento" class="input-field" type="date">
+                </div>
+
+                <div class="input-container fecha_alta">
+                    <label for="fecha_alta" class="input-label">Fecha de alta<span class="span-required">*</span></label>
+                    <input id="fecha_alta" formControlName="fecha_alta" class="input-field" type="date">
+                </div>
+
+                <div class="input-container sexo">
+                    <label for="sexo" class="input-label">Sexo<span class="span-required">*</span></label>
+                    <input id="sexo" formControlName="sexo" class="input-field">
+                </div>
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Dirección</h3>
+            
+            <fieldset class="input-group">
+                
+                <!-- Dirección (opcional) -->
+                <div class="input-container direccion">
+                    <label for="direccion" class="input-label">Dirección</label>
+                    <input id="direccion" formControlName="direccion" class="input-field" placeholder="Ej: Calle Mayor, 10">
+                </div>
+            
+                <!-- Población (opcional) -->
+                <div class="input-container poblacion">
+                    <label for="poblacion" class="input-label">Población <span class="span-required">*</span></label>
+                    <input id="poblacion" formControlName="poblacion" class="input-field" placeholder="Ej: Madrid">
+                </div>
+            
+                <!-- País (opcional) -->
+                <div class="input-container pais">
+                    <label for="pais" class="input-label">Provincia</label>
+                    <input id="pais" formControlName="pais" class="input-field" placeholder="Ej: España">
+                </div>
+            
+                <!-- Código Postal (opcional) -->
+                <div class="input-container codigo_postal">
+                    <label for="cod_postal" class="input-label">Código Postal</label>
+                    <input id="cod_postal" formControlName="cod_postal" type="number" class="input-field" placeholder="Ej: 28001">
+                </div>
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Contacto</h3>
+            
+            <fieldset class="input-group">
+                <!-- Teléfono (opcional) -->
+                <div class="input-container telefono">
+                    <label for="telefono" class="input-label">Teléfono</label>
+                    <input id="telefono" formControlName="telefono" class="input-field" placeholder="Ej: 912345678">
+                </div>
+            
+                <!-- Fax (opcional) -->
+                <div class="input-container fax">
+                    <label for="fax" class="input-label">Fax</label>
+                    <input id="fax" formControlName="fax" class="input-field" placeholder="Ej: 912345679">
+                </div>
+            
+            </fieldset>
+            
+
+            <footer class="form-footer">
+                @if(comercial_id){
+                    <button type="submit" class="submit-button">
+                        Guardar cambios
+                    </button>
+                } @else { 
+                    <button type="submit" class="submit-button">
+                        Crear cuenta comercial
+                    </button>
+                }
+            </footer>
+        </form>
+    </main>
+</section>

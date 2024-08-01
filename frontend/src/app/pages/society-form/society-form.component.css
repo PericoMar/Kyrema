@@ -2,6 +2,14 @@
     padding: var(--section-padding);
 }
 
+.datos-header{
+    margin-bottom: 10px;
+}
+
+.datos-header h3{
+    margin: 0;
+}
+
 .content-block{
     padding:40px 80px;
 }

@@ -4,7 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { SocietyService } from '../../services/society.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppConfig } from '../../../config/app-config';
 
 @Component({
   selector: 'app-society-form',
@@ -14,11 +15,12 @@ import { Router } from '@angular/router';
   styleUrl: './society-form.component.css'
 })
 export class SocietyFormComponent {
-  id_sociedad_formulario!: string;
   sociedad! : Society;
+  sociedad_id!: string;
   societyForm!: FormGroup;
   tiposDeSociedad = ['Sociedad de caza', 'Sociedad dependiente'];
   sociedad_padre_id: string;
+  sociedadesPadre: Society[] = [];
 
   selectedFile!: File;
   fileName!: string;
@@ -27,13 +29,25 @@ export class SocietyFormComponent {
   constructor(
     private formBuilder: FormBuilder,
     private societyService: SocietyService,
-    private router : Router
+    private router : Router,
+    private route : ActivatedRoute
   ) {
+    
+
     this.sociedad_padre_id = this.societyService.getCurrentSociety().id || '';
 
-    this.societyService.getSociedadesHijas();
+    if(this.sociedad_padre_id == AppConfig.SOCIEDAD_ADMIN_ID){
+      this.societyService.getSociedadesPadres().subscribe(response => {
+        console.log('Sociedades padre:', response);
+        this.sociedadesPadre = response;
+      });
+    }
 
-    this.id_sociedad_formulario = this.societyService.getSociedadIdPorUrl();
+    // Coger la sociedad por la ruta:
+    this.route.paramMap.subscribe(params => {
+      this.sociedad_id = params.get('sociedad') || '';
+    });
+
   }
 
   ngOnInit(): void {
@@ -65,6 +79,13 @@ export class SocietyFormComponent {
       logo: [''],
       sociedad_padre_id: [this.sociedad_padre_id]
     });
+    if(this.sociedad_id){
+      this.societyService.getSocietyById(this.sociedad_id).subscribe(response => {
+        // PatchValues para rellenar el formulario con los datos de la sociedad.
+        this.societyForm.patchValue(response);
+      });
+    } 
+    
   }
 
   onFileSelected(event : any) {
@@ -83,7 +104,7 @@ export class SocietyFormComponent {
   onSubmit() {
     if (this.societyForm.valid) {
       const nuevaSociedad: Society = this.societyForm.value;
-      if(this.id_sociedad_formulario == ''){
+      if(this.sociedad_id == ''){
         this.societyService.createSociety(nuevaSociedad).subscribe(response => {
           console.log('Sociedad creada:', response);
 
@@ -103,7 +124,7 @@ export class SocietyFormComponent {
           console.error('Error al crear la sociedad:', error);
         });
       } else {
-        this.societyService.updateSociety(this.id_sociedad_formulario, nuevaSociedad).subscribe(response => {
+        this.societyService.updateSociety(this.sociedad_id, nuevaSociedad).subscribe(response => {
           console.log('Sociedad actualizada:', response);
           this.societyService.getSociedadAndHijas(this.sociedad_padre_id).subscribe(response => {
             this.societyService.guardarSociedadesEnLocalStorage(response);

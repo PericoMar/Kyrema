@@ -61,7 +61,7 @@ export class ProductsService {
   //Esto edita una fila en la tabla del producto
   //En el objeto nuevoProducto se debe incluir el id del tipo de producto
   editarProducto(tipo_producto: any, productoEditado : any): Observable<any>{
-    return this.http.post<any>(`${this.apiUrl}/editar-producto${tipo_producto}`, {productoEditado});
+    return this.http.post<any>(`${this.apiUrl}/editar-producto/${tipo_producto}`, {productoEditado});
   }
 
   //Esto elimina una fila en la tabla del producto

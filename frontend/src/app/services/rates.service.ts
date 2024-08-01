@@ -24,11 +24,11 @@ export class RatesService {
     return this.http.post<any>(`${this.apiUrl}tarifa-producto/sociedad`, tarifaProducto);
   }
 
-  updateTarifasPorSociedad(sociedad: any, tarifa: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}tarifas/sociedad/${sociedad}`, { tarifa });
-  }
+  updateTarifaPorSociedad(sociedad: any, tarifa: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}tarifa/sociedad/${sociedad}`, { tarifa });
+  } 
 
   createTarifaPorSociedad(sociedad_id : any, tarifa: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}tarifas/sociedad/${sociedad_id}`, { tarifa });
+    return this.http.post<any>(`${this.apiUrl}tarifa/sociedad/${sociedad_id}`, { tarifa });
   }
 }

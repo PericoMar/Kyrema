@@ -54,16 +54,58 @@ class TarifaProductoController extends Controller
         return response()->json($tarifas);
     }
 
+
+    //return {
+    //     id: tipoProducto.id,
+    //     nombre: tipoProducto.nombre,
+    //     prima_seguro: tarifa.prima_seguro,
+    //     cuota_asociacion: tarifa.cuota_asociacion,
+    //     precio_total: tarifa.precio_total,
+    //     tarifa_sociedad: tarifa.id_sociedad
+    // };
     public function updateTarifaPorSociedad($sociedad_id, Request $request)
     {
-        // Coge la tarifa de la resquest donde estara el id del tipo_producto y los precios
-        $tarifa = $request->input('tarifa');
 
-        // Cambia los datos de esta sociedad y el id de dentro de $tarifa con los datos de $tarifa.
-        TarifasProducto::where('id_sociedad', $sociedad_id)->update($tarifa);
+        $tarifa = $request->input('tarifa');
+        // Coger id y meterlo en $id_tipo_producto
+        $id_tipo_producto = $tarifa['id'];
+        // Coger los precios
+        $prima_seguro = $tarifa['prima_seguro'];
+        $cuota_asociacion = $tarifa['cuota_asociacion'];
+        $precio_total = $tarifa['precio_total'];
+
+        // Actualizar los datos:
+        TarifasProducto::where('id_sociedad', $sociedad_id)->where('tipo_producto_id', $id_tipo_producto)->update([
+            'prima_seguro' => $prima_seguro,
+            'cuota_asociacion' => $cuota_asociacion,
+            'precio_total' => $precio_total
+        ]);
 
         // Devuelve un mensaje de éxito
         return response()->json(['message' => 'Tarifa actualizada con éxito'], 200);
+    }
+
+    public function createTarifaPorSociedad($sociedad_id, Request $request)
+    {
+        $tarifa = $request->input('tarifa');
+        // Coger id y meterlo en $id_tipo_producto
+        $id_tipo_producto = $tarifa['id'];
+        // Coger los precios
+        $prima_seguro = $tarifa['prima_seguro'];
+        $cuota_asociacion = $tarifa['cuota_asociacion'];
+        $precio_total = $tarifa['precio_total'];
+
+        // Meter los datos en la tabla
+        TarifasProducto::create([
+            'id_sociedad' => $sociedad_id,
+            'tipo_producto_id' => $id_tipo_producto,
+            'prima_seguro' => $prima_seguro,
+            'cuota_asociacion' => $cuota_asociacion,
+            'precio_total' => $precio_total
+        ]);
+
+        // Devuelve un mensaje de éxito
+        return response()->json(['message' => 'Tarifa creada con éxito'], 201);
 
     }
 

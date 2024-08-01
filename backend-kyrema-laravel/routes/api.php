@@ -54,6 +54,7 @@ Route::get('sociedad/hijas/{id}', [SociedadController::class, 'getSociedadesHija
 Route::post('sociedad', [SociedadController::class, 'store']);
 Route::delete('sociedad/{id}', [SociedadController::class, 'destroy']);
 Route::put('sociedad/{id}/permisos', [SociedadController::class, 'updatePermisos']);
+Route::get('sociedades/padres', [SociedadController::class, 'getSociedadesPadres']);
 
 
 // Gestiona todas las solicitudes de la conexion entre TipoProducto y Sociedad
@@ -61,6 +62,8 @@ Route::post('tipo-producto-sociedad', [TipoProductoSociedadController::class, 's
 Route::post('sociedad/{sociedad_padre_id}/hija/{sociedad_hija_id}', [TipoProductoSociedadController::class, 'transferirTiposProductos']);
 
 Route::apiResource('comerciales', ComercialController::class);
+Route::delete('comercial/{id}', [ComercialController::class, 'destroy']);
+
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/comercial/{id}', [ComercialController::class, 'show']);
 
@@ -75,6 +78,9 @@ Route::get('tarifas/sociedad/{id_sociedad}', [TarifaProductoController::class, '
 Route::get('tarifas-producto/sociedad/{id_sociedad}', [TarifaProductoController::class, 'getTarifaPorSociedadAndTipoProducto']);
 // Set tarifa por sociedad y tipoProducto
 Route::post('tarifa-producto/sociedad', [TarifaProductoController::class, 'store']);
+
+Route::put('tarifa/sociedad/{id_sociedad}', [TarifaProductoController::class, 'updateTarifaPorSociedad']);
+Route::post('tarifa/sociedad/{id_sociedad}', [TarifaProductoController::class, 'createTarifaPorSociedad']);
 
 Route::apiResource('tarifas-producto', TarifaProductoController::class);
 Route::apiResource('tarifas-anexo', TarifaAnexoController::class);

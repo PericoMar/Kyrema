@@ -85,4 +85,8 @@ export class SocietyService {
   updateSocietyPermissions(sociedad_id: string, permisosTiposProductos: any[]): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/sociedad/${sociedad_id}/permisos`, { permisosTiposProductos });
   }
+
+  getSociedadesPadres(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/sociedades/padres`);
+  }
 }

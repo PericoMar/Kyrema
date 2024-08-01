@@ -1,26 +1,37 @@
 <section class="society-form-section">
     <header>
-        <h1>Crear sociedad</h1>
+        <h1>Formulario sociedades</h1>
     </header>
     <main class="content-block">
         <form [formGroup]="societyForm" (ngSubmit)="onSubmit()">
-            <div class="space-between">
-            <h3 class="form-section-title">Datos generales</h3>
-            <div class="input-file">
-                <input type="file" class="file-input" accept=".png, .jpg, .jpeg, .svg"
-                  (change)="onFileSelected($event)" #fileUpload>
-  
-                  <div class="file-upload">
-  
-                  {{fileName || "No has añadido ningun logo aún."}}
-  
-                    <button type="button" mat-mini-fab color="primary" class="upload-btn"
-                      (click)="fileUpload.click()">
-                        <mat-icon>attach_file</mat-icon>
-                    </button>
-                  </div>
-              </div>
-            </div>
+            <header class="space-between datos-header">
+                <h3 class="form-section-title">Datos generales</h3>
+                @if(sociedadesPadre.length > 0){
+                    <div class="input-container sociedad_padre">
+                        <label for="sociedad-padre" class="input-label">Sociedad Padre</label>
+                        <select formControlName="sociedad_padre_id" id="sociedad-padre" class="input-field">
+                            @for(sociedad of sociedadesPadre ; track sociedad){
+                                <option value="{{sociedad.id}}">{{sociedad.nombre}}</option>
+                            }
+                        </select>
+                    </div>
+                }
+                <div class="input-file">
+                    <input type="file" class="file-input" accept=".png, .jpg, .jpeg, .svg" formControlName="logo"
+                    (change)="onFileSelected($event)" #fileUpload>
+    
+                    <div class="file-upload">
+    
+                    {{fileName || "No has añadido ningun logo aún."}}
+    
+                        <button type="button" mat-mini-fab color="primary" class="upload-btn"
+                        (click)="fileUpload.click()">
+                            <mat-icon>attach_file</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <hr>
 
             <fieldset class="input-group">
                 
@@ -180,9 +191,15 @@
             </fieldset>
 
             <footer class="form-footer">
-                <button type="submit" class="submit-button">
-                    Crear sociedad
-                </button>
+                @if(sociedad_id){
+                    <button type="submit" class="submit-button">
+                        Guardar cambios
+                    </button>
+                } @else { 
+                    <button type="submit" class="submit-button">
+                        Crear sociedad
+                    </button>
+                }
             </footer>
         </form>
     </main>

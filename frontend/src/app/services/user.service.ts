@@ -46,9 +46,21 @@ export class UserService {
     return user ? JSON.parse(user) : null;
   }
 
+  deleteComercial(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/api/comercial/${id}`);
+  }
+
   logout() {
     localStorage.removeItem(this.USER_KEY);
     localStorage.removeItem('token');
+  }
+
+  createCommercial(commercial: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/api/comercial`, commercial);
+  }
+
+  updateCommercial(commercial_id: any, commercial: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/api/comercial/${commercial.id}`, commercial);
   }
 }
 

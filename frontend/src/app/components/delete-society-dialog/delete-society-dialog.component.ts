@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { ProductNotificationService } from '../../services/product-notification.service';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { SocietyService } from '../../services/society.service';
 import { SocietyNotificationService } from '../../services/society-notification.service';
 

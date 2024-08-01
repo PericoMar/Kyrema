@@ -14,6 +14,7 @@ import { CommissionsComponent } from './pages/commissions/commissions.component'
 import { CommercialsCommissionsTableComponent } from './pages/commercials-commissions-table/commercials-commissions-table.component';
 import { SocietyFormComponent } from './pages/society-form/society-form.component';
 import { PermissionsBySocietyComponent } from './pages/permissions-by-society/permissions-by-society.component';
+import { CommercialFormComponent } from './pages/commercial-form/commercial-form.component';
 
 export const routes: Routes = [
     {
@@ -45,6 +46,8 @@ export const routes: Routes = [
         { path: 'informes', component: ReportsComponent, }, 
         { path: 'sociedades' , component: SocietyManagerComponent,},
         { path: 'tarifas' , component: TarifasComponent,  },
+        { path: 'comercial' , component: CommercialFormComponent },
+        { path: 'comercial/:comercial' , component: CommercialFormComponent },
         { path: 'comisiones' , component: SocietyManagerComponent },
         { path: 'comisiones/:sociedad' , component: CommissionsComponent},
         { path: 'comisiones-comerciales/:sociedad' , component: CommercialsCommissionsTableComponent},

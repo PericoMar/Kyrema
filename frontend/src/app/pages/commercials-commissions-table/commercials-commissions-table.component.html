@@ -1,5 +1,10 @@
 <main>
-  <h2>Gestión de comisiones por comercial</h2>
+  <header class="space-between">
+    <h2>Gestión de comerciales</h2>
+    @if(currentSociety.sociedad_padre_id == null || currentSociety.sociedad_padre_id == '1'){
+      <a routerLink="/comercial" routerLinkActive="active" class="button-crear">Crear cuenta nuevo comercial</a>
+  }   
+  </header>
     <div class="table-container content-block">
       <app-table [rowData]="rowData" [columnDefs]="columnDefs"></app-table>
     </div>
