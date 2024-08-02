@@ -42,6 +42,8 @@ mat-dialog-content {
     font-weight: 500;
     transition: background-color 0.3s, color 0.3s;
     margin-left: 8px;
+    width: 87px;
+    box-sizing: border-box;
   }
   
   .delete-button:hover {

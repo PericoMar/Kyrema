@@ -30,6 +30,7 @@ Route::get('/productos/{letrasIdentificacion}', [ProductoController::class, 'get
 
 Route::post('/crear-producto/{letrasIdentificacion}', [ProductoController::class, 'crearProducto']);
 Route::post('/editar-producto/{letrasIdentificacion}', [ProductoController::class, 'editarProducto']);
+Route::post('/anular-producto/{letrasIdentificacion}', [ProductoController::class, 'anularProducto']);
 Route::delete('/eliminar-producto/{letrasIdentificacion}', [ProductoController::class, 'eliminarProducto']);
 
 Route::post('/crear-tipo-producto', [ProductoController::class, 'crearTipoProducto']);
@@ -62,6 +63,7 @@ Route::post('tipo-producto-sociedad', [TipoProductoSociedadController::class, 's
 Route::post('sociedad/{sociedad_padre_id}/hija/{sociedad_hija_id}', [TipoProductoSociedadController::class, 'transferirTiposProductos']);
 
 Route::apiResource('comerciales', ComercialController::class);
+Route::get('comerciales/sociedad/{id_sociedad}', [ComercialController::class, 'getComercialesPorSociedad']);
 Route::delete('comercial/{id}', [ComercialController::class, 'destroy']);
 
 Route::post('/auth/login', [AuthController::class, 'login']);

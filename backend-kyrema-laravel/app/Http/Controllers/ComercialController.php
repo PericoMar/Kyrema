@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Hash;
 use App\Models\Comercial;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,7 @@ class ComercialController extends Controller
         return response()->json($comerciales);
     }
 
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -38,23 +40,35 @@ class ComercialController extends Controller
             'path_otros' => 'nullable|string|max:255',
             'path_foto' => 'nullable|string|max:255',
         ]);
-
+    
         // Cambiar el formato de las fechas 'Y-m-d\TH:i:s'
         if ($request->fecha_nacimiento) {
-            $request->fecha_nacimiento = date('Y-m-d\TH:i:s', strtotime($request->fecha_nacimiento));
+            $request->merge([
+                'fecha_nacimiento' => date('Y-m-d\TH:i:s', strtotime($request->fecha_nacimiento))
+            ]);
         }
         if ($request->fecha_alta) {
-            $request->fecha_alta = date('Y-m-d\TH:i:s', strtotime($request->fecha_alta));
+            $request->merge([
+                'fecha_alta' => date('Y-m-d\TH:i:s', strtotime($request->fecha_alta))
+            ]);
         }
-
-        $comercial = Comercial::create($request->all());
-
+    
+        // Crear una copia de los datos del request
+        $data = $request->all();
+    
+        // Hashear la contraseña
+        $data['contraseña'] = Hash::make($request->contraseña);
+    
+        // Crear el comercial usando los datos modificados
+        $comercial = Comercial::create($data);
+    
         return response()->json($comercial, 201);
     }
 
+
     public function getComercialesPorSociedad($sociedad)
     {
-        $comerciales = Comercial::where('sociedad_id', $sociedad)->get();
+        $comerciales = Comercial::where('id_sociedad', $sociedad)->get();
         return response()->json($comerciales);
     }
 
@@ -71,7 +85,6 @@ class ComercialController extends Controller
             'id_sociedad' => 'numeric|exists:sociedad,id',
             'usuario' => 'string|max:255',
             'email' => 'string|email|max:255',
-            'contraseña' => 'string|max:255',
             'dni' => 'string|max:255',
             'sexo' => 'string|max:10',
             'fecha_nacimiento' => 'date',
@@ -97,6 +110,7 @@ class ComercialController extends Controller
         if ($request->fecha_alta) {
             $request->fecha_alta = date('Y-m-d\TH:i:s', strtotime($request->fecha_alta));
         }
+        
 
         $comercial = Comercial::findOrFail($id);
         $comercial->update($request->all());

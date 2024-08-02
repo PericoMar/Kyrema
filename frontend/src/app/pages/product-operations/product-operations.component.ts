@@ -163,7 +163,7 @@ export class ProductOperationsComponent {
 
   loadRowData() {
     //Recoger todos los valores de la tabla
-    this.productsService.getProductosByTipoAndSociedades(this.familyProduct.letras_identificacion, this.idsSociedades).subscribe(
+    this.productsService.getProductosByTipoAndSociedadesNoAnulados(this.familyProduct.letras_identificacion, this.idsSociedades).subscribe(
       data => {
         this.rowData = data;
       },

@@ -1,0 +1,28 @@
+mat-dialog-content {
+    margin-bottom: 20px;
+  }
+  
+  mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 24px;
+  }
+  
+
+
+  /* Estilos personalizados para el botón */
+  .custom-close-button {
+    background-color: #006c19; /* Color de fondo rojo */
+    color: white; /* Color del texto blanco */
+    border: none; /* Sin borde */
+    padding: 6px 12px; /* Relleno */
+    border-radius: 5px; /* Esquinas redondeadas */
+    font-size: 14px; /* Tamaño de fuente */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
+    transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+  }
+  
+  .custom-close-button:hover {
+    background-color: #005013;/* Color de fondo rojo oscuro al pasar el cursor */
+  }
+  

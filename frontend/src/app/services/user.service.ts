@@ -13,32 +13,11 @@ export class UserService {
 
 
   getComercialById(id_sociedad: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/comercial/${id_sociedad}`)
-    .pipe(
-      map(response => {
-        // Extraer los datos específicos del objeto response.comercial
-        const { id, nivel, id_sociedad, nombre, usuario } = response;
-    
-        // Crear el objeto comercial con los datos extraídos
-        const comercial = {
-            id,
-            nivel,
-            id_sociedad,
-            nombre,
-            usuario
-        };
-    
-        return response;
-      }),
-      catchError(error => {
-        console.error('Error de autenticación:', error);
-        return of(false); // Devuelve un Observable que emite false en caso de error de autenticación
-      })
-    );
+    return this.http.get<any>(`${this.apiUrl}/comercial/${id_sociedad}`);
   }
 
   getComercialesPorSociedad(id_sociedad : any){
-    return this.http.get<any>(`${this.apiUrl}/comerciales/${id_sociedad}`);
+    return this.http.get<any>(`${this.apiUrl}/comerciales/sociedad/${id_sociedad}`);
   }
 
   getCurrentUser() {

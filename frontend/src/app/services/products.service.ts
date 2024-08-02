@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,16 @@ export class ProductsService {
   getProductosByTipoAndSociedades(letras_identificacion: string, sociedades: any[]): Observable<any> {
     const params = new HttpParams().set('sociedades', sociedades.join(','));
     return this.http.get<any>(`${this.apiUrl}/productos/${letras_identificacion}`, { params });
+  }
+
+  getProductosByTipoAndSociedadesNoAnulados(letras_identificacion: string, sociedades: any[]): Observable<any> {
+    return this.getProductosByTipoAndSociedades(letras_identificacion, sociedades).pipe(
+      map((productos: any[]) => productos.filter(producto => !producto.anulado)));
+  }
+
+  getProductosByTipoAndSociedadesAnulados(letras_identificacion: string, sociedades: any[]): Observable<any> {
+    return this.getProductosByTipoAndSociedades(letras_identificacion, sociedades).pipe(
+      map((productos: any[]) => productos.filter(producto => producto.anulado)));
   }
 
   //Esto crea la tabla en BDD de los productos nuevos
@@ -67,5 +77,9 @@ export class ProductsService {
   //Esto elimina una fila en la tabla del producto
   deleteProduct(tipo_producto: any, id: any): Observable<any>{
     return this.http.delete<any>(`${this.apiUrl}/eliminar-producto/${tipo_producto}?id=${id}`);
+  }
+
+  anularProducto(tipo_producto: any, desc_anulacion : any ): Observable<any>{
+    return this.http.post<any>(`${this.apiUrl}/anular-producto/${tipo_producto}`, {desc_anulacion});
   }
 }

@@ -9,6 +9,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log; // Importar la clase Log
+use App\Models\Anulacion; // Importar el modelo Anulacion
 
 class ProductoController extends Controller
 {
@@ -39,6 +40,10 @@ class ProductoController extends Controller
             $table->unsignedBigInteger('sociedad_id')->nullable();
             $table->unsignedBigInteger('tipo_de_pago_id')->nullable();
             $table->unsignedBigInteger('comercial_id')->nullable();
+
+            //Booleano de si está anulado o no
+            $table->boolean('anulado')->default(false);
+            
 
             foreach ($campos as $campo) {
                 $nombreCampo = strtolower(str_replace(' ', '_', $campo['nombre']));
@@ -241,6 +246,33 @@ class ProductoController extends Controller
         DB::table($nombreTabla)->where('id', $id)->delete();
         
         return response()->json(['message' => 'Producto eliminado con éxito'], 200);
+    }
+
+    public function anularProducto($letrasIdentificacion, Request $request){
+        // Convertir letras de identificación a nombre de tabla
+        $nombreTabla = strtolower($letrasIdentificacion);
+
+        $id = $request->input('id');
+        
+        // Actualizar el campo 'anulado' a true en la tabla correspondiente
+        DB::table($nombreTabla)
+            ->where('id', $id)
+            ->update(['anulado' => true]);
+
+        // Meter la anulación a la tabla de anulaciones
+        $anulacion = new Anulacion();
+        $anulacion->fecha = Carbon::now()->format('Y-m-d\TH:i:s');
+
+        $anulacion->sociedad_id = $request->input('sociedad_id');
+        $anulacion->comercial_id = $request->input('comercial_id');
+        $anulacion->causa = $request->input('causa');
+        $anulacion->letrasIdentificacion = $letrasIdentificacion;
+        $anulacion->producto_id = $id;
+        $anulacion->codigo_producto = $request->input('codigo_producto');
+
+        $anulacion->save();
+        
+        return response()->json(['message' => 'Producto anulado con éxito'], 200);
     }
     
 }

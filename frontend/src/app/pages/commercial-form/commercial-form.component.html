@@ -34,7 +34,7 @@
 
                 <!-- dni (opcional) -->
                 <div class="input-container dni">
-                    <label for="dni" class="input-label">DNI</label>
+                    <label for="dni" class="input-label">DNI <span class="span-required">*</span></label>
                     <input id="dni" formControlName="dni" class="input-field" placeholder="Ej: A12345678">
                 </div>
             
@@ -55,12 +55,13 @@
                     <label for="usuario" class="input-label">Usuario<span class="span-required">*</span></label>
                     <input id="usuario" formControlName="usuario" class="input-field" placeholder="Ej: usuario12canama">
                 </div>
-
-                <!-- Contraseña (opcional) -->
-                <div class="input-container contraseña">
-                    <label for="contraseña" class="input-label">Contraseña</label>
-                    <input id="contraseña" formControlName="contraseña" class="input-field" placeholder="******">
-                </div>
+                @if(comercial_id == ''){
+                    <!-- Contraseña (opcional) -->
+                    <div class="input-container contraseña">
+                        <label for="contraseña" class="input-label">Contraseña <span class="span-required">*</span></label>
+                        <input id="contraseña" formControlName="contraseña" class="input-field" placeholder="******">
+                    </div>
+                }
             </fieldset>
 
             <hr>
@@ -73,12 +74,12 @@
                 </div>
 
                 <div class="input-container fecha_alta">
-                    <label for="fecha_alta" class="input-label">Fecha de alta<span class="span-required">*</span></label>
+                    <label for="fecha_alta" class="input-label">Fecha de alta</label>
                     <input id="fecha_alta" formControlName="fecha_alta" class="input-field" type="date">
                 </div>
 
                 <div class="input-container sexo">
-                    <label for="sexo" class="input-label">Sexo<span class="span-required">*</span></label>
+                    <label for="sexo" class="input-label">Sexo</label>
                     <input id="sexo" formControlName="sexo" class="input-field" placeholder="M/F">
                 </div>
             </fieldset>
@@ -90,25 +91,25 @@
                 
                 <!-- Dirección (opcional) -->
                 <div class="input-container direccion">
-                    <label for="direccion" class="input-label">Dirección</label>
+                    <label for="direccion" class="input-label">Dirección </label>
                     <input id="direccion" formControlName="direccion" class="input-field" placeholder="Ej: Calle Mayor, 10">
                 </div>
             
                 <!-- Población (opcional) -->
                 <div class="input-container poblacion">
-                    <label for="poblacion" class="input-label">Población <span class="span-required">*</span></label>
+                    <label for="poblacion" class="input-label">Población </label>
                     <input id="poblacion" formControlName="poblacion" class="input-field" placeholder="Ej: Madrid">
                 </div>
             
                 <!-- País (opcional) -->
                 <div class="input-container provincia">
-                    <label for="provincia" class="input-label">Provincia</label>
+                    <label for="provincia" class="input-label">Provincia </label>
                     <input id="provincia" formControlName="provincia" class="input-field" placeholder="Ej: Madrid">
                 </div>
             
                 <!-- Código Postal (opcional) -->
                 <div class="input-container codigo_postal">
-                    <label for="cod_postal" class="input-label">Código Postal</label>
+                    <label for="cod_postal" class="input-label">Código Postal </label>
                     <input id="cod_postal" formControlName="cod_postal" type="number" class="input-field" placeholder="Ej: 28001">
                 </div>
             </fieldset>
@@ -126,7 +127,7 @@
                 <!-- Fax (opcional) -->
                 <div class="input-container fax">
                     <label for="fax" class="input-label">Fax</label>
-                    <input id="fax" formControlName="fax" class="input-field" placeholder="Ej: ">
+                    <input id="fax" formControlName="fax" class="input-field" placeholder=" ">
                 </div>
             
             </fieldset>

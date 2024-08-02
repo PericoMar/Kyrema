@@ -1,9 +1,20 @@
-<h2 mat-dialog-title>Eliminar</h2>
+<h2 mat-dialog-title>Anular</h2>
 <mat-dialog-content>
     <p>{{ data.message }}</p>
     <p class="bold">{{ data.codigo_producto }}</p>
+
+    <p>{{ data.secondary_msg}}</p>
+    
+    <!-- Input para indicar la causa -->
+    <label for="causa" class="input-label">Causa</label>
+    <input type="text" class="input-field" id="causa" [(ngModel)]="causa">
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button (click)="onClose()" class="custom-close-button">Cerrar</button>
-  <button mat-button (click)="confirmDelete(data)" class="delete-button">Eliminar</button>
+  <button mat-button (click)="confirmDelete(data)" class="delete-button">
+    @if(loading){
+      <app-button-spinner></app-button-spinner>
+    } @else {
+      Anular
+    }</button>
 </mat-dialog-actions>

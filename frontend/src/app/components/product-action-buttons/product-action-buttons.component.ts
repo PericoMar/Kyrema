@@ -66,7 +66,8 @@ export class ProductActionButtonsComponent {
       width: '400px',
       data : {
         id: data.id,
-        message: '¿Estás seguro que deseas eliminar el siguiente producto?',
+        message: '¿Estás seguro que deseas anular el siguiente producto?',
+        secondary_msg: 'Se guardará en la tabla de anulaciones.',
         codigo_producto: data.codigo_producto,
         tipo_producto: this.letrasIdentificacion,
       },

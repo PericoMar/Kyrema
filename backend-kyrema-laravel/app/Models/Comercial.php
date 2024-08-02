@@ -14,8 +14,6 @@ class Comercial extends Authenticatable implements JWTSubject
 
     protected $table = 'comercial';
     protected $primaryKey = 'id';
-    public $incrementing = false;
-    protected $keyType = 'string';
     public $timestamps = false;
 
     protected $fillable = [
@@ -23,7 +21,24 @@ class Comercial extends Authenticatable implements JWTSubject
         'nombre',
         'id_sociedad',
         'usuario',
+        'email',
         'contraseña',
+        'dni',
+        'sexo',
+        'fecha_nacimiento',
+        'fecha_alta',
+        'referido',
+        'direccion',
+        'poblacion',
+        'provincia',
+        'cod_postal',
+        'telefono',
+        'fax',
+        'path_licencia_cazador',
+        'path_dni',
+        'path_justificante_iban',
+        'path_otros',
+        'path_foto',
     ];
 
     public function sociedad()

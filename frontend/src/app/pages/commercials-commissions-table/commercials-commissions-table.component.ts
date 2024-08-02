@@ -61,7 +61,8 @@ export class CommercialsCommissionsTableComponent {
   initComercialTable(){
     this.comercialService.getComercialesPorSociedad(this.sociedad).subscribe(
       comerciales => { 
-        this.rowData = Array.isArray(comerciales) ? [comerciales] : [comerciales];
+        console.log(comerciales);
+        this.rowData = Array.isArray(comerciales) ? comerciales : [comerciales];
       },
       error => { console.log(error)}
     );
