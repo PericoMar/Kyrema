@@ -22,6 +22,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\NavController;
 use App\Http\Controllers\AnuladosController;
+use App\Http\Controllers\AnexosController;
 
 
 
@@ -78,9 +79,12 @@ Route::put('/comercial/{id}', [ComercialController::class, 'update']);
 Route::post('/comercial', [ComercialController::class, 'store']);
 
 Route::apiResource('comercial-comisiones', ComercialComisionController::class);
+
+// ANEXOS:
+Route::get('/anexos/sociedad/{id_sociedad}', [AnexosController::class, 'getAnexosPorSociedad']);
+Route::delete('/anexos/{id}', [AnexosController::class, 'destroy']);
 Route::apiResource('tipos-anexo', TipoAnexoController::class);
 Route::apiResource('campos-anexo', CampoAnexoController::class);
-Route::apiResource('valores-anexo', ValorAnexoController::class);
 
 // Todas las tarifas por sociedad
 Route::get('tarifas/sociedad/{id_sociedad}', [TarifaProductoController::class, 'getTarifaPorSociedad']);

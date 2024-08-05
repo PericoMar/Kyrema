@@ -1,0 +1,14 @@
+main.anexos-manager{
+    padding: var(--section-padding);
+    background-color: var(--main-bg-color);
+    height: 100%;
+}
+
+.anexos-table{
+  padding: 40px;  
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+}

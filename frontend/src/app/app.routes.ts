@@ -16,6 +16,8 @@ import { SocietyFormComponent } from './pages/society-form/society-form.componen
 import { PermissionsBySocietyComponent } from './pages/permissions-by-society/permissions-by-society.component';
 import { CommercialFormComponent } from './pages/commercial-form/commercial-form.component';
 import { AnulacionesPageComponent } from './pages/anulaciones-page/anulaciones-page.component';
+import { AnexosManagerComponent } from './pages/anexos-manager/anexos-manager.component';
+import { AnexosConfiguratorComponent } from './pages/anexos-configurator/anexos-configurator.component';
 
 export const routes: Routes = [
     {
@@ -49,6 +51,8 @@ export const routes: Routes = [
         { path: 'sociedades' , component: SocietyManagerComponent,},
         { path: 'tarifas' , component: TarifasComponent,  },
         { path: 'comercial' , component: CommercialFormComponent },
+        { path: 'anexos', component: AnexosManagerComponent},
+        { path: 'configurador-anexos', component: AnexosConfiguratorComponent},
         { path: 'comercial/:comercial' , component: CommercialFormComponent },
         { path: 'comisiones' , component: SocietyManagerComponent },
         { path: 'comisiones/:sociedad' , component: CommissionsComponent},
