@@ -28,12 +28,12 @@ export class DeleteDialogComponent {
     private userService : UserService,
   ) {
     this.sociedad = this.societyService.getCurrentSociety();
-    this.comercial = this.userService.getCurrentUser();
+    this.comercial = this.userService.getCurrentUser(); 
+
   }
 
-  comercial!: string;
+  comercial!: any;
   sociedad!: any;
-  sociedad_nombre!: string;
 
   causa: string = '';
 
@@ -62,11 +62,12 @@ export class DeleteDialogComponent {
   createDescAnulacion(){
     return {
       causa: this.causa,
-      comercial: this.comercial,
-      sociedad: this.sociedad_nombre,
+      comercial_id: this.comercial.id,
+      sociedad_id: this.sociedad.id,
+      comercial_nombre: this.comercial.nombre,
+      sociedad_nombre: this.sociedad.nombre,
       codigo_producto: this.data.codigo_producto,
-      id: this.data.id,
-      tipo_producto: this.data.tipo_producto
+      id: this.data.id
     }
   }
 }

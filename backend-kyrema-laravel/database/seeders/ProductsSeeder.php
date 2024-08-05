@@ -16,7 +16,7 @@ class ProductsSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        $tableName = 'SE';
+        $tableName = 'PA';
         $tableDatePrefix = Carbon::now()->format('mY');
         
         for ($i = 0; $i < 100; $i++) { // Cambiado a 1000 para más datos
@@ -64,7 +64,7 @@ class ProductsSeeder extends Seeder
                 'fecha_de_nacimiento' => $fechaDeNacimiento,
 
                 // Campos variables
-                'fecha_de_evento' => $pruebaFecha,
+                
 
                 // Timestamps
                 'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'

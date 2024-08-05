@@ -23,6 +23,8 @@ class Anulacion extends Model
         'fecha',
         'sociedad_id',
         'comercial_id',
+        'sociedad_nombre',
+        'comercial_nombre',
         'causa',
         'letrasIdentificacion',
         'producto_id',

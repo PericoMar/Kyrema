@@ -18,12 +18,12 @@ export class ProductsService {
 
   getProductosByTipoAndSociedadesNoAnulados(letras_identificacion: string, sociedades: any[]): Observable<any> {
     return this.getProductosByTipoAndSociedades(letras_identificacion, sociedades).pipe(
-      map((productos: any[]) => productos.filter(producto => !producto.anulado)));
+      map((productos: any[]) => productos.filter(producto => producto.anulado == 0)));
   }
 
   getProductosByTipoAndSociedadesAnulados(letras_identificacion: string, sociedades: any[]): Observable<any> {
     return this.getProductosByTipoAndSociedades(letras_identificacion, sociedades).pipe(
-      map((productos: any[]) => productos.filter(producto => producto.anulado)));
+      map((productos: any[]) => productos.filter(producto => producto.anulado == 1)));
   }
 
   //Esto crea la tabla en BDD de los productos nuevos
@@ -44,10 +44,9 @@ export class ProductsService {
 
   downloadPlantilla(letrasIdentificacion: string, id: any): Observable<Blob> {
     const url = `${this.apiUrl}/descargar-plantilla/${letrasIdentificacion}`;
-    
+  
     // Configurar parámetros de la consulta en la URL
-    let params = new HttpParams();
-    params = params.append('id', id);
+    let params = new HttpParams().set('id', id);
 
     // Configurar cabeceras si es necesario
     const headers = new HttpHeaders({
@@ -58,7 +57,7 @@ export class ProductsService {
     return this.http.get(url, {
       params: params,
       headers: headers,
-      responseType: 'blob'
+      responseType: 'blob' // Asegura que la respuesta se trate como un Blob
     });
   }
 
@@ -80,6 +79,6 @@ export class ProductsService {
   }
 
   anularProducto(tipo_producto: any, desc_anulacion : any ): Observable<any>{
-    return this.http.post<any>(`${this.apiUrl}/anular-producto/${tipo_producto}`, {desc_anulacion});
+    return this.http.post<any>(`${this.apiUrl}/anular-producto/${tipo_producto}`, desc_anulacion);
   }
 }

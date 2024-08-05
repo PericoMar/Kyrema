@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TableComponent } from './table/table.component';
 import { ProductFormComponent } from './product-form/product-form.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FamilyProductService } from '../../services/family-product.service';
 import { CamposService } from '../../services/campos.service';
 import { ColDef} from 'ag-grid-community'; 
@@ -15,7 +15,7 @@ import { ProductNotificationService } from '../../services/product-notification.
 @Component({
   selector: 'app-product-operations',
   standalone: true,
-  imports: [TableComponent, ProductFormComponent],
+  imports: [TableComponent, ProductFormComponent, RouterModule],
   templateUrl: './product-operations.component.html',
   styleUrl: './product-operations.component.css'
 })

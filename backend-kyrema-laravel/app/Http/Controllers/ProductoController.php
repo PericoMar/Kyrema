@@ -265,6 +265,8 @@ class ProductoController extends Controller
 
         $anulacion->sociedad_id = $request->input('sociedad_id');
         $anulacion->comercial_id = $request->input('comercial_id');
+        $anulacion->sociedad_nombre = $request->input('sociedad_nombre');
+        $anulacion->comercial_nombre = $request->input('comercial_nombre'); 
         $anulacion->causa = $request->input('causa');
         $anulacion->letrasIdentificacion = $letrasIdentificacion;
         $anulacion->producto_id = $id;

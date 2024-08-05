@@ -18,6 +18,8 @@ class CreateAnulacionesTable extends Migration
             $table->date('fecha'); // Fecha de la anulación
             $table->unsignedBigInteger('sociedad_id'); 
             $table->unsignedBigInteger('comercial_id'); // ID del comercial
+            $table->string('sociedad_nombre'); // Nombre de la sociedad
+            $table->string('comercial_nombre'); // Nombre del comercial
             $table->string('causa'); // Causa de la anulación
             $table->string('letrasIdentificacion'); // Nombre de la tabla donde está el seguro anulado
             $table->unsignedBigInteger('producto_id'); // ID del producto

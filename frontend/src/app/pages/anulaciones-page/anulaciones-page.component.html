@@ -1,1 +1,8 @@
-<p>anulaciones-page works!</p>
+<section class="anulados-section">
+    <header class="space-between">
+        <h1>Listado de anulados de {{ tipoProductoNombre }}</h1>
+    </header>
+    <main class="content-block anulados-table">
+        <app-table [rowData]="rowData" [columnDefs]="columnDefs"></app-table>
+    </main>
+</section>

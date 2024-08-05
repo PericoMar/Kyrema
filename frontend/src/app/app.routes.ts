@@ -15,6 +15,7 @@ import { CommercialsCommissionsTableComponent } from './pages/commercials-commis
 import { SocietyFormComponent } from './pages/society-form/society-form.component';
 import { PermissionsBySocietyComponent } from './pages/permissions-by-society/permissions-by-society.component';
 import { CommercialFormComponent } from './pages/commercial-form/commercial-form.component';
+import { AnulacionesPageComponent } from './pages/anulaciones-page/anulaciones-page.component';
 
 export const routes: Routes = [
     {
@@ -43,6 +44,7 @@ export const routes: Routes = [
         // { path: 'configurador-productos/:id' , component: ProductConfiguratorComponent, canActivate: [authGuard]},
         { path: '', component: ProductOperationsComponent,  },
         { path: 'operaciones/:product', component: ProductOperationsComponent, }, 
+        { path: 'anulados/:product', component: AnulacionesPageComponent, },
         { path: 'informes', component: ReportsComponent, }, 
         { path: 'sociedades' , component: SocietyManagerComponent,},
         { path: 'tarifas' , component: TarifasComponent,  },

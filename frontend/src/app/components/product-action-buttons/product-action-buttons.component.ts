@@ -40,7 +40,6 @@ export class ProductActionButtonsComponent {
         // Crear un enlace <a> en el DOM para iniciar la descarga
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.style.display = 'none';
         a.href = url;
   
         // Establecer el nombre de archivo para la descarga

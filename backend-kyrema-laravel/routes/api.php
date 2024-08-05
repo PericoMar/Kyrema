@@ -21,12 +21,18 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\NavController;
+use App\Http\Controllers\AnuladosController;
 
 
 
 // Route::get('/productos/{letras_identificativas}', [ProductoController::class, 'getProductosPorTipo']);
 
 Route::get('/productos/{letrasIdentificacion}', [ProductoController::class, 'getProductosByTipoAndSociedades']);
+
+// ANULADOS
+Route::get('anulados/{letrasIdentificacion}', [AnuladosController::class, 'getAnulados']);
+
+
 
 Route::post('/crear-producto/{letrasIdentificacion}', [ProductoController::class, 'crearProducto']);
 Route::post('/editar-producto/{letrasIdentificacion}', [ProductoController::class, 'editarProducto']);

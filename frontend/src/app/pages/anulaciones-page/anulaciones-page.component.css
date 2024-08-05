@@ -1,0 +1,7 @@
+.anulados-section{
+    padding: var(--section-padding);
+}
+
+.anulados-table{
+    height: 500px;
+}
