@@ -12,6 +12,10 @@
     margin-bottom: 40px;
   }
   
+  .flex-start{
+    gap: 80px;
+  }
+
   hr{
     margin-top: 8px;
   }
@@ -225,7 +229,7 @@
   
   .add-field {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    margin: 40px 0px;
+    margin: 30px 0px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -289,4 +293,6 @@
     100% { transform: rotate(360deg); }
   }
   
-  
+  .invisible{
+    width: 20%;
+  }

@@ -14,6 +14,8 @@ import { RatesService } from '../../services/rates.service';
 import { Tarifa } from '../../interfaces/tarifa';
 import { SocietyService } from '../../services/society.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
+import { appConfig } from '../../app.config';
+import { AppConfig } from '../../../config/app-config';
 
 
 interface Campo {
@@ -34,7 +36,6 @@ interface Campo {
   styleUrl: './product-configurator.component.css'
 })
 export class ProductConfiguratorComponent {
-  private readonly SOCIEDAD_ADMIN_ID = '1';
   tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }];
   fileName = '';
   selectedFile! : File;
@@ -93,6 +94,7 @@ export class ProductConfiguratorComponent {
     { nombre: 'Prima del seguro', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
     { nombre: 'Cuota de asociación', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
     { nombre: 'Precio Total', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+    { nombre: 'Numero anexos', tipoDato: 'number', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
   ]
 
   camposAsegurado: Campo[] = [
@@ -192,14 +194,14 @@ export class ProductConfiguratorComponent {
         });
         const tarifaNuevoProducto : Tarifa = {
           tipo_producto_id: id_tipo_producto,
-          id_sociedad: this.SOCIEDAD_ADMIN_ID,
+          id_sociedad: AppConfig.SOCIEDAD_ADMIN_ID,
           prima_seguro: this.tarifas[0].valor,
           cuota_asociacion: this.tarifas[1].valor,
           precio_total: this.tarifas[2].valor
         };
         this.ratesService.setTarifasPorSociedadAndTipoProducto(tarifaNuevoProducto).subscribe((res:any) => {
           console.log(res);
-          this.societyService.connectSocietyWithTipoProducto(this.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
+          this.societyService.connectSocietyWithTipoProducto(AppConfig.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
             console.log(res);
             // Recargar la pagina:
             window.location.reload();

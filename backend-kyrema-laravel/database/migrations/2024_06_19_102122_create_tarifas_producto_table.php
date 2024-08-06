@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('tarifas_producto', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tipo_producto');
+            $table->unsignedBigInteger('tipo_producto_id');
             $table->unsignedBigInteger('id_sociedad');
             $table->decimal('prima_seguro', 10, 2)->nullable();
             $table->decimal('cuota_asociacion', 10, 2)->nullable();
             $table->decimal('precio_total', 10, 2)->nullable();
             $table->foreign('id_sociedad')->references('id')->on('sociedad')->onDelete('cascade');
-            $table->foreign('tipo_producto')->references('id')->on('tipo_producto')->onDelete('cascade');
+            $table->foreign('tipo_producto_id')->references('id')->on('tipo_producto')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             // Nombre cambiado para poder hacerle referencia
-            $table->string('codigo');
+            $table->string('letras_identificacion');
             $table->string('id_tipo_producto')->nullable();
 
             $table->timestamps();

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class DeleteProductData extends Command
 {
@@ -20,6 +21,11 @@ class DeleteProductData extends Command
     {
         $productId = $this->argument('productId');
 
+        // Obtener letrasIdentificacion y plantilla_path antes de eliminar la tabla tipo_producto
+        $product = DB::table('tipo_producto')->where('id', $productId)->first();
+        $letrasIdentificacion = $product->letras_identificacion ?? null;
+        $plantillaPath = $product->plantilla_path ?? null;
+
         // Delete from tipo_producto
         DB::table('tipo_producto')->where('id', $productId)->delete();
 
@@ -29,16 +35,20 @@ class DeleteProductData extends Command
         // Delete from tarifas_producto
         DB::table('tarifas_producto')->where('tipo_producto_id', $productId)->delete();
 
-        //Coger las letrasIdentificacion de la tabla tipo_producto
-        $letrasIdentificacion = DB::table('tipo_producto')->where('id', $productId)->pluck('letras_identificacion');
-
-        if (Schema::hasTable($letrasIdentificacion)) {
+        // Drop the table if it exists
+        if ($letrasIdentificacion && Schema::hasTable($letrasIdentificacion)) {
             Schema::dropIfExists($letrasIdentificacion);
         }
 
         // Delete from campos
         DB::table('campos')->where('tipo_producto_id', $productId)->delete();
 
+        // Eliminar la plantilla si existe
+        if ($plantillaPath && Storage::disk('public')->exists($plantillaPath)) {
+            Storage::disk('public')->delete($plantillaPath);
+        }
+
         $this->info("Data for product ID $productId has been deleted.");
     }
 }
+

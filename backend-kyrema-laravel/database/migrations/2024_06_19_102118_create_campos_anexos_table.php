@@ -10,10 +10,12 @@ return new class extends Migration
     {
         Schema::create('campos_anexos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('campo_id');
+            $table->string('nombre');
+            $table->string('columna')->nullable();
+            $table->string('fila')->nullable();
+            $table->string('tipo_dato');
             $table->unsignedBigInteger('tipo_anexo');
             $table->boolean('obligatorio');
-            $table->foreign('campo_id')->references('id')->on('campos')->onDelete('cascade');
             $table->foreign('tipo_anexo')->references('id')->on('tipos_anexos')->onDelete('cascade');
             $table->timestamps();
         });

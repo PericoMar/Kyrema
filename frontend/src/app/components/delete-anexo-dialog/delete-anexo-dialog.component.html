@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Eliminar</h2>
+<mat-dialog-content>
+    <p>{{ data.message }}</p>
+    <p class="bold">{{ data.nombre }}</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onClose()" class="custom-close-button">Cerrar</button>
+  <button mat-button (click)="confirmDelete(data)" class="delete-button">
+    @if(loading){
+      <app-button-spinner></app-button-spinner>
+    } @else {
+      Eliminar
+    }
+  </button>
+</mat-dialog-actions>

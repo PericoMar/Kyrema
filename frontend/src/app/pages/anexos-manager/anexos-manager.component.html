@@ -3,9 +3,9 @@
         <form [formGroup]="anexosForm" id="anexos-form">
             <table mat-table [dataSource]="anexos"  >
                 <!-- Nombre Column -->
-                <ng-container matColumnDef="name">
+                <ng-container matColumnDef="nombre">
                     <th mat-header-cell *matHeaderCellDef> Nombre </th>
-                    <td mat-cell *matCellDef="let anexo"> {{ anexo.name }} </td>
+                    <td mat-cell *matCellDef="let anexo"> {{ anexo.nombre }} </td>
                 </ng-container>
 
                 <!-- Acciones Column -->
@@ -17,7 +17,7 @@
                                 style="margin-right: 8px;">
                             Editar
                         </button>
-                        <button mat-button color="warn" (click)="deleteAnexo(i)">Borrar</button>
+                        <button mat-button color="warn" (click)="openDeleteDialog(anexo)">Borrar</button>
                     </td>
                 </ng-container>
 

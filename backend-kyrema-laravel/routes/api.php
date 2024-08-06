@@ -40,6 +40,7 @@ Route::post('/editar-producto/{letrasIdentificacion}', [ProductoController::clas
 Route::post('/anular-producto/{letrasIdentificacion}', [ProductoController::class, 'anularProducto']);
 Route::delete('/eliminar-producto/{letrasIdentificacion}', [ProductoController::class, 'eliminarProducto']);
 
+
 Route::post('/crear-tipo-producto', [ProductoController::class, 'crearTipoProducto']);
 Route::post('/subir-plantilla/{letrasIdentificacion}', [ProductoController::class, 'subirPlantilla']);
 
@@ -83,8 +84,13 @@ Route::apiResource('comercial-comisiones', ComercialComisionController::class);
 // ANEXOS:
 Route::get('/anexos/sociedad/{id_sociedad}', [AnexosController::class, 'getAnexosPorSociedad']);
 Route::delete('/anexos/{id}', [AnexosController::class, 'destroy']);
+Route::post('/anexos', [AnexosController::class, 'createTipoAnexo']);
+Route::get('/anexos/tipo-producto/{id_tipo_producto}', [AnexosController::class, 'getTipoAnexosPorTipoProducto']);
+
 Route::apiResource('tipos-anexo', TipoAnexoController::class);
 Route::apiResource('campos-anexo', CampoAnexoController::class);
+
+Route::get('campos-anexo/tipo-anexo/{id_tipo_anexo}', [CampoAnexoController::class, 'getCamposPorTipoAnexo']);
 
 // Todas las tarifas por sociedad
 Route::get('tarifas/sociedad/{id_sociedad}', [TarifaProductoController::class, 'getTarifaPorSociedad']);
@@ -98,6 +104,7 @@ Route::post('tarifa/sociedad/{id_sociedad}', [TarifaProductoController::class, '
 
 Route::apiResource('tarifas-producto', TarifaProductoController::class);
 Route::apiResource('tarifas-anexo', TarifaAnexoController::class);
+Route::post('tarifa-anexo/sociedad', [TarifaAnexoController::class, 'store']);
 
 
 Route::apiResource('escalado-anexos', EscaladoAnexoController::class);

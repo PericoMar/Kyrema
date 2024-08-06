@@ -73,6 +73,7 @@
 }
 
 
+
 .clean-inputs {
     background-color: #4c78af;
     color: white;
@@ -85,4 +86,17 @@
 
 hr {
     width: 100%;
+}
+
+.add-anexo-button{
+    margin-bottom: 10px;
+}
+
+.mat-button-success{
+    background-color: #4CAF50; /* Verde */
+    color: white;
+
+    &:hover {
+        background-color: #45A049; /* Verde más oscuro */
+    }
 }

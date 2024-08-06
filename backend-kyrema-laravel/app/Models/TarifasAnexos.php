@@ -7,18 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class TarifasAnexos extends Model
 {
+    // Nombre de la tabla
     protected $table = 'tarifas_anexos';
-    protected $primaryKey = 'id';
-    public $incrementing = false;
-    protected $keyType = 'string';
-    public $timestamps = false;
 
+    // Clave primaria
+    protected $primaryKey = 'id';
+
+    // Campos que se pueden llenar masivamente
     protected $fillable = [
-        'id',
-        'anexo',
-        'tiene_escala',
-        'id_producto',
-        'precio',
+        'id_tipo_anexo',
+        'id_sociedad',
+        'prima_seguro',
+        'cuota_asociacion',
+        'precio_total',
+        'tiene_escalado',
+        'created_at',
+        'updated_at',
     ];
 
     public function tipoAnexo()

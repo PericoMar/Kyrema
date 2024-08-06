@@ -92,7 +92,7 @@
         </fieldset>
         
     </main>
-    <hr>
+    <hr class="divider">
 
     @if(camposFormularioPorGrupos['datos_producto'] && camposFormularioPorGrupos['datos_producto'].length > 0){
     <header class="form-header">
@@ -103,10 +103,23 @@
             <label [for]="campo.name" class="input-label">{{ campo.label }}</label>
             <input [id]="campo.name" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field">
         }
-        <hr>
+        <hr class="divider">
     }
 
-   
+    @if(tiposAnexos.length > 0){
+        <header class="form-header">
+            <h3 class="form-section-title">Anexos</h3>
+        </header>
+        @for(tipoAnexo of tiposAnexos ; track tipoAnexo.id){
+            <!-- Mat -button color verde con un mas y el nombre del anexo -->
+            <button mat-raised-button color="primary" (click)="addAnexo(tipoAnexo.id)" class="add-anexo-button">
+                + {{ tipoAnexo.nombre }}
+            </button>
+        }
+        <hr class="divider">
+    }   
+
+
     <header class="form-header">
         <h3 class="form-section-title">Datos del pago</h3>
     </header>
@@ -145,7 +158,7 @@
         </div>
     </fieldset>
 
-    <button type="submit" class="submit-button">
+    <button mat-raised-button type="submit" class="mat-button-success submit-button">
         {{ productForm.value.id == null || productForm.value.id == '' ? 'Crear' : 'Editar'}}
     </button>
     } @else {

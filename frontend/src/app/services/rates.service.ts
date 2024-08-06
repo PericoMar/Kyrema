@@ -31,4 +31,9 @@ export class RatesService {
   createTarifaPorSociedad(sociedad_id : any, tarifa: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}tarifa/sociedad/${sociedad_id}`, { tarifa });
   }
+
+  //ANEXOS:
+  setTarifaPorSociedadAndTipoAnexo(tarifaAnexo : any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}tarifa-anexo/sociedad`, tarifaAnexo);
+  }
 }

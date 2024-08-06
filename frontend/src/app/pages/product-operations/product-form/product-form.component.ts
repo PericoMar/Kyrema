@@ -8,6 +8,8 @@ import { error } from 'console';
 import { RatesService } from '../../../services/rates.service';
 import { FamilyProductService } from '../../../services/family-product.service';
 import { ProductNotificationService } from '../../../services/product-notification.service';
+import { AnexosService } from '../../../services/anexos.service';
+import { MatButtonModule } from '@angular/material/button';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -33,7 +35,7 @@ interface CampoFormulario{
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, MatButtonModule],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css']
 })
@@ -53,6 +55,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
     {id: '3', nombre: 'Domiciliación bancaria'}
   ];
 
+  tiposAnexos: any[] = [];
+  anexos: any[] = [];
+  camposAnexo: any[] = [];
+
 
   constructor(
     private fb: FormBuilder,
@@ -61,7 +67,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
     private userService: UserService,
     private rateService : RatesService,
     private familyService: FamilyProductService,
-    private productNotificationService: ProductNotificationService
+    private productNotificationService: ProductNotificationService,
+    private anexosService: AnexosService
   ) { 
     
   }
@@ -92,6 +99,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       data => {
         this.tipo_producto = data;
         this.loadPago(this.societyService.getCurrentSociety().id);
+        this.loadTiposAnexos();
       },
       error => {
         console.error(error);
@@ -107,6 +115,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
         this.onSociedadChange(value);
       }
     });
+
     
   }
 
@@ -158,6 +167,32 @@ export class ProductFormComponent implements OnInit, OnChanges{
       });
   }
 
+  loadTiposAnexos(){
+    //  Cargar los tipos de anexos asociados al tipo de producto
+    this.anexosService.getTipoAnexosPorTipoProducto(this.tipo_producto.id).subscribe({
+      next: (tiposAnexos: any[]) => {
+        this.tiposAnexos = tiposAnexos;
+        console.log('tiposAnexos: ', this.tiposAnexos);
+      },
+      error: (error: any) => {
+        console.error('Error loading tiposAnexos', error);
+      }
+    });
+  }
+
+  loadCamposAnexo(id_tipo_anexo: string){
+    // Cargar los campos del anexo seleccionado
+    this.anexosService.getCamposPorTipoAnexo(id_tipo_anexo).subscribe({
+      next: (camposAnexo: any[]) => {
+        this.camposAnexo = camposAnexo;
+        console.log('Anexos: ', this.anexos);
+      },
+      error: (error: any) => {
+        console.error('Error loading anexos', error);
+      }
+    });
+  }
+
   createForm(campos: Campo[]) {
     this.camposFormularioPorGrupos = {};
     campos.forEach((campo : Campo) => {
@@ -192,6 +227,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
 
+
   isFieldRequired(grupo: string, field: string): boolean {
     const grupoCampos = this.camposFormularioPorGrupos[grupo];
     if (!grupoCampos) {
@@ -200,6 +236,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
   
     const campo = grupoCampos.find((campo: any) => campo.name === field);
     return campo ? campo.obligatorio : false;
+  }
+
+  addAnexo(id: any){
+    console.log("Añadir anexo", id);
   }
 
   onSubmit() {

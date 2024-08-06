@@ -40,9 +40,12 @@ class ProductoController extends Controller
             $table->unsignedBigInteger('sociedad_id')->nullable();
             $table->unsignedBigInteger('tipo_de_pago_id')->nullable();
             $table->unsignedBigInteger('comercial_id')->nullable();
+            
 
             //Booleano de si está anulado o no
             $table->boolean('anulado')->default(false);
+
+
             
 
             foreach ($campos as $campo) {

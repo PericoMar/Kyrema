@@ -6,24 +6,27 @@ import { RouterModule } from '@angular/router';
 import { AnexosService } from '../../services/anexos.service';
 import { SocietyService } from '../../services/society.service';
 import { CommonModule } from '@angular/common';
+import { DeleteAnexoDialogComponent } from '../../components/delete-anexo-dialog/delete-anexo-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
   selector: 'app-anexos-manager',
   standalone: true,
-  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule, CommonModule],
+  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule, CommonModule, DeleteAnexoDialogComponent],
   templateUrl: './anexos-manager.component.html',
   styleUrl: './anexos-manager.component.css'
 })
 export class AnexosManagerComponent {
   anexos: any[] = [];
-  displayedColumns: string[] = ['name', 'actions'];
+  displayedColumns: string[] = ['nombre', 'actions'];
   anexosForm: FormGroup;
 
   constructor(
     private anexosService: AnexosService,
     private societyService: SocietyService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialog: MatDialog
   ) {
     this.anexosForm = this.fb.group({
       // Define any form controls if needed
@@ -34,7 +37,6 @@ export class AnexosManagerComponent {
     this.anexosService.getAnexosPorSociedad(this.societyService.getCurrentSociety().id).subscribe({
       next: (anexos: any[]) => {
         this.anexos = anexos;
-        this.anexos = [{id: '1', name: 'Anexo 1', type: 'PDF'}]; // Mock data
         console.log('Anexos: ', this.anexos);
       },
       error: (error: any) => {
@@ -53,6 +55,17 @@ export class AnexosManagerComponent {
       error: (error: any) => {
         console.error('Error deleting anexo', error);
       }
+    });
+  }
+
+  openDeleteDialog(data : any){
+    this.dialog.open(DeleteAnexoDialogComponent, {
+      width: '400px',
+      data : {
+        id: data.id,
+        message: '¿Estás seguro que deseas eliminar el siguiente tipo de anexo?',
+        nombre: data.nombre
+      },
     });
   }
 }

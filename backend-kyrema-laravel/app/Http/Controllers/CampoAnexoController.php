@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class CampoAnexoController extends Controller
 {
+
+    public function getCamposPorTipoAnexo($id)
+    {
+        $campos = CampoAnexo::where('tipo_anexo', $id)->get();
+        return response()->json($campos);
+    }
+    
     public function index()
     {
         $campoAnexos = CampoAnexo::all();

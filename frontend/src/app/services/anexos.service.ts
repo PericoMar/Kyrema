@@ -18,4 +18,20 @@ export class AnexosService {
   deleteAnexo(id_anexo: string){
     return this.http.delete<any>(`${this.apiUrl}/anexos/${id_anexo}`);
   }
+
+  createTipoAnexo(nuevoTipoAnexo: any){
+    return this.http.post<any>(`${this.apiUrl}/anexos`, nuevoTipoAnexo);
+  }
+
+  getTipoAnexosPorTipoProducto(id_tipo_producto: string){
+    return this.http.get<any>(`${this.apiUrl}/anexos/tipo-producto/${id_tipo_producto}`);
+  }
+
+  getAnexosPorProducto(id_producto: string){
+    return this.http.get<any>(`${this.apiUrl}/anexos/producto/${id_producto}`);
+  }
+
+  getCamposPorTipoAnexo(id_tipo_anexo: string){
+    return this.http.get<any>(`${this.apiUrl}/campos-anexo/tipo-anexo/${id_tipo_anexo}`);
+  }
 }

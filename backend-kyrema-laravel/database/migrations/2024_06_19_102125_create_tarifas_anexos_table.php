@@ -10,11 +10,14 @@ return new class extends Migration
     {
         Schema::create('tarifas_anexos', function (Blueprint $table) {
             $table->id();
-            $table->string('anexo');
-            $table->boolean('tiene_escala');
-            $table->unsignedBigInteger('id_tipo_producto');
-            $table->decimal('precio', 10, 2);
-            $table->foreign('id_tipo_producto')->references('id')->on('tarifas_producto')->onDelete('cascade');
+            $table->unsignedBigInteger('id_tipo_anexo');
+            $table->unsignedBigInteger('id_sociedad');
+            $table->boolval('tiene_escalado');
+            $table->decimal('prima_seguro', 10, 2)->nullable();
+            $table->decimal('cuota_asociacion', 10, 2)->nullable();
+            $table->decimal('precio_total', 10, 2)->nullable();
+            $table->foreign('id_sociedad')->references('id')->on('sociedad')->onDelete('cascade');
+            $table->foreign('id_tipo_anexo')->references('id')->on('tipos_anexos')->onDelete('cascade');
             $table->timestamps();
         });
     }

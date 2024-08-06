@@ -1,10 +1,32 @@
 <section class="anexos-configurator">
-    <h1>Cnfigurador de tipo de anexo</h1>
+    <h1>Configurador de tipo de anexo</h1>
     <main class="content-block new-anexo-form">
-        <form>
+        
+        <form (ngSubmit)="crearTipoAnexo()">
+            <header class="form-header">
+                <h2>Descripción del anexo</h2>
+                <hr>
+                <div class="space-between">
+                  <div>
+                    <label for="nombre_producto">Nombre del anexo</label>
+                    <input type="text" class="nombre-producto" [(ngModel)]="nombreAnexo" name="nombreProducto" placeholder="Escriba aquí el nombre del nuevo producto">
+                  </div>
+                  <div>
+                    <label for="nombre_producto">Letras de identificación</label>
+                    <input type="text" class="nombre-producto" [(ngModel)]="letrasIdentificacion" name="letrasIdentificacion" placeholder="Escriba aquí las letras de identificación">
+                  </div>
+                  <div>
+                    <label for="nombre_producto">Tipo producto asociado</label>
+                    <select [(ngModel)]="tipoProductoAsociado" name="tipoProductoAsociado">
+                        @for(tipo of tiposProductos ; track $index) {
+                          <option value="{{tipo.id}}">{{tipo.nombre}}</option>
+                        }
+                      </select>
+                  </div>
+                </div>
+                </header>
             <h2>Datos del anexo</h2>
 
-            <h2>Datos variables</h2>
             <hr>
             <div class="overflow-scroll flexible">
                 <table class="table">
@@ -67,7 +89,7 @@
                     </td>
                     <td class="col-eliminar">
                       <div class="center">
-                        <button mat-icon-button color="warn" (click)="eliminarCampo($index)">
+                        <button mat-icon-button color="warn" (click)="eliminarCampo($index)" type="button">
                           <mat-icon>delete</mat-icon>
                         </button> 
                       </div>
@@ -83,6 +105,29 @@
               <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
             </svg>
           </button>
+
+          <h2>Tarifas</h2>
+          <hr>
+
+          <fieldset class="input-group">
+            @for(tarifa of tarifas ; track tarifa.id){
+              <div class="input-container prima_del_seguro">
+                <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
+                <div class="input-suffix-container">
+                  <input [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
+                  <span class="input-suffix">€</span>
+                </div>
+              </div>
+            }
+          </fieldset>
+
+          <footer class="form-footer">
+            @if(cargandoNuevoAnexo){
+              <button class="button-disabled"><div class="spinner"></div></button>
+            }@else {
+              <button>Crear nuevo tipo de anexo</button>
+            }
+          </footer>
         </form>
     </main>
 </section>

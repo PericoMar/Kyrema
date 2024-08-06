@@ -2,30 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TarifaAnexo;
+use App\Models\TarifasAnexos;
 use Illuminate\Http\Request;
 
 class TarifaAnexoController extends Controller
 {
+    public function store(Request $request){
+        // Validar los datos recibidos
+        $request->validate([
+            'id_tipo_anexo' => 'required|numeric',
+            'id_sociedad' => 'required|numeric',
+            'prima_seguro' => 'required|numeric',
+            'cuota_asociacion' => 'required|numeric',
+            'precio_total' => 'required|numeric',
+        ]);
+
+        // Crear el nuevo registro en la base de datos con el ID generado
+        $tarifaAnexo = TarifasAnexos::create([
+            'id_tipo_anexo' => $request->input('id_tipo_anexo'),
+            'id_sociedad' => $request->input('id_sociedad'),
+            'prima_seguro' => $request->input('prima_seguro'),
+            'cuota_asociacion' => $request->input('cuota_asociacion'),
+            'precio_total' => $request->input('precio_total'),
+        ]);
+
+        return response()->json($tarifaAnexo, 201);
+    }
+
     public function index()
     {
         $tarifaAnexos = TarifaAnexo::all();
         return response()->json($tarifaAnexos);
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'anexo' => 'required|string|max:255|exists:tipo_anexos,id',
-            'tiene_escala' => 'required|boolean',
-            'id_tipo_producto' => 'required|numeric|exists:tarifa_productos,id',
-            'precio' => 'required|numeric',
-        ]);
-
-        $tarifaAnexo = TarifaAnexo::create($request->all());
-
-        return response()->json($tarifaAnexo, 201);
-    }
 
     public function show($id)
     {
