@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('campos_anexos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
+            $table->string('nombre_codigo')->nullable();
             $table->string('columna')->nullable();
             $table->string('fila')->nullable();
             $table->string('tipo_dato');

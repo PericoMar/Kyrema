@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('campos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('nombre_columna')->nullable();
+            $table->string('nombre_codigo')->nullable();
             $table->string('tipo_producto_id')->nullable();
             $table->string('columna')->nullable();
             $table->string('fila')->nullable();

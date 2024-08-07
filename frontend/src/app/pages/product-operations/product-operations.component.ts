@@ -11,11 +11,12 @@ import { ActionButtonsComponent } from '../society-manager/society-table/action-
 import { ComisionButtonsComponent } from '../society-manager/society-table/comision-buttons/comision-buttons.component';
 import { ProductActionButtonsComponent } from '../../components/product-action-buttons/product-action-buttons.component';
 import { ProductNotificationService } from '../../services/product-notification.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-product-operations',
   standalone: true,
-  imports: [TableComponent, ProductFormComponent, RouterModule],
+  imports: [TableComponent, ProductFormComponent, RouterModule, CommonModule],
   templateUrl: './product-operations.component.html',
   styleUrl: './product-operations.component.css'
 })

@@ -81,6 +81,7 @@ class ProductoController extends Controller
         foreach ($campos as $campo) {
             DB::table('campos')->insert([
                 'nombre' => $campo['nombre'],
+                'nombre_codigo' => strtolower(str_replace(' ', '_', $campo['nombre'])),
                 'tipo_producto_id' => $tipoProductoId,
                 'columna' => $campo['columna'] ?? null,
                 'fila' => $campo['fila'] ?? null,

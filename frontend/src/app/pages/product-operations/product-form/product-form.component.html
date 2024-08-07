@@ -106,18 +106,7 @@
         <hr class="divider">
     }
 
-    @if(tiposAnexos.length > 0){
-        <header class="form-header">
-            <h3 class="form-section-title">Anexos</h3>
-        </header>
-        @for(tipoAnexo of tiposAnexos ; track tipoAnexo.id){
-            <!-- Mat -button color verde con un mas y el nombre del anexo -->
-            <button mat-raised-button color="primary" (click)="addAnexo(tipoAnexo.id)" class="add-anexo-button" type="button">
-                + {{ tipoAnexo.nombre }}
-            </button>
-        }
-        <hr class="divider">
-    }   
+    
 
 
     <header class="form-header">
@@ -164,6 +153,42 @@
     } @else {
         <div>
             <p>Cargando...
+            </p>
+        </div>
+    }
+</form>
+
+<h2>Anexos</h2>
+<form class="content-block anexos-form">
+    @if(tiposAnexos.length > 0 && formatosAnexos && objectLength(formatosAnexos) == tiposAnexos.length){
+        <div class="flex-start">
+        @for(tipoAnexo of tiposAnexos ; track tipoAnexo.id){
+            <!-- Mat -button color verde con un mas y el nombre del anexo -->
+            <button mat-raised-button color="primary" (click)="addAnexo(tipoAnexo)" class="add-anexo-button" type="button">
+                + {{ tipoAnexo.nombre }}
+            </button>
+        }
+        </div>
+        
+
+        @for(anexo of anexos ; track $index){
+            <header class="form-header space-between">
+                <h4>{{ anexo.tipo_anexo.nombre }} {{ $index + 1 }}</h4>
+                <!-- Mat button con un icono de una x -->
+                <button mat-icon-button (click)="removeAnexo($index)" class="remove-anexo-button" type="button">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </header>
+            @for(campoAnexo of camposAnexo[anexo.tipo_anexo.id]; track campoAnexo.id){
+                <label [for]="campoAnexo.nombre_codigo" class="input-label">{{ campoAnexo.nombre }}</label>
+                <input [id]="campoAnexo.nombre_codigo" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexo.formato[campoAnexo.nombre_codigo]" [name]="campoAnexo.nombre_codigo">
+            }
+        }
+        
+        <hr class="divider">
+    }  @else {
+        <div>
+            <p>Cargando anexos...
             </p>
         </div>
     }

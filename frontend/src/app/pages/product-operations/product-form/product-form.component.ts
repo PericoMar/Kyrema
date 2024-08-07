@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { ProductsService } from '../../../services/products.service';
 import { SocietyService } from '../../../services/society.service';
 import { UserService } from '../../../services/user.service';
-import { error } from 'console';
 import { RatesService } from '../../../services/rates.service';
 import { FamilyProductService } from '../../../services/family-product.service';
 import { ProductNotificationService } from '../../../services/product-notification.service';
 import { AnexosService } from '../../../services/anexos.service';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -18,6 +18,7 @@ interface Campo {
   fila: string, 
   id: string, 
   nombre: string, 
+  nombre_codigo?: string,
   obligatorio: boolean, 
   tipo_dato: string, 
   tipo_producto_id: string, 
@@ -35,7 +36,7 @@ interface CampoFormulario{
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatButtonModule],
+  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css']
 })
@@ -56,8 +57,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
   ];
 
   tiposAnexos: any[] = [];
+  formatosAnexos!: any;
   anexos: any[] = [];
-  camposAnexo: any[] = [];
+  camposAnexo!: any;
 
 
   constructor(
@@ -101,6 +103,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       data => {
         this.tipo_producto = data;
         this.loadPago(this.societyService.getCurrentSociety().id);
+        // Aquí se cargan todos los datos necesarios para gestionar los anexos:
         this.loadTiposAnexos();
       },
       error => {
@@ -175,7 +178,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
       next: (tiposAnexos: any[]) => {
         this.tiposAnexos = tiposAnexos;
         console.log('tiposAnexos: ', this.tiposAnexos);
-        this.applyDynamicStyles();
+        // Cargamos los campos de todos los tipos de anexos
+        this.loadCamposAnexo();
       },
       error: (error: any) => {
         console.error('Error loading tiposAnexos', error);
@@ -183,18 +187,60 @@ export class ProductFormComponent implements OnInit, OnChanges{
     });
   }
 
-  loadCamposAnexo(id_tipo_anexo: string){
-    // Cargar los campos del anexo seleccionado
-    this.anexosService.getCamposPorTipoAnexo(id_tipo_anexo).subscribe({
-      next: (camposAnexo: any[]) => {
-        this.camposAnexo = camposAnexo;
-        console.log('Anexos: ', this.anexos);
-      },
-      error: (error: any) => {
-        console.error('Error loading anexos', error);
-      }
+  loadCamposAnexo() {
+    // Inicializar camposAnexo como un objeto vacío
+    this.camposAnexo = {};
+  
+    // Crear una promesa que se resuelve cuando todos los campos de los anexos se han cargado
+    const promises = this.tiposAnexos.map((tipoAnexo: any) => {
+      return new Promise<void>((resolve, reject) => {
+        this.anexosService.getCamposPorTipoAnexo(tipoAnexo.id).subscribe({
+          next: (camposAnexo: any[]) => {
+            // Asignar los campos al tipo de anexo correspondiente
+            this.camposAnexo[tipoAnexo.id] = camposAnexo;
+            resolve(); // Resolver la promesa cuando la carga se complete
+          },
+          error: (error: any) => {
+            console.error('Error loading anexos', error);
+            reject(error); // Rechazar la promesa en caso de error
+          }
+        });
+      });
+    });
+  
+    // Esperar a que todas las promesas se resuelvan
+    Promise.all(promises).then(() => {
+      // Una vez que todos los campos se hayan cargado, cargar los formatos
+      this.loadFormatosAnexos();
+    }).catch((error) => {
+      console.error('Error al cargar todos los campos de anexos', error);
     });
   }
+
+  loadFormatosAnexos() {
+    // Inicializar formatosAnexos como un objeto vacío
+    this.formatosAnexos = {};
+  
+    // Iterar sobre los tipos de anexos
+    this.tiposAnexos.forEach((tipoAnexo: any) => {
+      // Inicializar el formato de anexos para el tipo de anexo actual
+      this.formatosAnexos[tipoAnexo.id] = {};
+  
+      // Comprobar si existen camposAnexo para el tipo de anexo
+      if (this.camposAnexo[tipoAnexo.id]) {
+        this.camposAnexo[tipoAnexo.id].forEach((campoAnexo: any) => {
+          // Definir el valor por defecto basado en el tipo de dato
+          let valorDefault: any = this.getDefaultValue(campoAnexo.tipo_dato);
+          // Añadir al formato de anexos con nombre_codigo como clave y valorDefault como valor
+          this.formatosAnexos[tipoAnexo.id][campoAnexo.nombre_codigo] = valorDefault;
+        });
+      }
+    });
+  
+    // Log para ver los resultados
+    console.log('Formatos anexos: ', this.formatosAnexos);
+  }
+  
 
   createForm(campos: Campo[]) {
     this.camposFormularioPorGrupos = {};
@@ -204,7 +250,12 @@ export class ProductFormComponent implements OnInit, OnChanges{
       if (this.camposFormularioPorGrupos[campo.grupo] == null) {
         this.camposFormularioPorGrupos[campo.grupo] = [];
       }
-      const name = campo.nombre.replace(/ /g, '_').toLowerCase();
+      let name; 
+      if(campo.nombre_codigo != null){
+        name = campo.nombre_codigo;
+      } else {
+        name = campo.nombre.replace(/ /g, '_').toLowerCase();
+      }
       const label = campo.nombre;
       const tipo_dato = campo.tipo_dato;
       const obligatorio = campo.obligatorio;
@@ -223,17 +274,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
 
+
   eliminateProductSelected() {  
     this.productForm.reset();
     console.log(this.productForm.value);
     this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
-  }
-
-  applyDynamicStyles(): void {
-    const productForm = this.el.nativeElement.querySelector('#product-form');
-    if (productForm) {
-      this.renderer.setStyle(productForm, 'margin-bottom', '40px');
-    }
   }
 
   isFieldRequired(grupo: string, field: string): boolean {
@@ -246,60 +291,89 @@ export class ProductFormComponent implements OnInit, OnChanges{
     return campo ? campo.obligatorio == 1 : false;
   }
 
-  addAnexo(id: any){
-    console.log("Añadir anexo", id);
+  addAnexo(tipo_anexo: any){
+    //Añadir a anexos un objeto con el formatoAnexos correspondiente y el id del tipo de anexo
+    this.anexos.push({formato: this.formatosAnexos[tipo_anexo.id], tipo_anexo: tipo_anexo});
+    console.log('Anexos', this.anexos);
+
+  }
+
+  removeAnexo(index: number){
+    this.anexos.splice(index , 1);
   }
 
   onSubmit() {
-    this.productForm.get('prima_del_seguro')?.enable();
-    this.productForm.get('cuota_de_asociación')?.enable();
-    this.productForm.get('precio_total')?.enable();
-    console.log(this.productForm.value);
+    console.log(this.anexos);
+  }
 
-    // Hacer las comprobaciones correspondientes antes de enviar el formulario
+  // onSubmit() {
+  //   this.productForm.get('prima_del_seguro')?.enable();
+  //   this.productForm.get('cuota_de_asociación')?.enable();
+  //   this.productForm.get('precio_total')?.enable();
+  //   console.log(this.productForm.value);
+
+  //   // Hacer las comprobaciones correspondientes antes de enviar el formulario
     
-    const nuevoProducto = this.productForm.value;
+  //   const nuevoProducto = this.productForm.value;
     
-    // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
-    const sociedadSeleccionada = this.sociedades.find((sociedad :any)=> sociedad.id === nuevoProducto.sociedad_id);
-    nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
+  //   // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
+  //   const sociedadSeleccionada = this.sociedades.find((sociedad :any)=> sociedad.id === nuevoProducto.sociedad_id);
+  //   nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
 
-    // Agregar el id del comercial al objeto nuevoProducto
-    const comercial_id = this.userService.getCurrentUser().id;
-    nuevoProducto.comercial_id = comercial_id;
+  //   // Agregar el id del comercial al objeto nuevoProducto
+  //   const comercial_id = this.userService.getCurrentUser().id;
+  //   nuevoProducto.comercial_id = comercial_id;
 
-    const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
-    nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
+  //   const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
+  //   nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
 
-    //Si no tiene id se está creando un nuevo producto
-    if(this.productForm.value.id == null || this.productForm.value.id == ''){
-      delete nuevoProducto.id;
-      this.productsService.crearProducto(this.letras_identificacion, nuevoProducto).subscribe(
-        data => {
-          console.log(data);
-          this.productForm.get('prima_del_seguro')?.disable();
-          this.productForm.get('cuota_de_asociación')?.disable();
-          this.productForm.get('precio_total')?.disable();
-          this.productNotificationService.notifyChangesOnProducts();
-        },
-        error => {
-          console.log(error);
-        }
-      )
-    } else {
-      //Si tiene id se está editando un producto
-      this.productsService.editarProducto(this.letras_identificacion, nuevoProducto).subscribe(
-        data => {
-          console.log(data);
-          this.productForm.get('prima_del_seguro')?.disable();
-          this.productForm.get('cuota_de_asociación')?.disable();
-          this.productForm.get('precio_total')?.disable();
-          this.productNotificationService.notifyChangesOnProducts();
-        },
-        error => {
-          console.log(error);
-        }
-      )
+  //   //Si no tiene id se está creando un nuevo producto
+  //   if(this.productForm.value.id == null || this.productForm.value.id == ''){
+  //     delete nuevoProducto.id;
+  //     this.productsService.crearProducto(this.letras_identificacion, nuevoProducto).subscribe(
+  //       data => {
+  //         console.log(data);
+  //         this.productForm.get('prima_del_seguro')?.disable();
+  //         this.productForm.get('cuota_de_asociación')?.disable();
+  //         this.productForm.get('precio_total')?.disable();
+  //         this.productNotificationService.notifyChangesOnProducts();
+  //       },
+  //       error => {
+  //         console.log(error);
+  //       }
+  //     )
+  //   } else {
+  //     //Si tiene id se está editando un producto
+  //     this.productsService.editarProducto(this.letras_identificacion, nuevoProducto).subscribe(
+  //       data => {
+  //         console.log(data);
+  //         this.productForm.get('prima_del_seguro')?.disable();
+  //         this.productForm.get('cuota_de_asociación')?.disable();
+  //         this.productForm.get('precio_total')?.disable();
+  //         this.productNotificationService.notifyChangesOnProducts();
+  //       },
+  //       error => {
+  //         console.log(error);
+  //       }
+  //     )
+  //   }
+  // }
+
+  getDefaultValue(tipoDato: string): any {
+    switch (tipoDato) {
+      case 'text':
+      case 'number':
+        return '';
+      case 'decimal':
+        return 0;
+      case 'date':
+        return null;
+      default:
+        return null;
     }
+  }
+
+  objectLength(obj: any): number {
+    return Object.keys(obj).length;
   }
 }

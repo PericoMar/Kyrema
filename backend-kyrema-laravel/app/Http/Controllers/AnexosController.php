@@ -71,6 +71,8 @@ class AnexosController extends Controller
         foreach ($campos as $campo) {
             DB::table('campos_anexos')->insert([
                 'nombre' => $campo['nombre'],
+                //nombre_codigo es el nombre pero todo en minusculas y reemplazando los espacios por guiones bajos
+                'nombre_codigo' => strtolower(str_replace(' ', '_', $campo['nombre'])),
                 'tipo_anexo' => $tipoAnexoId,
                 'columna' => $campo['columna'] ?? null,
                 'fila' => $campo['fila'] ?? null,
