@@ -1,7 +1,10 @@
-<form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form content-block">
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form content-block" id="product-form">
     @if(productForm){
     <header class="form-header">
         <h3 class="form-section-title">Datos de la sociedad</h3>
+        @if(product.id !== null || product.id !== ''){
+            <button  mat-raised-button color="primary" type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
+        }
     </header>
     @if(sociedades.length > 0){
         <label for="sociedad" class="input-label">Sociedad</label>
@@ -19,9 +22,6 @@
 
     <header class="form-header">
         <h3 class="form-section-title">Datos del asegurado</h3>
-        @if(product.id !== null || product.id !== ''){
-            <button type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
-        }
     </header>
     <main class="form-main">
         <div class="input-container dni">
@@ -112,7 +112,7 @@
         </header>
         @for(tipoAnexo of tiposAnexos ; track tipoAnexo.id){
             <!-- Mat -button color verde con un mas y el nombre del anexo -->
-            <button mat-raised-button color="primary" (click)="addAnexo(tipoAnexo.id)" class="add-anexo-button">
+            <button mat-raised-button color="primary" (click)="addAnexo(tipoAnexo.id)" class="add-anexo-button" type="button">
                 + {{ tipoAnexo.nombre }}
             </button>
         }

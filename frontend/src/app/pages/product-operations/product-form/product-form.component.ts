@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductsService } from '../../../services/products.service';
 import { SocietyService } from '../../../services/society.service';
@@ -68,7 +68,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
     private rateService : RatesService,
     private familyService: FamilyProductService,
     private productNotificationService: ProductNotificationService,
-    private anexosService: AnexosService
+    private anexosService: AnexosService,
+    private el: ElementRef,
+    private renderer: Renderer2
   ) { 
     
   }
@@ -173,6 +175,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       next: (tiposAnexos: any[]) => {
         this.tiposAnexos = tiposAnexos;
         console.log('tiposAnexos: ', this.tiposAnexos);
+        this.applyDynamicStyles();
       },
       error: (error: any) => {
         console.error('Error loading tiposAnexos', error);
@@ -220,13 +223,18 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
 
-  eliminateProductSelected() {
+  eliminateProductSelected() {  
     this.productForm.reset();
     console.log(this.productForm.value);
     this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
   }
 
-
+  applyDynamicStyles(): void {
+    const productForm = this.el.nativeElement.querySelector('#product-form');
+    if (productForm) {
+      this.renderer.setStyle(productForm, 'margin-bottom', '40px');
+    }
+  }
 
   isFieldRequired(grupo: string, field: string): boolean {
     const grupoCampos = this.camposFormularioPorGrupos[grupo];
@@ -235,7 +243,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     }
   
     const campo = grupoCampos.find((campo: any) => campo.name === field);
-    return campo ? campo.obligatorio : false;
+    return campo ? campo.obligatorio == 1 : false;
   }
 
   addAnexo(id: any){
