@@ -292,3 +292,12 @@ div.center{
   100% { transform: rotate(360deg); }
 }
 
+/* Añadir media query para que cuando la pantalla sea menos de 1150px quitar el display flex  */
+@media (max-width: 1150px) {
+  .flex-start, .center, .space-between, .input-group{
+      flex-direction: column;
+      justify-content: baseline;
+      align-items: flex-start;
+      gap: 10px;
+  }
+}

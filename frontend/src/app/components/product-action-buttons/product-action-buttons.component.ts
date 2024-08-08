@@ -31,34 +31,41 @@ export class ProductActionButtonsComponent {
     });
   }
 
-  descargarSeguro(producto : any) {
-    console.log('Descargando: ',producto.id)
+  descargarSeguro(producto: any) {
+    const downloadIcon = document.querySelector('.download-icon') as HTMLElement;
+    const loader = document.querySelector('.download-icon .loader') as HTMLElement;
+    
+    // Añadir la clase 'active' para mostrar el loader y reducir el tamaño del icono
+    downloadIcon.classList.add('active');
+
     this.productsService.downloadPlantilla(this.letrasIdentificacion, producto.id).subscribe({
-      next: (response: Blob) => {
-        const blob = new Blob([response], { type: 'application/pdf' });
-  
-        // Crear un enlace <a> en el DOM para iniciar la descarga
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-  
-        // Establecer el nombre de archivo para la descarga
-        const nombreArchivo = producto.codigo_producto + '_' + producto.nombre_socio + '_' + producto.apellido_1 + '_' + producto.apellido_2 + '.pdf';
-        a.download = nombreArchivo;
-  
-        // Adjuntar el enlace al cuerpo del documento y simular clic en el enlace
-        document.body.appendChild(a);
-        a.click();
-  
-        // Limpiar y liberar recursos
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      },
-      error: (error: any) => {
-        console.error('Error downloading the file', error);
-      }
+        next: (response: Blob) => {
+            const blob = new Blob([response], { type: 'application/pdf' });
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+
+            const nombreArchivo = producto.codigo_producto + '_' + producto.nombre_socio + '_' + producto.apellido_1 + '_' + producto.apellido_2 + '.pdf';
+            a.download = nombreArchivo;
+
+            document.body.appendChild(a);
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        },
+        error: (error: any) => {
+            console.error('Error downloading the file', error);
+        },
+        complete: () => {
+            // Eliminar la clase 'active' cuando la descarga se complete (éxito o error)
+            downloadIcon.classList.remove('active');
+        }
     });
   }
+
+
 
   openDeleteDialog(data : any){
     this.dialog.open(DeleteDialogComponent, {

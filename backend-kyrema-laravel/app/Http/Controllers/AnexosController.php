@@ -14,7 +14,51 @@ class AnexosController extends Controller
 {
     public function conectarAnexosConProducto($id_producto, Request $request){
         // Me llegará un array con todos los anexos que tengo que crear y conectar con el producto
-        
+        // Si ya tiene un id se cambia el mismo anexo sino se crea unno nuevo
+        // El formato en el que llegan los anexos es el siguiente:
+        // {id: '', formato: this.formatosAnexos[tipo_anexo.id], tipo_anexo: tipo_anexo}
+        // La tabla en la que hay que meterlos es la siguiente:
+        // SELECT TOP (1000) [id]
+        //     ,[producto_id]
+        //     ,[perro_asegurado]
+        //     ,[created_at]
+        //     ,[updated_at]
+        // FROM [KYREMA].[dbo].[letras_identificacion que estan dentro del tipo_anexo]
+        // Obtener el array de anexos desde el request
+        $anexos = $request->input('anexos');
+
+        foreach ($anexos as $anexo) {
+            $tipoAnexo = $anexo['tipo_anexo']; // Tipo de anexo
+            $letrasIdentificacion = strtolower($tipoAnexo['letras_identificacion']); // Nombre de la tabla
+            $anexoId = $anexo['id']; // ID del anexo (si existe)
+            $formato = $anexo['formato']; // Campos dinámicos del anexo
+
+            // Verificar que la tabla existe
+            if (Schema::hasTable($letrasIdentificacion)) {
+                // Construir los datos a insertar/actualizar, agregando siempre el id_producto y las marcas de tiempo
+                $data = [
+                    'producto_id' => $id_producto,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+                // Agregar los campos dinámicos del formato
+                foreach ($formato as $key => $value) {
+                    $data[$key] = $value;
+                }
+
+                if ($anexoId) {
+                    // Si el anexo tiene un ID, se actualiza el registro existente
+                    DB::table($letrasIdentificacion)->where('id', $anexoId)->update($data);
+                } else {
+                    // Si no tiene ID, se crea un nuevo registro
+                    DB::table($letrasIdentificacion)->insert($data);
+                }
+            } else {
+                return response()->json(['error' => "La tabla {$letrasIdentificacion} no existe."], 400);
+            }
+        }
+        return response()->json(['message' => 'Anexos conectados con éxito'], 200);
     }
 
     public function createTipoAnexo(Request $request){
@@ -94,11 +138,43 @@ class AnexosController extends Controller
         ], 200);
     }
 
-    public function getAnexosPorProducto($id_producto){ 
+    public function getAnexosPorProducto($id_tipo_producto , $id_producto){ 
+        // IMPORTANTE PUEDE HABER MÁS DE UN TIPO ANEXO POR TIPO PRODUCTO
+        // Necesito coger todos las letras_identificacion e ids de TiposAnexos que tengan id_tipo_producto = $id_tipo_producto
 
-        $tiposAnexo = TiposAnexos::where('id_tipo_producto', $id_producto)->get();
-        return response()->json($tiposAnexo);
+        // Las letras_identificacion usarlas como nombres de tablas y coger todos los anexos relacionados con el $id_producto y poner el anexo con el siguiente formato:
+        // {id: '', formato: this.formatosAnexos[tipo_anexo.id], tipo_anexo: tipo_anexo} (Es decir que el tipo_anexo me lo deberia de haber guardado previamente)
+        
+         // Obtener los tipos de anexos asociados al tipo de producto
+        $tiposAnexos = DB::table('tipos_anexos')
+        ->where('id_tipo_producto', $id_tipo_producto)
+        ->get();
 
+        $anexos = [];
+
+        // Iterar sobre los tipos de anexos para buscar en las tablas correspondientes
+        foreach ($tiposAnexos as $tipoAnexo) {
+            $nombreTabla = strtolower($tipoAnexo->letras_identificacion);
+
+            if (Schema::hasTable($nombreTabla)) {
+                // Obtener los anexos de la tabla correspondiente al tipo de anexo
+                $anexosDeTabla = DB::table($nombreTabla)
+                    ->where('producto_id', $id_producto)
+                    ->get();
+
+                // Formatear cada anexo con el formato especificado
+                foreach ($anexosDeTabla as $anexo) {
+                    $anexos[] = [
+                        'id' => $anexo->id,
+                        // El formato son todos los campos excepto los campos de control (producto_id, created_at, updated_at)
+                        'formato' => collect($anexo)->except(['id', 'producto_id', 'created_at', 'updated_at'])->toArray(),
+                        'tipo_anexo' => $tipoAnexo
+                    ];
+                }
+            }
+        }
+
+        return response()->json($anexos);
     }
 
 
@@ -120,54 +196,6 @@ class AnexosController extends Controller
 
         return response()->json($tiposAnexo);
 
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create($id_producto, Request $request)
-    {
-        
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
     }
 
     /**

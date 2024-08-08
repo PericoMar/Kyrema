@@ -29,6 +29,14 @@ class TarifaAnexoController extends Controller
         return response()->json($tarifaAnexo, 201);
     }
 
+    public function getTarifaPorSociedadAndTipoAnexo($id_sociedad, $id_tipo_anexo){
+        $tarifaAnexo = TarifasAnexos::where('id_sociedad', $id_sociedad)
+            ->where('id_tipo_anexo', $id_tipo_anexo)
+            ->first();
+
+        return response()->json($tarifaAnexo);
+    }
+
     public function index()
     {
         $tarifaAnexos = TarifaAnexo::all();

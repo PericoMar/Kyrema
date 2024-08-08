@@ -3,11 +3,13 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
+import { FamilyProductService } from '../../services/family-product.service';
+import { SpinnerComponent } from '../../components/spinner/spinner.component';
 
 @Component({
   selector: 'app-products-manager',
   standalone: true,
-  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule],
+  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule, SpinnerComponent],
   templateUrl: './products-manager.component.html',
   styleUrl: './products-manager.component.css'
 })
@@ -15,20 +17,14 @@ export class ProductsManagerComponent {
   insuranceForm!: FormGroup;
   insurancesArray!: FormArray;
   displayedColumns: string[] = ['type', 'actions'];
-  insurances: { id: number, type: string }[] = [
-    { id: 1, type: 'Seguro 1' },
-    { id: 2, type: 'Seguro 2' },
-    { id: 3, type: 'Seguro 3' },
-  ];
+  insurances!: { id: number, type: string }[];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder,
+              private familyService: FamilyProductService,
+  ) {}
 
   ngOnInit() {
-    this.insuranceForm = this.fb.group({
-      insurances: this.fb.array(this.insurances.map(insurance => this.createInsuranceGroup(insurance)))
-    });
-
-    this.insurancesArray = this.insuranceForm.get('insurances') as FormArray;
+    this.getTiposProductos();    
   }
 
   createInsuranceGroup(insurance: { id: number, type: string }): FormGroup {
@@ -38,12 +34,6 @@ export class ProductsManagerComponent {
     });
   }
 
-  addInsurance() {
-    const newInsurance = this.fb.group({
-      type: ['Nuevo Seguro']
-    });
-    this.insurancesArray.push(newInsurance);
-  }
 
   editInsurance(index: number) {
     const insurance = this.insurancesArray.at(index) as FormGroup;
@@ -55,7 +45,22 @@ export class ProductsManagerComponent {
     this.insurancesArray.removeAt(index);
   }
 
-  onSubmit() {
-    console.log(this.insuranceForm.value);
+  getTiposProductos(){
+    this.familyService.getAllTipos().subscribe(
+      (tipos) => {
+        // Pasar los tipos al siguiente formato:
+        // { id: 1, type: 'Seguro 1' }, donde type es el nombre.
+        this.insurances = tipos.map((tipo: any) => ({ id: tipo.id, type: tipo.nombre }));
+        this.insuranceForm = this.fb.group({
+          insurances: this.fb.array(this.insurances.map(insurance => this.createInsuranceGroup(insurance)))
+        });
+    
+        this.insurancesArray = this.insuranceForm.get('insurances') as FormArray;
+      },
+      (error) => {
+        console.log(error);
+      });
   }
+
+  
 }

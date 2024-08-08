@@ -58,7 +58,9 @@ export class ProductOperationsComponent {
 
     this.productNotificationService.productNotification$.subscribe(
       () => {
-        this.loadRowData();
+        if(this.familyProduct){
+          this.loadRowData();
+        }
       }
     );
   }

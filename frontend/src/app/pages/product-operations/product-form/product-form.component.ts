@@ -55,11 +55,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
     {id: '2', nombre: 'Transferencia bancaria'},
     {id: '3', nombre: 'Domiciliación bancaria'}
   ];
+  precioFinal! : any;
 
   tiposAnexos: any[] = [];
   formatosAnexos!: any;
+  tarifasAnexos!: any;
   anexos: any[] = [];
   camposAnexo!: any;
+
 
 
   constructor(
@@ -71,8 +74,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
     private familyService: FamilyProductService,
     private productNotificationService: ProductNotificationService,
     private anexosService: AnexosService,
-    private el: ElementRef,
-    private renderer: Renderer2
   ) { 
     
   }
@@ -101,18 +102,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
       tipo_de_pago_id: ['', Validators.required],
     });
 
-    this.familyService.getTipoProductoPorLetras(this.letras_identificacion).subscribe(
-      data => {
-        this.tipo_producto = data;
-        this.loadPago(this.societyService.getCurrentSociety().id);
-        // Aquí se cargan todos los datos necesarios para gestionar los anexos:
-        this.loadTiposAnexos();
-      },
-      error => {
-        console.error(error);
-      }
-    );
-
+    
+    this.loadTipoProducto();
     // Cargar las sociedades
     this.loadSociedades();
     this.createForm(this.campos);
@@ -128,9 +119,12 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   ngAfterViewInit() {
     this.anexoElements.changes.subscribe(() => {
-      const lastAnexoElement = this.anexoElements.last;
-      if (lastAnexoElement) {
-        lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      // Si no está editando uno existente.
+      if(this.product.id == '' || this.product.id == null){ 
+        const lastAnexoElement = this.anexoElements.last;
+        if (lastAnexoElement) {
+          lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     });
   }
@@ -140,26 +134,21 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.isLoadingProduct = true;
       console.log(this.product);  
       this.productForm.patchValue(this.product);
-      this.anexosService.getAnexosPorProducto(this.product.id).subscribe({
-        next: (anexos: any[]) => {
-          this.anexos = anexos;
-          console.log('Anexos: ', this.anexos);
-        },
-        error: (error: any) => {
-          console.error('Error loading anexos', error);
-        }
-      });
+      this.loadAnexoPorProducto();
       this.isLoadingProduct = false
     }
 
-    if(changes['campos']){
-      console.log("Campos", this.campos);
+    if(changes['campos'] || changes['letras_identificacion']){
+      this.loadTipoProducto();      
       this.createForm(this.campos);
+      this.loadSociedades(); 
+      this.loadAnexoPorProducto();
     }
   }
 
   onSociedadChange(sociedad_id: string) {
     this.loadPago(sociedad_id);
+    this.loadTarifasPorAnexo(sociedad_id);
   }
 
   loadSociedades(): void {
@@ -178,6 +167,20 @@ export class ProductFormComponent implements OnInit, OnChanges{
     );
   }
 
+  loadTipoProducto(){
+    this.familyService.getTipoProductoPorLetras(this.letras_identificacion).subscribe(
+      data => {
+        this.tipo_producto = data;
+        this.loadPago(this.societyService.getCurrentSociety().id);
+        // Aquí se cargan todos los datos necesarios para gestionar los anexos:
+        this.loadTiposAnexos();
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  }
+
   loadPago(id_sociedad : string) : void{
     this.rateService.getTarifasPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
       data => {
@@ -186,6 +189,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
         this.productForm.controls['cuota_de_asociación'].setValue(data[0].cuota_asociacion);
         this.productForm.controls['precio_total'].setValue(data[0].precio_total);
         this.productForm.controls['tipo_de_pago_id'].setValue(this.tiposPago[0].id);
+        this.getPrecioFinal();
       },
       error => {
         console.error(error);
@@ -200,6 +204,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
         console.log('tiposAnexos: ', this.tiposAnexos);
         // Cargamos los campos de todos los tipos de anexos
         this.loadCamposAnexo();
+        this.loadTarifasPorAnexo(this.sociedades[0].id);
+        
       },
       error: (error: any) => {
         console.error('Error loading tiposAnexos', error);
@@ -237,6 +243,22 @@ export class ProductFormComponent implements OnInit, OnChanges{
     });
   }
 
+  loadTarifasPorAnexo(sociedad_id: any){
+    this.tarifasAnexos = {};
+    this.tiposAnexos.forEach((tipoAnexo: any) => {
+      this.rateService.getTarifaPorSociedadAndTipoAnexo(sociedad_id, tipoAnexo.id).subscribe({
+        next: (tarifas: any[]) => {
+          this.tarifasAnexos[tipoAnexo.id] = tarifas;
+          
+        },
+        error: (error: any) => {
+          console.error('Error loading tarifas por anexo', error);
+        }
+      });
+    });
+    console.log('Tarifas por anexo: ', this.tarifasAnexos);
+  }
+
   loadFormatosAnexos() {
     // Inicializar formatosAnexos como un objeto vacío
     this.formatosAnexos = {};
@@ -261,9 +283,23 @@ export class ProductFormComponent implements OnInit, OnChanges{
     console.log('Formatos anexos: ', this.formatosAnexos);
   }
 
+  loadAnexoPorProducto(){
+    if(this.tipo_producto && this.product){
+      this.anexosService.getAnexosPorProducto(this.tipo_producto.id, this.product.id).subscribe({
+        next: (anexos: any[]) => {
+          this.anexos = anexos;
+          console.log('Anexos: ', this.anexos);
+        },
+        error: (error: any) => {
+          console.error('Error loading anexos', error);
+        }
+      });
+    }
+  }
+
   addAnexo(tipo_anexo: any){
     //Añadir a anexos un objeto con el formatoAnexos correspondiente y el id del tipo de anexo
-    this.anexos.push({id: '', formato: this.formatosAnexos[tipo_anexo.id], tipo_anexo: tipo_anexo});
+    this.anexos.push({id: '', formato: this.formatosAnexos[tipo_anexo.id], tipo_anexo: tipo_anexo, tarifas: this.tarifasAnexos[tipo_anexo.id]});
     console.log('Anexos', this.anexos);
     setTimeout(() => {
       const lastAnexoElement = this.anexoElements.last;
@@ -271,11 +307,12 @@ export class ProductFormComponent implements OnInit, OnChanges{
         lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
       }
     }, 0);
-
+    this.getPrecioFinal();
   }
 
   removeAnexo(index: number){
     this.anexos.splice(index , 1);
+    this.getPrecioFinal();
   }
 
   createForm(campos: Campo[]) {
@@ -314,6 +351,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   eliminateProductSelected() {  
     this.productForm.reset();
     console.log(this.productForm.value);
+    this.anexos = [];
     this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
   }
 
@@ -336,6 +374,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.productForm.get('cuota_de_asociación')?.enable();
     this.productForm.get('precio_total')?.enable();
     console.log(this.productForm.value);
+    console.log('Anexos', this.anexos);
 
     // Hacer las comprobaciones correspondientes antes de enviar el formulario
     
@@ -364,6 +403,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('cuota_de_asociación')?.disable();
           this.productForm.get('precio_total')?.disable();
           this.productNotificationService.notifyChangesOnProducts();
+          this.conectarAnexosConProductos(this.anexos, data.id);
         },
         error => {
           console.log(error);
@@ -378,6 +418,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('cuota_de_asociación')?.disable();
           this.productForm.get('precio_total')?.disable();
           this.productNotificationService.notifyChangesOnProducts();
+          this.conectarAnexosConProductos(this.anexos, data.id);
         },
         error => {
           console.log(error);
@@ -403,4 +444,26 @@ export class ProductFormComponent implements OnInit, OnChanges{
   objectLength(obj: any): number {
     return Object.keys(obj).length;
   }
+
+  conectarAnexosConProductos(anexos: any, id_producto: any){
+    this.anexosService.conectarAnexosConProductos(anexos, id_producto).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: (error: any) => {
+        console.error('Error connecting anexos with products', error);
+      }
+    });
+  }
+
+  getPrecioFinal() {
+    // Asegúrate de que `precio_total` sea un número
+    this.precioFinal = parseFloat(this.productForm.get('precio_total')?.value) || 0;
+    
+    // Sumar el precio de los anexos al precio total
+    this.precioFinal += this.anexos.reduce((acc: number, anexo: any) => {
+      return acc + (parseFloat(anexo.tarifas.precio_total) || 0);
+    }, 0);
+  }
+
 }

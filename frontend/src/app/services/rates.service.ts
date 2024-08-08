@@ -36,4 +36,8 @@ export class RatesService {
   setTarifaPorSociedadAndTipoAnexo(tarifaAnexo : any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}tarifa-anexo/sociedad`, tarifaAnexo);
   }
+
+  getTarifaPorSociedadAndTipoAnexo(id_sociedad: string, tipo_anexo_id:string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}tarifa-anexo/sociedad/${id_sociedad}/tipo-anexo/${tipo_anexo_id}`);
+  } 
 }

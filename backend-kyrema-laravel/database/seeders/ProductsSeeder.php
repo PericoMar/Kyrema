@@ -16,7 +16,7 @@ class ProductsSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        $tableName = 'PA';
+        $tableName = 'SE';
         $tableDatePrefix = Carbon::now()->format('mY');
         
         for ($i = 0; $i < 100; $i++) { // Cambiado a 1000 para más datos
@@ -62,9 +62,14 @@ class ProductsSeeder extends Seeder
                 'provincia' => $faker->state,
                 'codigo_postal' => $faker->numerify('#####'),
                 'fecha_de_nacimiento' => $fechaDeNacimiento,
+                'numero_anexos' => 0,
 
                 // Campos variables
-                
+                'tipo_de_caceria' => $faker->randomElement(['Montería', 'Ganchos', 'Rececho', 'Aguardo', 'Espera', 'Ojeo']),
+                'poblacion' => $faker->city,
+                'codigo_postal_caceria' => $faker->numerify('#####'),
+                'matricula' => $faker->numerify('######'),
+                'dia_de_la_caceria' => $pruebaFecha,
 
                 // Timestamps
                 'created_at' => Carbon::now()->format('Y-m-d\TH:i:s'), // Formato 'Y-m-d\TH:i:s'

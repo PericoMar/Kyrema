@@ -56,6 +56,12 @@ body {
     align-items: center;
 }
 
+.space-between-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 
 .bold{
     font-weight: bold;
@@ -122,6 +128,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     color: var(--required-color);
 }
 
+input.disabled{
+    cursor: not-allowed;
+}
+
 .submit-button {
     background-color: #4CAF50;
     color: white;
@@ -135,3 +145,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .submit-button:hover {
     background-color: #45a049;
 }
+
+/* Añadir media query para que cuando la pantalla sea menos de 1150px quitar el display flex  */
+@media (max-width: 1150px) {
+    .flex-start, .center, .space-between, .input-group{
+        flex-direction: column;
+        justify-content: baseline;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .input-container.input-group{
+        width: 100% !important;
+    }
+  }

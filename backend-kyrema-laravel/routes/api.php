@@ -83,7 +83,8 @@ Route::apiResource('comercial-comisiones', ComercialComisionController::class);
 
 // ANEXOS:
 Route::get('/anexos/sociedad/{id_sociedad}', [AnexosController::class, 'getAnexosPorSociedad']);
-Route::get('/anexos/producto/{id_producto}', [AnexosController::class, 'getAnexosPorProducto']);
+
+Route::get('anexos/{id_tipo_producto}/producto/{id_producto}', [AnexosController::class, 'getAnexosPorProducto']);
 // Conectar anexo con producto:
 Route::post('/anexos/{id_producto}', [AnexosController::class, 'conectarAnexosConProducto']);
 
@@ -109,7 +110,9 @@ Route::post('tarifa/sociedad/{id_sociedad}', [TarifaProductoController::class, '
 
 Route::apiResource('tarifas-producto', TarifaProductoController::class);
 Route::apiResource('tarifas-anexo', TarifaAnexoController::class);
+
 Route::post('tarifa-anexo/sociedad', [TarifaAnexoController::class, 'store']);
+Route::get('tarifa-anexo/sociedad/{id_sociedad}/tipo-anexo/{id_tipo_anexo}', [TarifaAnexoController::class, 'getTarifaPorSociedadAndTipoAnexo']);
 
 
 Route::apiResource('escalado-anexos', EscaladoAnexoController::class);

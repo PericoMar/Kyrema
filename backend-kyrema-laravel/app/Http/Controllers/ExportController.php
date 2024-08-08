@@ -17,6 +17,7 @@ class ExportController extends Controller
 
     public function exportExcelToPdf($letrasIdentificacion, Request $request)
     {
+        
         try {
             // Obtener el tipo de producto basado en las letras de identificación
             $tipoProducto = DB::table('tipo_producto')->where('letras_identificacion', $letrasIdentificacion)->first();
@@ -29,7 +30,7 @@ class ExportController extends Controller
             $plantillaPath = storage_path('app/public/' . $tipoProducto->plantilla_path);
             
             if (!file_exists($plantillaPath)) {
-                return response()->json(['error' => 'Plantilla no encontrada'], 404);
+                return response()->json(['error' => 'Plantilla no encontrada'. $plantillaPath], 404);
             }
 
             // Cargar el archivo Excel
@@ -94,7 +95,7 @@ class ExportController extends Controller
 
             // Eliminar los archivos temporales
             unlink($tempExcelPath);
-            unlink($tempPdfPath); // No eliminamos el PDF temporal
+            unlink($tempPdfPath);
 
             return $response;
 

@@ -70,7 +70,12 @@
 }
 
 .inputs-pago{
-    width: 70%;
+    width: 100%;
+    align-items: end;
+}
+
+input.disabled{
+    cursor: not-allowed;
 }
 
 .select{
@@ -97,6 +102,15 @@ hr {
     width: 100%;
 }
 
+.final-price{
+    text-align: end;
+    width: 50%;
+}
+
+.final-price h2{
+    margin-bottom:10px;
+}
+
 .add-anexo-button{
     margin-bottom: 10px;
 }
@@ -109,3 +123,17 @@ hr {
         background-color: #45A049; /* Verde más oscuro */
     }
 }
+
+/* Añadir media query para que cuando la pantalla sea menos de 1150px quitar el display flex  */
+@media (max-width: 1150px) {
+    .flex-start, .center, .space-between, .input-group{
+        flex-direction: column;
+        justify-content: baseline;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .input-container.input-group{
+        width: 100% !important;
+    }
+  }
