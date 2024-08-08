@@ -167,6 +167,10 @@ export class ProductConfiguratorComponent {
 
       this.showErrorDialog('Hay tarifas sin rellenar');
 
+    } else if(this.plantillaVacia()) {
+        
+      this.showErrorDialog('Por favor, seleccione una plantilla');
+
     } else {
       this.cargandoNuevoProducto = true;
 
@@ -219,6 +223,10 @@ export class ProductConfiguratorComponent {
       }
     }
     return false;  
+  }
+
+  private plantillaVacia() {
+    return this.selectedFile === undefined
   }
 
   private letrasIdentificacionEnUso() {
