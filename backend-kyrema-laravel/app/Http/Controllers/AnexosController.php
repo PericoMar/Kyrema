@@ -12,6 +12,11 @@ use App\Models\TipoProductoSociedad;
 
 class AnexosController extends Controller
 {
+    public function conectarAnexosConProducto($id_producto, Request $request){
+        // Me llegará un array con todos los anexos que tengo que crear y conectar con el producto
+        
+    }
+
     public function createTipoAnexo(Request $request){
          // Validar los datos recibidos
         $request->validate([
@@ -89,6 +94,15 @@ class AnexosController extends Controller
         ], 200);
     }
 
+    public function getAnexosPorProducto($id_producto){ 
+
+        $tiposAnexo = TiposAnexos::where('id_tipo_producto', $id_producto)->get();
+        return response()->json($tiposAnexo);
+
+    }
+
+
+
     public function getAnexosPorSociedad($id_sociedad){
         //Cogemos todos los tipos_productos asociados a esta sociedad:
         $tiposProductoSociedad = TipoProductoSociedad::where('id_sociedad', $id_sociedad)->get();
@@ -103,7 +117,7 @@ class AnexosController extends Controller
     public function getTipoAnexosPorTipoProducto($id_tipo_producto){
 
         $tiposAnexo = TiposAnexos::where('id_tipo_producto', $id_tipo_producto)->get();
-        
+
         return response()->json($tiposAnexo);
 
     }
@@ -119,9 +133,9 @@ class AnexosController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($id_producto, Request $request)
     {
-        //
+        
     }
 
     /**

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { ProductsService } from '../../../services/products.service';
 import { SocietyService } from '../../../services/society.service';
@@ -77,6 +77,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
     
   }
 
+  @ViewChildren('anexoElement') anexoElements!: QueryList<ElementRef>;
+
   ngOnInit() {
     this.productForm = this.fb.group({
       id: [''],
@@ -124,11 +126,29 @@ export class ProductFormComponent implements OnInit, OnChanges{
     
   }
 
+  ngAfterViewInit() {
+    this.anexoElements.changes.subscribe(() => {
+      const lastAnexoElement = this.anexoElements.last;
+      if (lastAnexoElement) {
+        lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['product']) {
       this.isLoadingProduct = true;
       console.log(this.product);  
       this.productForm.patchValue(this.product);
+      this.anexosService.getAnexosPorProducto(this.product.id).subscribe({
+        next: (anexos: any[]) => {
+          this.anexos = anexos;
+          console.log('Anexos: ', this.anexos);
+        },
+        error: (error: any) => {
+          console.error('Error loading anexos', error);
+        }
+      });
       this.isLoadingProduct = false
     }
 
@@ -240,7 +260,23 @@ export class ProductFormComponent implements OnInit, OnChanges{
     // Log para ver los resultados
     console.log('Formatos anexos: ', this.formatosAnexos);
   }
-  
+
+  addAnexo(tipo_anexo: any){
+    //Añadir a anexos un objeto con el formatoAnexos correspondiente y el id del tipo de anexo
+    this.anexos.push({id: '', formato: this.formatosAnexos[tipo_anexo.id], tipo_anexo: tipo_anexo});
+    console.log('Anexos', this.anexos);
+    setTimeout(() => {
+      const lastAnexoElement = this.anexoElements.last;
+      if (lastAnexoElement) {
+        lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 0);
+
+  }
+
+  removeAnexo(index: number){
+    this.anexos.splice(index , 1);
+  }
 
   createForm(campos: Campo[]) {
     this.camposFormularioPorGrupos = {};
@@ -291,73 +327,64 @@ export class ProductFormComponent implements OnInit, OnChanges{
     return campo ? campo.obligatorio == 1 : false;
   }
 
-  addAnexo(tipo_anexo: any){
-    //Añadir a anexos un objeto con el formatoAnexos correspondiente y el id del tipo de anexo
-    this.anexos.push({formato: this.formatosAnexos[tipo_anexo.id], tipo_anexo: tipo_anexo});
-    console.log('Anexos', this.anexos);
-
-  }
-
-  removeAnexo(index: number){
-    this.anexos.splice(index , 1);
-  }
+  // onSubmit() {
+  //   console.log(this.anexos);
+  // }
 
   onSubmit() {
-    console.log(this.anexos);
+    this.productForm.get('prima_del_seguro')?.enable();
+    this.productForm.get('cuota_de_asociación')?.enable();
+    this.productForm.get('precio_total')?.enable();
+    console.log(this.productForm.value);
+
+    // Hacer las comprobaciones correspondientes antes de enviar el formulario
+    
+    const nuevoProducto = this.productForm.value;
+    
+    // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
+    const sociedadSeleccionada = this.sociedades.find((sociedad :any)=> sociedad.id === nuevoProducto.sociedad_id);
+    nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
+
+    // Agregar el id del comercial al objeto nuevoProducto
+    const comercial_id = this.userService.getCurrentUser().id;
+    nuevoProducto.comercial_id = comercial_id;
+
+    const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
+    nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
+
+    nuevoProducto.numero_anexos = this.anexos.length;
+
+    //Si no tiene id se está creando un nuevo producto
+    if(this.productForm.value.id == null || this.productForm.value.id == ''){
+      delete nuevoProducto.id;
+      this.productsService.crearProducto(this.letras_identificacion, nuevoProducto).subscribe(
+        data => {
+          console.log(data);
+          this.productForm.get('prima_del_seguro')?.disable();
+          this.productForm.get('cuota_de_asociación')?.disable();
+          this.productForm.get('precio_total')?.disable();
+          this.productNotificationService.notifyChangesOnProducts();
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    } else {
+      //Si tiene id se está editando un producto
+      this.productsService.editarProducto(this.letras_identificacion, nuevoProducto).subscribe(
+        data => {
+          console.log(data);
+          this.productForm.get('prima_del_seguro')?.disable();
+          this.productForm.get('cuota_de_asociación')?.disable();
+          this.productForm.get('precio_total')?.disable();
+          this.productNotificationService.notifyChangesOnProducts();
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
   }
-
-  // onSubmit() {
-  //   this.productForm.get('prima_del_seguro')?.enable();
-  //   this.productForm.get('cuota_de_asociación')?.enable();
-  //   this.productForm.get('precio_total')?.enable();
-  //   console.log(this.productForm.value);
-
-  //   // Hacer las comprobaciones correspondientes antes de enviar el formulario
-    
-  //   const nuevoProducto = this.productForm.value;
-    
-  //   // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
-  //   const sociedadSeleccionada = this.sociedades.find((sociedad :any)=> sociedad.id === nuevoProducto.sociedad_id);
-  //   nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
-
-  //   // Agregar el id del comercial al objeto nuevoProducto
-  //   const comercial_id = this.userService.getCurrentUser().id;
-  //   nuevoProducto.comercial_id = comercial_id;
-
-  //   const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
-  //   nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
-
-  //   //Si no tiene id se está creando un nuevo producto
-  //   if(this.productForm.value.id == null || this.productForm.value.id == ''){
-  //     delete nuevoProducto.id;
-  //     this.productsService.crearProducto(this.letras_identificacion, nuevoProducto).subscribe(
-  //       data => {
-  //         console.log(data);
-  //         this.productForm.get('prima_del_seguro')?.disable();
-  //         this.productForm.get('cuota_de_asociación')?.disable();
-  //         this.productForm.get('precio_total')?.disable();
-  //         this.productNotificationService.notifyChangesOnProducts();
-  //       },
-  //       error => {
-  //         console.log(error);
-  //       }
-  //     )
-  //   } else {
-  //     //Si tiene id se está editando un producto
-  //     this.productsService.editarProducto(this.letras_identificacion, nuevoProducto).subscribe(
-  //       data => {
-  //         console.log(data);
-  //         this.productForm.get('prima_del_seguro')?.disable();
-  //         this.productForm.get('cuota_de_asociación')?.disable();
-  //         this.productForm.get('precio_total')?.disable();
-  //         this.productNotificationService.notifyChangesOnProducts();
-  //       },
-  //       error => {
-  //         console.log(error);
-  //       }
-  //     )
-  //   }
-  // }
 
   getDefaultValue(tipoDato: string): any {
     switch (tipoDato) {

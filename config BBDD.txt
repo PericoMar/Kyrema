@@ -6,6 +6,9 @@ php artisan db:seed --class=SociedadSeeder
 
 php artisan db:seed --class=ComercialesTableSeeder
 
-php artisan db:seed --class=NavegacionSeeder
-
 php artisan db:seed --class=ProductsSeeder
+
+Ejecutar una sola migración:
+php artisan migrate --path=/database/migrations/2024_06_19_102122_create_tarifas_producto_table.php
+
+	

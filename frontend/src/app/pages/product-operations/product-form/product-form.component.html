@@ -173,7 +173,7 @@
 
         @for(anexo of anexos ; track $index){
             <header class="form-header space-between">
-                <h4>{{ anexo.tipo_anexo.nombre }} {{ $index + 1 }}</h4>
+                <h4 [attr.id]="'anexo-' + $index" #anexoElement>{{ anexo.tipo_anexo.nombre }} nº{{ $index + 1 }}</h4>
                 <!-- Mat button con un icono de una x -->
                 <button mat-icon-button (click)="removeAnexo($index)" class="remove-anexo-button" type="button">
                     <mat-icon>close</mat-icon>
@@ -183,9 +183,10 @@
                 <label [for]="campoAnexo.nombre_codigo" class="input-label">{{ campoAnexo.nombre }}</label>
                 <input [id]="campoAnexo.nombre_codigo" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexo.formato[campoAnexo.nombre_codigo]" [name]="campoAnexo.nombre_codigo">
             }
+            <hr class="divider">
         }
         
-        <hr class="divider">
+        
     }  @else {
         <div>
             <p>Cargando anexos...
