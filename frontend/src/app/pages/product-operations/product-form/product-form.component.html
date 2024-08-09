@@ -177,20 +177,21 @@
         </div>
         
 
-        @for(anexo of anexos ; track $index){
+        <div *ngFor="let anexo of anexos; let i = index" class="anexo-input-group">
             <header class="form-header space-between">
-                <h4 [attr.id]="'anexo-' + $index" #anexoElement>{{ anexo.tipo_anexo.nombre }} nº{{ $index + 1 }}</h4>
+                <h4 [attr.id]="'anexo-' + i" #anexoElement>{{ anexo.tipo_anexo.nombre }} nº{{ i + 1 }}</h4>
                 <!-- Mat button con un icono de una x -->
-                <button mat-icon-button (click)="removeAnexo($index)" class="remove-anexo-button" type="button">
+                <button mat-icon-button (click)="removeAnexo(i)" class="remove-anexo-button" type="button">
                     <mat-icon>close</mat-icon>
                 </button>
             </header>
-            @for(campoAnexo of camposAnexo[anexo.tipo_anexo.id]; track campoAnexo.id){
+            <div *ngFor="let campoAnexo of camposAnexo[anexo.tipo_anexo.id]; let j = index">
                 <label [for]="campoAnexo.nombre_codigo" class="input-label">{{ campoAnexo.nombre }}</label>
-                <input [id]="campoAnexo.nombre_codigo" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexo.formato[campoAnexo.nombre_codigo]" name="{{campoAnexo.nombre_codigo}}{{$index}}">
-            }
+                <input [id]="campoAnexo.nombre_codigo" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexos[i].formato[campoAnexo.nombre_codigo]" name="{{campoAnexo.nombre_codigo}}-{{i}}-{{j}}">
+            </div>
             <hr class="divider">
-        }
+        </div>
+        
         
         </form>        
     } @else {

@@ -71,9 +71,37 @@ class ExportController extends Controller
                 $sheet->setCellValue($celda, $nuevoContenido);
             }
 
-            foreach ($campos as $campo) {
-                $celda = $campo->columna . $campo->fila;
-                $sheet->getStyle($celda)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_NONE);
+            // ANEXOS:
+            // Mirar si el tipoProducto tiene algun anexo asociado y coger los campos de esos anexos que no tenga columna y fila null
+            $tiposAnexos = DB::table('tipos_anexos')
+            ->where('id_tipo_producto', $tipoProducto->id)
+            ->get();
+
+            if($tiposAnexos){
+
+                foreach ($tiposAnexos as $tipoAnexo) {
+                    $letrasIdentificacionAnexo = strtolower($tipoAnexo->letras_identificacion);
+                    
+                    // Coger los anexos relacionados con el id del producto de la tabla con el nombre $letrasIdentificacionAnexo
+                    $anexos = DB::table($letrasIdentificacionAnexo)->where('producto_id', $id)->get();
+
+                    if($anexos){
+                        $camposAnexo = DB::table('campos')
+                        ->where('tipo_producto_id', $tipoAnexo->id)
+                        ->whereNotNull('columna')
+                        ->whereNotNull('fila')
+                        ->get();
+
+                        for($i = 0; $i < count($anexos); $i++){
+                            $valoresAnexos = $anexos[$i];
+                            foreach($camposAnexo as $campoAnexo){
+                                $celda = $campoAnexo->columna . ($campoAnexo->fila + $i);
+                                $valorAnexo = $valoresAnexos->{$campoAnexo->nombre_codigo};
+                                $sheet->setCellValue($celda, $campoAnexo->nombre);
+                            }
+                        }
+                    }
+                }
             }
 
             // Guardar el archivo Excel con los nuevos datos

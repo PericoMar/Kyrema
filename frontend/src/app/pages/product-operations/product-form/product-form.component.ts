@@ -142,7 +142,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.loadTipoProducto();      
       this.createForm(this.campos);
       this.loadSociedades(); 
-      this.loadAnexoPorProducto();
+      if(this.product){
+        this.loadAnexoPorProducto();
+      }
     }
   }
 
@@ -297,18 +299,29 @@ export class ProductFormComponent implements OnInit, OnChanges{
     }
   }
 
-  addAnexo(tipo_anexo: any){
-    //Añadir a anexos un objeto con el formatoAnexos correspondiente y el id del tipo de anexo
-    this.anexos.push({id: '', formato: this.formatosAnexos[tipo_anexo.id], tipo_anexo: tipo_anexo, tarifas: this.tarifasAnexos[tipo_anexo.id]});
+  addAnexo(tipo_anexo: any) {
+    // Clonar el objeto formato para evitar referencias compartidas
+    const nuevoFormato = { ...this.formatosAnexos[tipo_anexo.id] };
+
+    this.anexos.push({
+        id: '',
+        formato: nuevoFormato, // Usar la copia independiente
+        tipo_anexo: tipo_anexo,
+        tarifas: this.tarifasAnexos[tipo_anexo.id] // Asumiendo que esto no necesita ser clonado
+    });
+
     console.log('Anexos', this.anexos);
+    
     setTimeout(() => {
-      const lastAnexoElement = this.anexoElements.last;
-      if (lastAnexoElement) {
-        lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
-      }
+        const lastAnexoElement = this.anexoElements.last;
+        if (lastAnexoElement) {
+            lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
+        }
     }, 0);
+    
     this.getPrecioFinal();
-  }
+}
+
 
   removeAnexo(index: number){
     this.anexos.splice(index , 1);

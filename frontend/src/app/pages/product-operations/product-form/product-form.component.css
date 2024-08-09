@@ -111,6 +111,10 @@ hr {
     margin-bottom:10px;
 }
 
+.anexo-input-group{
+    width: 100%;
+}
+
 .add-anexo-button{
     margin-bottom: 10px;
 }

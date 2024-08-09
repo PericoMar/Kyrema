@@ -38,4 +38,8 @@ export class AnexosService {
   conectarAnexosConProductos(anexos: any, id_producto: any){
     return this.http.post<any>(`${this.apiUrl}/anexos/${id_producto}`, {anexos})
   }
+
+  getAllTiposAnexos(){
+    return this.http.get<any>(`${this.apiUrl}/tipos-anexo/all`);
+  }
 }

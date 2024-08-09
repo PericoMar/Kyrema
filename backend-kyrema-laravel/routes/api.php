@@ -94,6 +94,7 @@ Route::post('/anexos', [AnexosController::class, 'createTipoAnexo']);
 Route::get('/anexos/tipo-producto/{id_tipo_producto}', [AnexosController::class, 'getTipoAnexosPorTipoProducto']);
 
 Route::apiResource('tipos-anexo', TipoAnexoController::class);
+Route::get('tipos-anexo/all', [TipoAnexoController::class, 'index']);
 Route::apiResource('campos-anexo', CampoAnexoController::class);
 
 Route::get('campos-anexo/tipo-anexo/{id_tipo_anexo}', [CampoAnexoController::class, 'getCamposPorTipoAnexo']);

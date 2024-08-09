@@ -44,9 +44,17 @@ export class AnexosConfiguratorComponent {
     (error) => {
       console.log(error)
     });
+
+    this.anexosService.getAllTiposAnexos().subscribe((tiposAnexos : any) => {
+      this.tiposAnexos = tiposAnexos;
+    },
+    (error : any) => {
+      console.log(error)
+    });
    }
 
   tiposProductos: any[] = [];
+  tiposAnexos: any[] = [];
   tipoProductoAsociado = '';
   nombreAnexo = '';
   letrasIdentificacion = '';
@@ -150,6 +158,11 @@ export class AnexosConfiguratorComponent {
     //Recorremos el array de tipos de productos y comparamos letras_identificacion con el nombre del archivo seleccionado
     for (let i = 0; i < this.tiposProductos.length; i++) {
       if (this.tiposProductos[i].letras_identificacion === this.letrasIdentificacion) {
+        return true;
+      }
+    }
+    for(let i = 0; i < this.tiposAnexos.length; i++) {
+      if(this.tiposAnexos[i].letras_identificacion === this.letrasIdentificacion) {
         return true;
       }
     }
