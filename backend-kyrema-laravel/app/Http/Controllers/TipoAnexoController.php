@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TipoAnexo;
+use App\Models\TiposAnexos;
 use Illuminate\Http\Request;
 
 class TipoAnexoController extends Controller
 {
     public function index()
     {
-        $tipoAnexos = TipoAnexo::all();
+        $tipoAnexos = TiposAnexos::all();
         return response()->json($tipoAnexos);
     }
 
@@ -20,14 +20,14 @@ class TipoAnexoController extends Controller
             'id_familia' => 'nullable|string|max:255',
         ]);
 
-        $tipoAnexo = TipoAnexo::create($request->all());
+        $tipoAnexo = TiposAnexos::create($request->all());
 
         return response()->json($tipoAnexo, 201);
     }
 
     public function show($id)
     {
-        $tipoAnexo = TipoAnexo::findOrFail($id);
+        $tipoAnexo = TiposAnexos::findOrFail($id);
         return response()->json($tipoAnexo);
     }
 
@@ -38,7 +38,7 @@ class TipoAnexoController extends Controller
             'id_familia' => 'nullable|string|max:255',
         ]);
 
-        $tipoAnexo = TipoAnexo::findOrFail($id);
+        $tipoAnexo = TiposAnexos::findOrFail($id);
         $tipoAnexo->update($request->all());
 
         return response()->json($tipoAnexo);
@@ -46,7 +46,7 @@ class TipoAnexoController extends Controller
 
     public function destroy($id)
     {
-        $tipoAnexo = TipoAnexo::findOrFail($id);
+        $tipoAnexo = TiposAnexos::findOrFail($id);
         $tipoAnexo->delete();
 
         return response()->json(null, 204);

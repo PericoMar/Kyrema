@@ -49,6 +49,6 @@ export class HeaderComponent implements OnInit{
 
   ngOnInit(): void {
     this.user = this.userService.getCurrentUser();
-    this.logoUrl = this.society.logo ? this.society.logo : '../../../assets/logo-kyrema-white.svg';
+    this.logoUrl = this.society.logo ? this.society.logo : '../../../assets/Logo_CANAMA__003.png';
   }
 }

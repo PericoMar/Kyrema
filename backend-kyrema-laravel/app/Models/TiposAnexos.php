@@ -9,14 +9,16 @@ class TiposAnexos extends Model
 {
     protected $table = 'tipos_anexos';
     protected $primaryKey = 'id';
-    public $incrementing = false;
-    protected $keyType = 'string';
-    public $timestamps = false;
 
+    // ,[nombre]
+    //   ,[letras_identificacion]
+    //   ,[id_tipo_producto]
+    //   ,[created_at]
+    //   ,[updated_at]
     protected $fillable = [
-        'id',
         'nombre',
-        'id_familia',
+        'letras_identificacion',
+        'id_tipo_producto',
     ];
 
     public function camposAnexos()

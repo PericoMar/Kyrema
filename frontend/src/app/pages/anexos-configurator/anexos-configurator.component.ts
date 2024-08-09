@@ -45,12 +45,12 @@ export class AnexosConfiguratorComponent {
       console.log(error)
     });
 
-    this.anexosService.getAllTiposAnexos().subscribe((tiposAnexos : any) => {
-      this.tiposAnexos = tiposAnexos;
-    },
-    (error : any) => {
-      console.log(error)
-    });
+    // this.anexosService.getAllTiposAnexos().subscribe((tiposAnexos : any) => {
+    //   this.tiposAnexos = tiposAnexos;
+    // },
+    // (error : any) => {
+    //   console.log(error)
+    // });
    }
 
   tiposProductos: any[] = [];

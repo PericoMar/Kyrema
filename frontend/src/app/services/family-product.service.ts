@@ -25,4 +25,9 @@ export class FamilyProductService {
   getAllTipos(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}tipos-producto/all`);
   }
+
+  deleteTipoProducto(id_tipo_producto: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}tipo-producto/delete/${id_tipo_producto}`);
+  }
+  
 }

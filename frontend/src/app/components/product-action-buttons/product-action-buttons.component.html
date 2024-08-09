@@ -1,9 +1,9 @@
 <div>
-    <a (click)="descargarSeguro(data)" class="download-icon">
-      <div class="loader"></div>
-      <mat-icon>download</mat-icon>
-    </a>
-    <a (click)="openDeleteDialog(data)" routerLinkActive="active" class="delete-icon">
-      <mat-icon>delete</mat-icon>
-    </a>
-  </div>
+  <a (click)="descargarSeguro(data)" class="download-icon" [id]="'download-icon-' + data.id">
+    <div class="loader" [id]="'loader-' + data.id"></div>
+    <mat-icon>download</mat-icon>
+  </a>
+  <a (click)="openDeleteDialog(data)" routerLinkActive="active" class="delete-icon">
+    <mat-icon>delete</mat-icon>
+  </a>
+</div>

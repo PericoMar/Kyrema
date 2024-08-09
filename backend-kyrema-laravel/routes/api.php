@@ -56,6 +56,7 @@ Route::get('tipos-producto/sociedad/{id_sociedad}', [TipoProductoController::cla
 Route::get('tipos-producto/all', [TipoProductoController::class, 'index']);
 Route::get('tipo-producto/{letras}', [TipoProductoController::class, 'getByLetras']);
 Route::get('tipo-producto/show/{ruta}', [TipoProductoController::class, 'show']);
+// Route::delete('tipo-producto/delete/{id}', [TipoProductoController::class, 'delete']);
 
 
 Route::get('sociedad/{id}', [SociedadController::class, 'show']);

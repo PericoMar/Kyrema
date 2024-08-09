@@ -32,11 +32,14 @@ export class ProductActionButtonsComponent {
   }
 
   descargarSeguro(producto: any) {
-    const downloadIcon = document.querySelector('.download-icon') as HTMLElement;
-    const loader = document.querySelector('.download-icon .loader') as HTMLElement;
+    // Seleccionar el contenedor de descarga específico por ID
+    const downloadIcon = document.getElementById(`download-icon-${producto.id}`) as HTMLElement;
+    const loader = document.getElementById(`loader-${producto.id}`) as HTMLElement;
     
     // Añadir la clase 'active' para mostrar el loader y reducir el tamaño del icono
-    downloadIcon.classList.add('active');
+    if (downloadIcon) {
+        downloadIcon.classList.add('active');
+    }
 
     this.productsService.downloadPlantilla(this.letrasIdentificacion, producto.id).subscribe({
         next: (response: Blob) => {
@@ -46,7 +49,7 @@ export class ProductActionButtonsComponent {
             const a = document.createElement('a');
             a.href = url;
 
-            const nombreArchivo = producto.codigo_producto + '_' + producto.nombre_socio + '_' + producto.apellido_1 + '_' + producto.apellido_2 + '.pdf';
+            const nombreArchivo = `${producto.codigo_producto}_${producto.nombre_socio}_${producto.apellido_1}_${producto.apellido_2}.pdf`;
             a.download = nombreArchivo;
 
             document.body.appendChild(a);
@@ -60,10 +63,13 @@ export class ProductActionButtonsComponent {
         },
         complete: () => {
             // Eliminar la clase 'active' cuando la descarga se complete (éxito o error)
-            downloadIcon.classList.remove('active');
+            if (downloadIcon) {
+                downloadIcon.classList.remove('active');
+            }
         }
     });
-  }
+}
+
 
 
 

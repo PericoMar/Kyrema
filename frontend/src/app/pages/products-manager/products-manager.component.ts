@@ -5,11 +5,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { FamilyProductService } from '../../services/family-product.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
+import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteProductDialogComponent } from '../../components/delete-product-dialog/delete-product-dialog.component';
 
 @Component({
   selector: 'app-products-manager',
   standalone: true,
-  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule, SpinnerComponent],
+  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule, SpinnerComponent, ErrorDialogComponent],
   templateUrl: './products-manager.component.html',
   styleUrl: './products-manager.component.css'
 })
@@ -21,6 +24,7 @@ export class ProductsManagerComponent {
 
   constructor(private fb: FormBuilder,
               private familyService: FamilyProductService,
+              private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -41,9 +45,7 @@ export class ProductsManagerComponent {
     console.log(`Editar seguro en el índice ${index}:`, insurance.value);
   }
 
-  deleteInsurance(index: number) {
-    this.insurancesArray.removeAt(index);
-  }
+  
 
   getTiposProductos(){
     this.familyService.getAllTipos().subscribe(
@@ -62,5 +64,14 @@ export class ProductsManagerComponent {
       });
   }
 
-  
+  deleteInsurance(data: any) {
+    this.dialog.open(DeleteProductDialogComponent, {
+      width: '400px',
+      data : {
+        id: data.id,
+        message: '¿Estás seguro que deseas eliminar el siguiente tipo de producto?',
+        nombre: data.nombre
+      },
+    });
+  }
 }
