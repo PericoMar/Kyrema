@@ -69,8 +69,3 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_918FD5E3D4FE49F399DDD7C8BE8CFD89 }}
-
-      - name: Run Laravel migrations (optional)
-        run: |
-          cd backend-kyrema-laravel
-          php artisan migrate --force
