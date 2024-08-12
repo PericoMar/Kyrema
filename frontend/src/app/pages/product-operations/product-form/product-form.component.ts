@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ButtonSpinnerComponent } from '../../../components/button-spinner/button-spinner.component';
+import { AppConfig } from '../../../../config/app-config';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -251,7 +252,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   loadTarifasPorAnexo(sociedad_id: any){
     this.tarifasAnexos = {};
     this.tiposAnexos.forEach((tipoAnexo: any) => {
-      this.rateService.getTarifaPorSociedadAndTipoAnexo(sociedad_id, tipoAnexo.id).subscribe({
+      this.rateService.getTarifaPorSociedadAndTipoAnexo(AppConfig.SOCIEDAD_ADMIN_ID, tipoAnexo.id).subscribe({
         next: (tarifas: any[]) => {
           this.tarifasAnexos[tipoAnexo.id] = tarifas;
           
@@ -400,9 +401,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
     return campo ? campo.obligatorio == 1 : false;
   }
 
-  // onSubmit() {
-  //   console.log(this.anexos);
-  // }
 
   onSubmit() {
     this.productForm.get('prima_del_seguro')?.enable();

@@ -1,5 +1,5 @@
 <nav class="nav-bar">
-    <ul class="nav-options">
+    <ul class="nav-options" [style.width]="navWidth">
       <ng-container *ngFor="let menu of navigation">
         <li>
           <!-- Button to trigger the menu or just display the label if no children -->

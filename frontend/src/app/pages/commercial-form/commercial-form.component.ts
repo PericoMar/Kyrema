@@ -24,6 +24,7 @@ export class CommercialFormComponent {
   comercial_id!: string;
   comercial! : Commercial;
   sociedad!: any;
+  sociedades!: any;
 
   selectedFile!: File;
   fileName!: string;
@@ -37,6 +38,8 @@ export class CommercialFormComponent {
     "fecha_nacimiento"
   ]
 
+  
+
   constructor(
     private formBuilder: FormBuilder,
     private comercialService: UserService,
@@ -45,6 +48,9 @@ export class CommercialFormComponent {
     private dialog : MatDialog
   ) {
     this.sociedad = this.societyService.getCurrentSociety();
+
+    this.sociedades = this.societyService.getSociedadesHijas();
+    console.log("Sociedades: ", this.sociedades)
 
     this.route.paramMap.subscribe(params => {
       this.comercial_id = params.get('comercial') || '';

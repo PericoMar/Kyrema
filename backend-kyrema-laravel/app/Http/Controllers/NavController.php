@@ -121,16 +121,24 @@ class NavController extends Controller
         })->toArray();
         // La parte de gestion solo si el id es el mismo que la sociedad admin, despues coger tipos producto y en Administracion coger los nombres
         // y concatenarlos con Informes y en link meter /informes/:letrasIdentificacion, En Productos en el label el nombre directamente y en el link /operaciones/:letrasIdentificacion
-        if($id_sociedad != self::SOCIEDAD_ADMIN_ID){
-            // Borrar la parte de gestion:
-            unset($navegacion[1]);
-        } else if(Sociedad::find($id_sociedad)->sociedadPadre == self::SOCIEDAD_ADMIN_ID){
-            // Si la sociedad tiene una sociedad padre, borrar la parte de gestion
-            $navegacion[1]["children"] = array_filter($navegacion[1]["children"], function($child) {
-                return $child["label"] !== "Sociedades" && $child["label"] !== "Comisiones";
-            });
-            // Reindexar el array para mantener la estructura correcta
-            $navegacion[1]["children"] = array_values($navegacion[1]["children"]);
+
+        $sociedad = Sociedad::find($id_sociedad);
+        $sociedadPadreId = $sociedad->sociedad_padre_id;
+
+        // Condición para eliminar la parte de gestión solo si ambas condiciones se cumplen
+        if ($id_sociedad != self::SOCIEDAD_ADMIN_ID && $sociedadPadreId != self::SOCIEDAD_ADMIN_ID) {
+            //Cambiar el navegacion[2] por el 1 y quitar el 2:
+            if (isset($navegacion[2])) {
+                $navegacion[1] = $navegacion[2];
+                unset($navegacion[2]);
+            }
+        }
+
+        // Condición para filtrar las opciones en el array de navegación
+        if ($sociedadPadreId == self::SOCIEDAD_ADMIN_ID && isset($navegacion[2])) {
+            $navegacion[1]["children"] = array_values(array_filter($navegacion[1]["children"], function($child) {
+                return in_array($child["label"], ["Sociedades", "Comisiones"]);
+            }));
         }
 
         return response()->json($navegacion);

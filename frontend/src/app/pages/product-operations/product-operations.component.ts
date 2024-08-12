@@ -44,9 +44,7 @@ export class ProductOperationsComponent {
     private router : Router,
     private productNotificationService: ProductNotificationService
   ) {
-    this.sociedadesBusqueda = this.societyService.getSociedadesHijas();
-    this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
-    console.log("ids", this.idsSociedades)
+    
   }
 
   ngOnInit(): void {
@@ -54,6 +52,9 @@ export class ProductOperationsComponent {
     this.route.paramMap.subscribe(params => {
       this.productUrl = params.get('product')!;
       this.loadProductData(this.productUrl);
+      this.sociedadesBusqueda = this.societyService.getSociedadesHijas();
+      this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
+      console.log("ids", this.idsSociedades)
     });
 
     this.productNotificationService.productNotification$.subscribe(
