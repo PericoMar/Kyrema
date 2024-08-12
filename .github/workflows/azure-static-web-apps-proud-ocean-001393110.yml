@@ -48,7 +48,7 @@ jobs:
           # Más información sobre las configuraciones del flujo de trabajo de Static Web App, visita: https://aka.ms/swaworkflowconfig
           app_location: "./frontend" # Ruta del código fuente de la aplicación
           api_location: "" # Ruta del código fuente de la API - opcional
-          output_location: "frontend/dist/frontend" # Ruta de salida debe coincidir con el directorio generado por la construcción de Angular
+          output_location: "dist/frontend/browser" # Ruta de salida debe coincidir con el directorio generado por la construcción de Angular
           ###### Fin de Configuraciones del Repositorio/Construcción ######
 
   close_pull_request_job:
