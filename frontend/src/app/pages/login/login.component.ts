@@ -45,10 +45,9 @@ export class LoginComponent {
           if (comercial) {
             this.navService.getNavegation(comercial.id_sociedad).subscribe(
               data => {
-                console.log(data[data.length - 1].children);
                 //Navega a la primera pagina dentro de operaciones:
-                if(data.length > 0 && data[data.length - 1].children.length > 0){
-                  this.router.navigate([`${data[data.length - 1].children[0].link}`]);  
+                if(data.length > 0 && data[data.length-1].children.length > 0){
+                  this.router.navigate([`${data[data.length-1].children[0].link}`]);  
                 } else {
                   this.router.navigate(['/operaciones/1']);
                 }

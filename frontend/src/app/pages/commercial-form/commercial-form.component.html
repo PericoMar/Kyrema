@@ -7,6 +7,17 @@
             <header class="space-between datos-header">
                 <h3 class="form-section-title">Datos generales</h3>
 
+                @if(sociedades.length > 0){
+                    <div class="input-container sociedade">
+                        <label for="sociedad" class="input-label">Sociedad Padre</label>
+                        <select formControlName="id_sociedad" id="sociedad" class="input-field">
+                            @for(sociedad of sociedades ; track sociedad){
+                                <option value="{{sociedad.id}}">{{sociedad.nombre}}</option>
+                            }
+                        </select>
+                    </div>
+                }
+
                 <div class="input-file">
                     <input type="file" class="file-input" accept=".png, .jpg, .jpeg, .svg"
                     (change)="onFileSelected($event)" #fileUpload>

@@ -1,10 +1,8 @@
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { NavService } from '../../services/nav.service';
-import { UserService } from '../../services/user.service';
 
 interface MenuItem {
   label: string;
@@ -19,8 +17,23 @@ interface MenuItem {
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })
-export class NavBarComponent{
+export class NavBarComponent implements OnChanges{
   
   @Input() navigation!: MenuItem[] | null;
+  public navWidth: string = '580px';
   
+  ngOnChanges(): void {
+    this.calculateWidth();
+  }
+
+  calculateWidth(): void {
+    if (this.navigation) {
+      const length = this.navigation.length;
+      // Define width based on length, you can adjust these thresholds
+      if (length < 3) {
+        this.navWidth = '320px';
+      }
+    }
+  }
+
 }
