@@ -19,19 +19,37 @@ jobs:
         with:
           submodules: true
           lfs: false
+
+      # Configuración para usar Node.js v18.13 o superior
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.13'
+
+      # Instalar dependencias
+      - name: Install dependencies
+        working-directory: ./frontend # Establecer el directorio de trabajo
+        run: npm install
+
+      # Construir la aplicación
+      - name: Build the app
+        working-directory: ./frontend # Establecer el directorio de trabajo
+        run: npm run build -- --configuration production # Asegúrate de que este comando sea el correcto para construir tu aplicación Angular
+
+      # Desplegar la aplicación
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PROUD_OCEAN_001393110 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Usado para integraciones de GitHub (i.e. comentarios en PR)
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "./frontend" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "angular.json#$.projects[*].architect.build.options.outputPath" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          ###### Configuraciones del Repositorio/Construcción - Estos valores se pueden configurar para coincidir con los requisitos de tu aplicación. ######
+          # Más información sobre las configuraciones del flujo de trabajo de Static Web App, visita: https://aka.ms/swaworkflowconfig
+          app_location: "./frontend" # Ruta del código fuente de la aplicación
+          api_location: "" # Ruta del código fuente de la API - opcional
+          output_location: "frontend/dist/frontend" # Ruta de salida debe coincidir con el directorio generado por la construcción de Angular
+          ###### Fin de Configuraciones del Repositorio/Construcción ######
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -44,3 +62,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PROUD_OCEAN_001393110 }}
           action: "close"
+
