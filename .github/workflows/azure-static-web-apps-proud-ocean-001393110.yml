@@ -34,7 +34,7 @@ jobs:
       # Construir la aplicación
       - name: Build the app
         working-directory: ./frontend # Establecer el directorio de trabajo
-        run: npm run build -- --prod # Asegúrate de que este comando sea el correcto para construir tu aplicación Angular
+        run: npm run build -- --configuration production # Asegúrate de que este comando sea el correcto para construir tu aplicación Angular
 
       # Desplegar la aplicación
       - name: Build And Deploy
