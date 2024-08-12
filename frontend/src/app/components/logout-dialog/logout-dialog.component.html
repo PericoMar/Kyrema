@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>¿Estas seguro que quieres cerrar sesión?</h2>
+<mat-dialog-content>
+  <p>Si cierras sesión, tendrás que volver a iniciar sesión para acceder a la plataforma.</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onClose()" class="custom-close-button">Cancelar</button>
+  <button mat-button (click)="confirmLogout()" class="delete-button">Cerrar sesión</button>
+</mat-dialog-actions>

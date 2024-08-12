@@ -152,7 +152,11 @@
     </fieldset>
 
     <button mat-raised-button type="submit" class="mat-button-success submit-button">
+    @if(loadingAction){
+        <app-button-spinner></app-button-spinner>
+    }@else {
         {{ productForm.value.id == null || productForm.value.id == '' ? 'Crear' : 'Editar'}}
+    }
     </button>
     } @else {
         <div>

@@ -30,8 +30,8 @@ export class UserService {
   }
 
   logout() {
-    localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem('token');
+    //Quitar todo los datos del local storage
+    localStorage.clear();
   }
 
   createCommercial(commercial: any): Observable<any> {

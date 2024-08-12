@@ -23,3 +23,27 @@ header.top-header{
     padding-left: 8px;
     width: 120px;   
 }
+
+.welcome-aside{
+    width: 170px;
+}
+
+.logout-button {
+    background: transparent; /* Fondo del botón transparente */
+    border: 2px solid transparent; /* Borde transparente para que no afecte el tamaño del botón */
+    border-radius: 50%; /* Hace que el botón tenga forma de círculo */
+    padding: 6px; /* Ajusta el tamaño del área de clic */
+    transition: background-color 0.3s ease; /* Transición suave para el cambio de borde */
+  }
+  
+  .logout-button:hover {
+    background-color: rgba(0, 0, 0, 0.2); /* Cambia el color del borde al hacer hover (con opacidad) */
+  }
+  
+  .logout-button .center mat-icon {
+    color: white; /* Color del ícono */
+  }
+  
+  .logout-button:focus {
+    outline: none; /* Elimina el contorno de enfoque del botón */
+  }

@@ -10,6 +10,8 @@ import { ProductNotificationService } from '../../../services/product-notificati
 import { AnexosService } from '../../../services/anexos.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ButtonSpinnerComponent } from '../../../components/button-spinner/button-spinner.component';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -36,7 +38,7 @@ interface CampoFormulario{
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule],
+  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, MatSnackBarModule, ButtonSpinnerComponent],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css']
 })
@@ -63,7 +65,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   anexos: any[] = [];
   camposAnexo!: any;
 
-
+  loadingAction: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -74,6 +76,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     private familyService: FamilyProductService,
     private productNotificationService: ProductNotificationService,
     private anexosService: AnexosService,
+    private snackBar: MatSnackBar
   ) { 
     
   }
@@ -259,6 +262,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       });
     });
     console.log('Tarifas por anexo: ', this.tarifasAnexos);
+    this.getPrecioFinal();
   }
 
   loadFormatosAnexos() {
@@ -285,19 +289,37 @@ export class ProductFormComponent implements OnInit, OnChanges{
     console.log('Formatos anexos: ', this.formatosAnexos);
   }
 
-  loadAnexoPorProducto(){
-    if(this.tipo_producto && this.product){
-      this.anexosService.getAnexosPorProducto(this.tipo_producto.id, this.product.id).subscribe({
-        next: (anexos: any[]) => {
-          this.anexos = anexos;
-          console.log('Anexos: ', this.anexos);
-        },
-        error: (error: any) => {
-          console.error('Error loading anexos', error);
-        }
-      });
+  loadAnexoPorProducto() {
+    if (this.tipo_producto && this.product.id != null) {
+        this.anexosService.getAnexosPorProducto(this.tipo_producto.id, this.product.id).subscribe({
+            next: (anexos: any[]) => {
+                // Iterar sobre los anexos obtenidos y añadir la tarifa correspondiente
+                this.anexos = anexos.map(anexo => {
+                    // Clonar el objeto formato para evitar referencias compartidas
+                    const nuevoFormato = { ...anexo.formato };
+
+                    // Añadir la tarifa correspondiente
+                    const tarifa = this.tarifasAnexos[anexo.tipo_anexo.id];
+
+                    return {
+                        ...anexo,
+                        formato: nuevoFormato, // Usar la copia independiente del formato
+                        tarifas: tarifa // Añadir la tarifa
+                    };
+                });
+
+                console.log('Anexos: ', this.anexos);
+            },
+            error: (error: any) => {
+                console.error('Error loading anexos', error);
+            },
+            complete: () => {
+                this.getPrecioFinal();
+            }
+        });
     }
-  }
+}
+
 
   addAnexo(tipo_anexo: any) {
     // Clonar el objeto formato para evitar referencias compartidas
@@ -391,6 +413,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
     // Hacer las comprobaciones correspondientes antes de enviar el formulario
     
+    this.loadingAction = true;
     const nuevoProducto = this.productForm.value;
     
     // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
@@ -417,6 +440,13 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('precio_total')?.disable();
           this.productNotificationService.notifyChangesOnProducts();
           this.conectarAnexosConProductos(this.anexos, data.id);
+          this.snackBar.open('Seguro creado con éxito', 'Cerrar', {
+            duration: 3000, // Duración en milisegundos
+            horizontalPosition: 'right', // Posición horizontal: start, center, end, left, right
+            verticalPosition: 'bottom',  // Posición vertical: top, bottom
+            panelClass: ['custom-snackbar']
+          })
+          this.loadingAction = false;
         },
         error => {
           console.log(error);
@@ -432,12 +462,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('precio_total')?.disable();
           this.productNotificationService.notifyChangesOnProducts();
           this.conectarAnexosConProductos(this.anexos, data.id);
+          this.loadingAction = false; 
         },
         error => {
           console.log(error);
         }
       )
     }
+    
   }
 
   getDefaultValue(tipoDato: string): any {

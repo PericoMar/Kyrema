@@ -8,12 +8,13 @@ import { SocietyService } from '../../services/society.service';
 import { CommonModule } from '@angular/common';
 import { DeleteAnexoDialogComponent } from '../../components/delete-anexo-dialog/delete-anexo-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SpinnerComponent } from '../../components/spinner/spinner.component';
 
 
 @Component({
   selector: 'app-anexos-manager',
   standalone: true,
-  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule, CommonModule, DeleteAnexoDialogComponent],
+  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule, CommonModule, DeleteAnexoDialogComponent, SpinnerComponent],
   templateUrl: './anexos-manager.component.html',
   styleUrl: './anexos-manager.component.css'
 })

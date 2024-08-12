@@ -141,3 +141,22 @@ hr {
         width: 100% !important;
     }
   }
+
+  ::ng-deep .custom-snackbar {
+    --mdc-snackbar-container-color: white;  
+    --mdc-snackbar-supporting-text-color: black;
+    --mat-snack-bar-button-color: rgb(211, 9, 9);
+  }
+
+  .mat-mdc-button.mat-mdc-snack-bar-action {
+    color: black !important;
+  }
+  
+  .custom-snackbar [matSnackBarLabel] {
+    font-size: 16px; /* Ajusta el tamaño de la fuente */
+  }
+  
+  .custom-snackbar [matSnackBarActions] button {
+    color: #b40912; /* Cambia el color del botón de acción */
+  }
+  

@@ -2,6 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { UserService } from '../../services/user.service';
 import { SocietyService } from '../../services/society.service';
+import { MatIcon } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { LogoutDialogComponent } from '../logout-dialog/logout-dialog.component';
 
 interface User {
   id: string,
@@ -33,7 +36,7 @@ interface MenuItem {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NavBarComponent],
+  imports: [NavBarComponent, MatIcon, LogoutDialogComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
@@ -45,10 +48,18 @@ export class HeaderComponent implements OnInit{
 
   constructor(
     private userService : UserService,
+    private dialog: MatDialog,
   ){}
 
   ngOnInit(): void {
     this.user = this.userService.getCurrentUser();
     this.logoUrl = this.society.logo ? this.society.logo : '../../../assets/Logo_CANAMA__003.png';
+  }
+
+  logout(){
+    this.dialog.open(LogoutDialogComponent, {
+      width: '400px',
+      data : {},
+    });
   }
 }

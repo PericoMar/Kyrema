@@ -17,60 +17,40 @@ import { DeleteProductDialogComponent } from '../../components/delete-product-di
   styleUrl: './products-manager.component.css'
 })
 export class ProductsManagerComponent {
-  insuranceForm!: FormGroup;
-  insurancesArray!: FormArray;
+  insurances: any[] = [];
   displayedColumns: string[] = ['type', 'actions'];
-  insurances!: { id: number, type: string }[];
+  insuranceForm: FormGroup;
 
-  constructor(private fb: FormBuilder,
-              private familyService: FamilyProductService,
-              private dialog: MatDialog
-  ) {}
-
-  ngOnInit() {
-    this.getTiposProductos();    
+  constructor(
+    private familyService: FamilyProductService,
+    private fb: FormBuilder,
+    private dialog: MatDialog
+  ) {
+    this.insuranceForm = this.fb.group({
+      // Define any form controls if needed
+    });
   }
 
-  createInsuranceGroup(insurance: { id: number, type: string }): FormGroup {
-    return this.fb.group({
-      id: [insurance.id],
-      type: [insurance.type]
+  ngOnInit(): void {
+    this.familyService.getAllTipos().subscribe({
+      next: (tipos: any[]) => {
+        this.insurances = tipos.map(tipo => ({ id: tipo.id, type: tipo.nombre }));
+        console.log('Insurances: ', this.insurances);
+      },
+      error: (error: any) => {
+        console.error('Error loading insurances', error);
+      }
     });
   }
 
 
-  editInsurance(index: number) {
-    const insurance = this.insurancesArray.at(index) as FormGroup;
-    // Aquí puedes agregar la lógica para editar el seguro, por ejemplo, abrir un modal con el formulario de edición
-    console.log(`Editar seguro en el índice ${index}:`, insurance.value);
-  }
-
-  
-
-  getTiposProductos(){
-    this.familyService.getAllTipos().subscribe(
-      (tipos) => {
-        // Pasar los tipos al siguiente formato:
-        // { id: 1, type: 'Seguro 1' }, donde type es el nombre.
-        this.insurances = tipos.map((tipo: any) => ({ id: tipo.id, type: tipo.nombre }));
-        this.insuranceForm = this.fb.group({
-          insurances: this.fb.array(this.insurances.map(insurance => this.createInsuranceGroup(insurance)))
-        });
-    
-        this.insurancesArray = this.insuranceForm.get('insurances') as FormArray;
-      },
-      (error) => {
-        console.log(error);
-      });
-  }
-
-  deleteInsurance(data: any) {
+  openDeleteDialog(data: any): void {
     this.dialog.open(DeleteProductDialogComponent, {
       width: '400px',
-      data : {
+      data: {
         id: data.id,
         message: '¿Estás seguro que deseas eliminar el siguiente tipo de producto?',
-        nombre: data.nombre
+        nombre: data.type
       },
     });
   }
