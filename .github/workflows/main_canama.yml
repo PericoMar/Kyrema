@@ -22,31 +22,22 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, pdo, pdo_mysql, tokenizer, xml, ctype, json, bcmath, zip
 
-      - name: Check if composer.json exists in backend
-        id: check_files
-        uses: andstor/file-existence-action@v1
-        with:
-          files: 'backend-kyrema-laravel/composer.json'
-
-      - name: Run composer install if composer.json exists
-        if: steps.check_files.outputs.files_exists == 'true'
+      - name: Install Composer dependencies
         run: |
           cd backend-kyrema-laravel
-          composer validate --no-check-publish && composer install --prefer-dist --no-progress
+          composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
-      - name: Copy .env file
-        run: |
-          cp backend-kyrema-laravel/.env.example backend-kyrema-laravel/.env
-
-      - name: Generate Laravel app key
+      - name: Optimize Laravel performance
         run: |
           cd backend-kyrema-laravel
-          php artisan key:generate
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
 
       - name: Zip artifact for deployment
         run: |
           cd backend-kyrema-laravel
-          zip ../release.zip ./* -r
+          zip -r ../release.zip ./
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -60,7 +51,7 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -78,3 +69,8 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_918FD5E3D4FE49F399DDD7C8BE8CFD89 }}
+
+      - name: Run Laravel migrations (optional)
+        run: |
+          cd backend-kyrema-laravel
+          php artisan migrate --force
