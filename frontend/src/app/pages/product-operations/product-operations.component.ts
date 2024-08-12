@@ -52,8 +52,10 @@ export class ProductOperationsComponent {
     this.route.paramMap.subscribe(params => {
       this.productUrl = params.get('product')!;
       this.loadProductData(this.productUrl);
+      setTimeout(() => {
       this.sociedadesBusqueda = this.societyService.getSociedadesHijas();
       this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
+      }, 500);
       console.log("ids", this.idsSociedades)
     });
 
