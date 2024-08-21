@@ -14,7 +14,7 @@ export class CamposService {
   constructor(private http : HttpClient) { }
 
   getCamposPorTipoProducto(id_tipo_producto: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/campos?id_tipo_producto=${id_tipo_producto}`);
+    return this.http.get<any>(`${this.apiUrl}/campos?id_tipo_producto=${id_tipo_producto}`);
   }
 
   getCamposVisiblesPorTipoProducto(id_tipo_producto: string): Observable<any> {
