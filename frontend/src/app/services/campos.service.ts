@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map, tap } from 'rxjs';
+import { AppConfig } from '../../config/app-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CamposService {
 
-  private apiUrl = 'http://localhost:8000';
+  private apiUrl = AppConfig.API_URL;
   private readonly CAMPOS_KEY = 'campos';
 
   constructor(private http : HttpClient) { }

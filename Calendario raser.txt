@@ -1,0 +1,11 @@
+Tengo que hacer un calendario para la segunda fase del desarrollo de una aplicación para unos
+clientes, Canama, tengo que describir de manera escueta los siguientes puntos y ponerles fechad e finalizacion
+no se en que formato hacer el archivo ademas tengo que poner que las fechas pueden variar, ahora mismo estamos en
+fase de pruebas donde se les ha dado acceso a un servicio de pruebas para que puedan insertar distintos tipos de seguros manejar las sociedades,
+manejar los comerciales, etc...
+En desarrollo comisiones por comercial, validacion de datos, pagina de formulario de contratacion para el cliente/socio,
+Anexos con plantillas propias, uso de la plantilla correspondiente a la fecha de creación del seguro, implementacion de edicion de tipos de productos, anexos, productos, sociedades, comerciales.
+validacion de datos en los formulario.
+
+
+

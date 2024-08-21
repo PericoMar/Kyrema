@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AppConfig } from '../../config/app-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnexosService {
 
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = AppConfig.API_URL;
 
 
   constructor(private http : HttpClient) { }

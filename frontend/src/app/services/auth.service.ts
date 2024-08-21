@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { AppConfig } from '../../config/app-config';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { catchError, map } from 'rxjs/operators';
 export class AuthService {
   private readonly USER_KEY = 'currentUser';
   private readonly TOKEN_KEY = 'token';
-  private loginUrl = 'http://localhost:8000'; // Actualiza esta URL con la ruta de tu backend
+  private loginUrl = AppConfig.API_URL; // Actualiza esta URL con la ruta de tu backend
   private isLoged : boolean = false;
 
   constructor(private http: HttpClient) {}

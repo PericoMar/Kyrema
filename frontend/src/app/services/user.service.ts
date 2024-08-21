@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
+import { AppConfig } from '../../config/app-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private readonly USER_KEY = 'currentUser';
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = AppConfig.API_URL;
 
   constructor(private http: HttpClient){}
 

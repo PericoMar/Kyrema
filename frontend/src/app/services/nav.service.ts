@@ -1,13 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { AppConfig } from '../../config/app-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavService {
 
-  private navUrl = 'http://localhost:8000/api';
+  private navUrl = AppConfig.API_URL;
 
   constructor(private http: HttpClient) { }
 

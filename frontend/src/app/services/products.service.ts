@@ -1,13 +1,14 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
+import { AppConfig } from '../../config/app-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductsService {
 
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = AppConfig.API_URL;
 
   constructor(private http : HttpClient) { }
 

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable,of, tap } from 'rxjs';
 import { Society } from '../interfaces/society';
+import { AppConfig } from '../../config/app-config';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { Society } from '../interfaces/society';
 export class SocietyService {
   private readonly SOCIETY_KEY = "currentSociety";
   private readonly SOCIEDADES_HIJAS_KEY = 'sociedades';
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = AppConfig.API_URL;
   private sociedad!: string;
 
   constructor(private http: HttpClient,private route: ActivatedRoute, private router: Router) {
