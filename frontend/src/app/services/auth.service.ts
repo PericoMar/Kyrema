@@ -17,7 +17,7 @@ export class AuthService {
 
   loginUser(usuario: string, contraseña: string): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<any>(`${this.loginUrl}/api/auth/login`, { usuario, contraseña }, { headers })
+    return this.http.post<any>(`${this.loginUrl}/auth/login`, { usuario, contraseña }, { headers })
       .pipe(
         map(response => {
           console.log(response);
