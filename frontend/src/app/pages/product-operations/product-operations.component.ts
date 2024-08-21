@@ -52,10 +52,16 @@ export class ProductOperationsComponent {
     this.route.paramMap.subscribe(params => {
       this.productUrl = params.get('product')!;
       this.loadProductData(this.productUrl);
-      setTimeout(() => {
-      this.sociedadesBusqueda = this.societyService.getSociedadesHijas();
-      this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
-      }, 500);
+      this.societyService.getSociedadesHijasObservable().subscribe({
+        next: (data) => {
+          this.sociedadesBusqueda = data;
+          this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
+          console.log("ids", this.idsSociedades);
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
       console.log("ids", this.idsSociedades)
     });
 
