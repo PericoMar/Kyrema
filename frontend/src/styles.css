@@ -159,3 +159,12 @@ input.disabled{
         width: 100% !important;
     }
   }
+
+
+  hr{
+    opacity: 0.5;
+  }
+
+  .wait-cursor {
+    cursor: wait;
+  }

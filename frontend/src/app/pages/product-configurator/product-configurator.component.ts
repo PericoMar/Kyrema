@@ -37,8 +37,10 @@ interface Campo {
 })
 export class ProductConfiguratorComponent {
   tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }];
+
   fileName = '';
   selectedFile! : File;
+
   nombreProducto = '';
   letrasIdentificacion = '';
   nuevoProducto : any = {
@@ -94,6 +96,7 @@ export class ProductConfiguratorComponent {
     { nombre: 'Prima del seguro', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
     { nombre: 'Cuota de asociación', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
     { nombre: 'Precio Total', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+    { nombre: 'Precio Final', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
     { nombre: 'Numero anexos', tipoDato: 'number', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
   ]
 

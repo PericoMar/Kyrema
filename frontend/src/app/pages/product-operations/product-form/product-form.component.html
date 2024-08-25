@@ -204,5 +204,22 @@
             </p>
         </div>
     }
-    
+
+    @if(anexos.length > 0 && (productForm.value.id != null && productForm.value.id != '')){
+        <h2>Certificados Anexos</h2>
+        <section class="content-block download-anexos">
+            <div class="flex-start">
+                @for(tipoAnexo of tiposAnexos ; track tipoAnexo.id){
+                    <button mat-raised-button color="primary" (click)="downloadAnexo(tipoAnexo)" class="download-anexo-button" [class.loading]="downloadingAnexo" type="button">
+                        <span class="button-content">
+                          <mat-icon class="download-icon">cloud_download</mat-icon>
+                          <div class="spinner" *ngIf="downloadingAnexo"></div>
+                          {{ tipoAnexo.nombre }}
+                        </span>
+                    </button>
+                }
+            </div>
+            <hr class="divider">
+        </section>
+    }
 }  

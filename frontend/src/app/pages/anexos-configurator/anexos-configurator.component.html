@@ -23,6 +23,20 @@
                         }
                       </select>
                   </div>
+                  <div class="input-file">
+                    <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
+                      (change)="onFileSelected($event)" #fileUpload>
+      
+                      <div class="file-upload">
+      
+                      {{fileName || "No has añadido ninguna plantilla aún."}}
+      
+                        <button type="button" mat-mini-fab color="primary" class="upload-btn"
+                          (click)="fileUpload.click()">
+                            <mat-icon>attach_file</mat-icon>
+                        </button>
+                      </div>
+                  </div>
                 </div>
                 </header>
             <h2>Datos del anexo</h2>

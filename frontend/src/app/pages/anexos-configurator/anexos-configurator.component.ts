@@ -52,6 +52,10 @@ export class AnexosConfiguratorComponent {
     //   console.log(error)
     // });
    }
+  
+  
+  fileName = '';
+  selectedFile! : File;
 
   tiposProductos: any[] = [];
   tiposAnexos: any[] = [];
@@ -127,6 +131,7 @@ export class AnexosConfiguratorComponent {
     } else {
       const nuevoTipoAnexo = {
         nombre: this.nombreAnexo,
+        plantilla_path: this.selectedFile,
         letras_identificacion: this.letrasIdentificacion,
         campos: this.campos,
         tipoProductoAsociado: this.tipoProductoAsociado,
@@ -134,6 +139,10 @@ export class AnexosConfiguratorComponent {
 
       this.anexosService.createTipoAnexo(nuevoTipoAnexo).subscribe((response: any) => {
         console.log(response);
+
+        this.anexosService.subirPlantillaAnexo(response.letras_identificacion, this.selectedFile).subscribe((response: any) => {
+          console.log(response);
+        });
 
         const tarifaAnexo = {
           id_tipo_anexo: response.id,
@@ -230,5 +239,18 @@ export class AnexosConfiguratorComponent {
       width: '300px',
       data: { message }
     });
+  }
+
+  onFileSelected(event : any) {
+
+    const file:File = event.target.files.item(0);
+    this.selectedFile = file;
+
+    if (file) {
+
+        this.fileName = file.name;
+
+        console.log(this.fileName);
+    }
   }
 }

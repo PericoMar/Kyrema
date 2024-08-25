@@ -67,6 +67,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   camposAnexo!: any;
 
   loadingAction: boolean = false;
+  downloadingAnexo: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -139,7 +140,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
       console.log(this.product);  
       this.productForm.patchValue(this.product);
       this.loadAnexoPorProducto();
-      this.isLoadingProduct = false
+      this.getPrecioFinal();
+      this.isLoadingProduct = false;
     }
 
     if(changes['campos'] || changes['letras_identificacion']){
@@ -426,6 +428,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
 
     nuevoProducto.numero_anexos = this.anexos.length;
+    nuevoProducto.precio_final = this.precioFinal;
 
     //Si no tiene id se está creando un nuevo producto
     if(this.productForm.value.id == null || this.productForm.value.id == ''){
@@ -451,6 +454,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
         }
       )
     } else {
+      console.log(nuevoProducto);
       //Si tiene id se está editando un producto
       this.productsService.editarProducto(this.letras_identificacion, nuevoProducto).subscribe(
         data => {
@@ -507,6 +511,42 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.precioFinal += this.anexos.reduce((acc: number, anexo: any) => {
       return acc + (parseFloat(anexo.tarifas.precio_total) || 0);
     }, 0);
+  }
+
+  downloadAnexo(tipoAnexo: any) {
+    this.downloadingAnexo = true;
+    this.anexosService.downloadAnexo(tipoAnexo.id, this.productForm.value.id).subscribe({
+      next: (response: any) => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        // Construir partes del nombre del archivo, verificando que existan.
+        const nombreSocio = this.productForm.value.nombre_socio ? `_${this.productForm.value.nombre_socio}` : '';
+        const apellido1 = this.productForm.value.apellido_1 ? `_${this.productForm.value.apellido_1}` : '';
+        const apellido2 = this.productForm.value.apellido_2 ? `_${this.productForm.value.apellido_2}` : '';
+
+        // Nombre del archivo final
+        const nombreArchivo = `${tipoAnexo.nombre}_${this.productForm.value.codigo_producto}${nombreSocio}${apellido1}${apellido2}.pdf`;
+
+        a.download = nombreArchivo;
+
+
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error: (error: any) => {
+        console.error('Error downloading the file', error);
+      },
+      complete: () => {
+        this.downloadingAnexo = false;
+      }
+    });
   }
 
 }

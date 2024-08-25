@@ -32,6 +32,9 @@ export class ProductActionButtonsComponent {
   }
 
   descargarSeguro(producto: any) {
+    // Poner el cursor en modo de espera
+    document.body.classList.add('wait-cursor');
+
     // Seleccionar el contenedor de descarga específico por ID
     const downloadIcon = document.getElementById(`download-icon-${producto.id}`) as HTMLElement;
     const loader = document.getElementById(`loader-${producto.id}`) as HTMLElement;
@@ -49,8 +52,16 @@ export class ProductActionButtonsComponent {
             const a = document.createElement('a');
             a.href = url;
 
-            const nombreArchivo = `${producto.codigo_producto}_${producto.nombre_socio}_${producto.apellido_1}_${producto.apellido_2}.pdf`;
+            // Construir partes del nombre del archivo, verificando que existan.
+            const nombreSocio = producto.nombre_socio ? `_${producto.nombre_socio}` : '';
+            const apellido1 = producto.apellido_1 ? `_${producto.apellido_1}` : '';
+            const apellido2 = producto.apellido_2 ? `_${producto.apellido_2}` : '';
+
+            // Nombre del archivo final
+            const nombreArchivo = `${producto.codigo_producto}${nombreSocio}${apellido1}${apellido2}.pdf`;
+
             a.download = nombreArchivo;
+
 
             document.body.appendChild(a);
             a.click();
@@ -66,6 +77,9 @@ export class ProductActionButtonsComponent {
             if (downloadIcon) {
                 downloadIcon.classList.remove('active');
             }
+
+            // Restaurar el cursor a su estado normal
+            document.body.classList.remove('wait-cursor');
         }
     });
 }

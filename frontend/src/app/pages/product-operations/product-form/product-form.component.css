@@ -13,6 +13,7 @@
     justify-content: flex-start;
     align-items: flex-start;
     padding: 40px ;
+    margin-bottom: 40px;
 }
 
 .form-header{
@@ -84,6 +85,7 @@ input.disabled{
 
 .divider{
     margin-bottom: 20px;
+    opacity: 0.5;
 }
 
 
@@ -116,7 +118,7 @@ hr {
 }
 
 .add-anexo-button{
-    margin-bottom: 10px;
+    margin-bottom: 10px;    
 }
 
 .mat-button-success{
@@ -126,6 +128,50 @@ hr {
     &:hover {
         background-color: #45A049; /* Verde más oscuro */
     }
+}
+
+.download-anexos{
+    padding:40px;
+}
+
+.download-anexo-button{
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+  
+.download-icon {
+    transition: transform 0.3s ease;
+}
+  
+.spinner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+  
+/* Estilo y animación cuando está cargando */
+.download-anexo-button.loading .download-icon {
+    transform: scale(0.7);
+    margin-right: 32px; /* Añade espacio para el spinner */
 }
 
 /* Añadir media query para que cuando la pantalla sea menos de 1150px quitar el display flex  */
