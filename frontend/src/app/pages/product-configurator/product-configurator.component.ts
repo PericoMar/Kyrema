@@ -190,13 +190,14 @@ export class ProductConfiguratorComponent {
         this.productService.subirPlantilla(this.letrasIdentificacion, this.selectedFile).subscribe((res:any) => {
           console.log(res);
         });
-        const tarifaNuevoProducto : Tarifa = {
+        const tarifaNuevoProducto: Tarifa = {
           tipo_producto_id: id_tipo_producto,
           id_sociedad: AppConfig.SOCIEDAD_ADMIN_ID,
-          prima_seguro: this.tarifas[0].valor,
-          cuota_asociacion: this.tarifas[1].valor,
-          precio_total: this.tarifas[2].valor
+          prima_seguro: this.tarifas[0].valor.replace(',', '.'),
+          cuota_asociacion: this.tarifas[1].valor.replace(',', '.'),
+          precio_total: this.tarifas[2].valor.replace(',', '.')
         };
+        
         this.ratesService.setTarifasPorSociedadAndTipoProducto(tarifaNuevoProducto).subscribe((res:any) => {
           console.log(res);
           this.societyService.connectSocietyWithTipoProducto(AppConfig.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
