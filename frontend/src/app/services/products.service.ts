@@ -84,6 +84,6 @@ export class ProductsService {
   }
 
   addNuevosCampos(letras_identificacion: any, campos :any): Observable<any>{
-    return this.http.post<any>(`${this.apiUrl}/add-campos/${letras_identificacion}`, campos);
+    return this.http.post<any>(`${this.apiUrl}/add-campos/${letras_identificacion}`, {campos});
   }
 }

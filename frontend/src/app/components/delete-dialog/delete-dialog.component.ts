@@ -61,7 +61,7 @@ export class DeleteDialogComponent {
 
   createDescAnulacion(){
     return {
-      causa: this.causa,
+      causa: this.causa ? this.causa : 'No se ha especificado una causa',
       comercial_id: this.comercial.id,
       sociedad_id: this.sociedad.id,
       comercial_nombre: this.comercial.nombre,

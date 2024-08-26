@@ -32,7 +32,7 @@ export class FamilyProductService {
   }
   
   editTipoProducto(id_tipo_producto: string, nombre: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/tipo-producto/edit/${id_tipo_producto}`, nombre);
+    return this.http.put<any>(`${this.apiUrl}/tipo-producto/edit-nombre/${id_tipo_producto}`, {nombre});
   }
 
 }
