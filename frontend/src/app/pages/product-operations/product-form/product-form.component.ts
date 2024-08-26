@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ButtonSpinnerComponent } from '../../../components/button-spinner/button-spinner.component';
 import { AppConfig } from '../../../../config/app-config';
+import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -39,7 +40,7 @@ interface CampoFormulario{
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, MatSnackBarModule, ButtonSpinnerComponent],
+  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, MatSnackBarModule, ButtonSpinnerComponent, SpinnerComponent],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css']
 })
@@ -67,7 +68,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   camposAnexo!: any;
 
   loadingAction: boolean = false;
-  downloadingAnexo: boolean = false;
+  downloadingAnexo: { [key: string]: boolean } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -86,26 +87,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   @ViewChildren('anexoElement') anexoElements!: QueryList<ElementRef>;
 
   ngOnInit() {
-    this.productForm = this.fb.group({
-      id: [''],
-      sociedad_id: ['', Validators.required],
-      nombre_socio: ['', Validators.required],
-      apellido_1: ['', Validators.required],
-      apellido_2: ['', Validators.required],
-      dni: ['', Validators.required],
-      telefono: ['', Validators.required],
-      email: ['', Validators.required],
-      sexo: ['', Validators.required],
-      dirección: ['', Validators.required],
-      población: ['', Validators.required],
-      provincia: ['', Validators.required],
-      codigo_postal: ['', Validators.required],
-      fecha_de_nacimiento: ['', Validators.required],
-      prima_del_seguro: [{value: '', disabled: true}, Validators.required],
-      cuota_de_asociación: [{value: '', disabled: true}, Validators.required],
-      precio_total: [{value: '', disabled: true}, Validators.required],
-      tipo_de_pago_id: ['', Validators.required],
-    });
+    
 
     
     this.loadTipoProducto();
@@ -118,7 +100,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
         this.onSociedadChange(value);
       }
     });
-
     
   }
 
@@ -139,7 +120,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.isLoadingProduct = true;
       console.log(this.product);  
       this.productForm.patchValue(this.product);
-      this.loadAnexoPorProducto();
+      if(this.product.id != null && this.product.id != ''){
+        this.loadAnexoPorProducto();
+      }
       this.getPrecioFinal();
       this.isLoadingProduct = false;
     }
@@ -148,7 +131,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.loadTipoProducto();      
       this.createForm(this.campos);
       this.loadSociedades(); 
-      if(this.product){
+      if(this.product.id != null && this.product.id != ''){
         this.loadAnexoPorProducto();
       }
     }
@@ -290,6 +273,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   
     // Log para ver los resultados
     console.log('Formatos anexos: ', this.formatosAnexos);
+    this.formIsLoaded = true;
   }
 
   loadAnexoPorProducto() {
@@ -354,6 +338,26 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   createForm(campos: Campo[]) {
+    this.productForm = this.fb.group({
+      id: [''],
+      sociedad_id: ['', Validators.required],
+      nombre_socio: ['', Validators.required],
+      apellido_1: ['', Validators.required],
+      apellido_2: ['', Validators.required],
+      dni: ['', Validators.required],
+      telefono: ['', Validators.required],
+      email: ['', Validators.required],
+      sexo: ['', Validators.required],
+      dirección: ['', Validators.required],
+      población: ['', Validators.required],
+      provincia: ['', Validators.required],
+      codigo_postal: ['', Validators.required],
+      fecha_de_nacimiento: ['', Validators.required],
+      prima_del_seguro: [{value: '', disabled: true}, Validators.required],
+      cuota_de_asociación: [{value: '', disabled: true}, Validators.required],
+      precio_total: [{value: '', disabled: true}, Validators.required],
+      tipo_de_pago_id: ['', Validators.required],
+    });
     this.camposFormularioPorGrupos = {};
     campos.forEach((campo : Campo) => {
 
@@ -514,25 +518,22 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   downloadAnexo(tipoAnexo: any) {
-    this.downloadingAnexo = true;
+    // Establece el estado de carga solo para el botón específico
+    this.downloadingAnexo[tipoAnexo.id] = true;
+
     this.anexosService.downloadAnexo(tipoAnexo.id, this.productForm.value.id).subscribe({
       next: (response: any) => {
         const blob = new Blob([response], { type: 'application/pdf' });
-
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
 
-        // Construir partes del nombre del archivo, verificando que existan.
         const nombreSocio = this.productForm.value.nombre_socio ? `_${this.productForm.value.nombre_socio}` : '';
         const apellido1 = this.productForm.value.apellido_1 ? `_${this.productForm.value.apellido_1}` : '';
         const apellido2 = this.productForm.value.apellido_2 ? `_${this.productForm.value.apellido_2}` : '';
-
-        // Nombre del archivo final
         const nombreArchivo = `${tipoAnexo.nombre}_${this.productForm.value.codigo_producto}${nombreSocio}${apellido1}${apellido2}.pdf`;
 
         a.download = nombreArchivo;
-
 
         document.body.appendChild(a);
         a.click();
@@ -544,7 +545,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
         console.error('Error downloading the file', error);
       },
       complete: () => {
-        this.downloadingAnexo = false;
+        // Restablece el estado de carga solo para el botón específico
+        this.downloadingAnexo[tipoAnexo.id] = false;
       }
     });
   }

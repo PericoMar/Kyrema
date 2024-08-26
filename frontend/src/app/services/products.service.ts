@@ -82,4 +82,8 @@ export class ProductsService {
   anularProducto(tipo_producto: any, desc_anulacion : any ): Observable<any>{
     return this.http.post<any>(`${this.apiUrl}/anular-producto/${tipo_producto}`, desc_anulacion);
   }
+
+  addNuevosCampos(letras_identificacion: any, campos :any): Observable<any>{
+    return this.http.post<any>(`${this.apiUrl}/add-campos/${letras_identificacion}`, campos);
+  }
 }

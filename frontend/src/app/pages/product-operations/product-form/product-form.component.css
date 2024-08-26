@@ -170,8 +170,8 @@ hr {
   
 /* Estilo y animación cuando está cargando */
 .download-anexo-button.loading .download-icon {
-    transform: scale(0.7);
-    margin-right: 32px; /* Añade espacio para el spinner */
+    /* Que no aparezca pero que ocupe espacio */
+    opacity: 0;
 }
 
 /* Añadir media query para que cuando la pantalla sea menos de 1150px quitar el display flex  */

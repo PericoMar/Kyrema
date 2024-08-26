@@ -16,11 +16,14 @@ import { SocietyService } from '../../services/society.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { appConfig } from '../../app.config';
 import { AppConfig } from '../../../config/app-config';
+import { CamposService } from '../../services/campos.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 interface Campo {
+  id? : string;
   nombre: string;
-  tipoDato: string;
+  tipo_dato: string;
   fila: string;
   columna: string,
   visible: boolean;
@@ -73,12 +76,22 @@ export class ProductConfiguratorComponent {
     }
   ];
 
+  camposGenerales : Campo[] = [];
+  camposAsegurado : Campo[] = [];
+  campos : Campo[] = [];
+
+  id_tipo_producto_editado : string | null = null;
+
+  letrasDisabled : boolean = false;
+
   constructor(
     private productService : ProductsService,
     private familyService : FamilyProductService,
     public dialog: MatDialog,
     private ratesService : RatesService,
-    private societyService : SocietyService
+    private societyService : SocietyService,
+    private camposService : CamposService,
+    private route: ActivatedRoute
   ) {
     this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
       this.tiposProductos = tiposProducto;
@@ -86,38 +99,72 @@ export class ProductConfiguratorComponent {
     (error) => {
       console.log(error)
     });
+
+
+    // Coger por la ruta el id del tipo de producto:
+    this.route.paramMap.subscribe(params => {
+      this.id_tipo_producto_editado = params.get('id');
+      console.log(this.id_tipo_producto_editado);
+      if(this.id_tipo_producto_editado) {
+        this.familyService.getTipoProductoPorId(this.id_tipo_producto_editado).subscribe((tipoProducto) => {
+          this.nombreProducto = tipoProducto.nombre;
+          this.letrasIdentificacion = tipoProducto.letras_identificacion;
+          this.fileName = tipoProducto.plantilla_path;
+          // Poner el campo de letrasIdentificacion como disabled
+          this.letrasDisabled = true;
+        });
+
+        this.camposService.getCamposPorTipoProducto(this.id_tipo_producto_editado).subscribe((campos) => {
+          // Cada campo tiene un campo 'grupo' dependiendo de ese grupo se metera en el array camposGenerales, camposAsegurado o campos
+          campos.forEach((campo : any) => {
+            campo.obligatorio = campo.obligatorio == '1' ? true : false;
+            campo.visible = campo.visible == '1' ? true : false;
+            if(campo.grupo === 'datos_generales') {
+              this.camposGenerales.push(campo);
+            } else if(campo.grupo === 'datos_asegurado') {
+              this.camposAsegurado.push(campo);
+            } else if(campo.grupo === 'datos_producto') {
+              this.campos.push(campo);
+            }
+          });
+        });
+      } else {
+        this.camposGenerales= [
+          { id: '', nombre: 'Codigo producto', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+          { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+          { id: '', nombre: 'Comercial', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
+          { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+          { id: '', nombre: 'Prima del seguro', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
+          { id: '', nombre: 'Cuota de asociación', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
+          { id: '', nombre: 'Precio Total', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+          { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
+          { id: '', nombre: 'Numero anexos', tipo_dato: 'number', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+        ]
+      
+        this.camposAsegurado = [
+          { id: '', nombre: 'DNI', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
+          { id: '', nombre: 'Nombre socio', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' },
+          { id: '', nombre: 'Apellido 1', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' },
+          { id: '', nombre: 'Apellido 2', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' },
+          { id: '', nombre: 'Email', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+          { id: '', nombre: 'Telefono', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
+          { id: '', nombre: 'Sexo', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado' },
+          { id: '', nombre: 'Dirección', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio:false, grupo: 'datos_asegurado' },
+          { id: '', nombre: 'Población', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' },
+          { id: '', nombre: 'Provincia', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado'},
+          { id: '', nombre: 'Codigo Postal', tipo_dato: 'number', fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' },
+          { id: '', nombre: 'Fecha de nacimiento', tipo_dato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado'},
+        ];
+        this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' }];
+      }
+    });
+    
   }
 
-  camposGenerales : Campo[] = [
-    { nombre: 'Codigo producto', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
-    { nombre: 'Sociedad', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
-    { nombre: 'Comercial', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
-    { nombre: 'Tipo de pago', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
-    { nombre: 'Prima del seguro', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
-    { nombre: 'Cuota de asociación', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
-    { nombre: 'Precio Total', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
-    { nombre: 'Precio Final', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
-    { nombre: 'Numero anexos', tipoDato: 'number', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
-  ]
-
-  camposAsegurado: Campo[] = [
-    { nombre: 'DNI', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
-    { nombre: 'Nombre socio', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' },
-    { nombre: 'Apellido 1', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' },
-    { nombre: 'Apellido 2', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' },
-    { nombre: 'Email', tipoDato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Telefono', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Sexo', tipoDato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado' },
-    { nombre: 'Dirección', tipoDato: 'text',fila: '',columna: '', visible: false, obligatorio:false, grupo: 'datos_asegurado' },
-    { nombre: 'Población', tipoDato: 'text',fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' },
-    { nombre: 'Provincia', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado'},
-    { nombre: 'Codigo Postal', tipoDato: 'number', fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' },
-    { nombre: 'Fecha de nacimiento', tipoDato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado'},
-  ];
-  campos: Campo[] = [{ nombre: '', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' }];
+  
 
   agregarCampo() {
-    this.campos.push({ nombre: '', tipoDato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' });
+    this.campos.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' });
   }
 
   eliminarCampo(index: number) {
@@ -184,7 +231,27 @@ export class ProductConfiguratorComponent {
       };
 
       console.log(nuevoProducto);
-      
+      if(this.id_tipo_producto_editado) {
+        //Borrar el tipo de producto antiguo
+        this.camposService.editCamposPorTipoProducto(this.id_tipo_producto_editado, nuevoProducto.campos).subscribe((res) => {
+          console.log(res);
+        });
+
+        this.familyService.editTipoProducto(this.id_tipo_producto_editado, this.nombreProducto).subscribe((tipo_producto) => {
+          console.log(tipo_producto);
+        });
+
+        this.productService.subirPlantilla(this.letrasIdentificacion, this.selectedFile).subscribe((res:any) => {
+          console.log(res); 
+        });
+
+        // Seleccionar de los campos los que son nuevos (no tienen id)
+        const nuevosCampos = nuevoProducto.campos.filter((campo) => !campo.id);
+        this.productService.addNuevosCampos(this.letrasIdentificacion, nuevosCampos).subscribe((res) => {
+          console.log(res);
+        });
+
+      }
       this.productService.crearTipoProducto(nuevoProducto).subscribe((res) => {
 
         // La respuesta contiene la información del nuevo tipo de producto

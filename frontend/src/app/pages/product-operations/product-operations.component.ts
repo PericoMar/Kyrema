@@ -62,7 +62,6 @@ export class ProductOperationsComponent {
           console.log(error);
         }
       });
-      console.log("ids", this.idsSociedades)
     });
 
     this.productNotificationService.productNotification$.subscribe(
@@ -158,6 +157,7 @@ export class ProductOperationsComponent {
             });
             this.camposFormulario = camposFormulario;
             this.productSelected = resultObject;
+            console.log("Producto generado cuando cambiamos de tipo de producto", this.productSelected);
             this.camposLoaded = true;
 
           },

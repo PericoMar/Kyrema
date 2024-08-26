@@ -12,7 +12,7 @@
             </div>
             <div>
               <label for="nombre_producto">Letras de identificación</label>
-              <input type="text" class="nombre-producto" [(ngModel)]="letrasIdentificacion" name="letrasIdentificacion" placeholder="Escriba aquí las letras de identificación">
+              <input type="text" class="letras-identificacion" [(ngModel)]="letrasIdentificacion" name="letrasIdentificacion" placeholder="Escriba aquí las letras de identificación" [disabled]="letrasDisabled">
             </div>
             <div class="input-file">
               <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
@@ -65,7 +65,7 @@
                   </td>
                   <td class="col-tipo-dato">
                     <div class="center div-select">
-                      <select [(ngModel)]="campoGeneral.tipoDato" name="tipoDatoGeneral{{$index}}" disabled>
+                      <select [(ngModel)]="campoGeneral.tipo_dato" name="tipo_datoGeneral{{$index}}" disabled>
                         @for(tipo of tiposDato ; track $index) {
                           <option value="{{tipo.value}}">{{tipo.nombre}}</option>
                         }
@@ -132,7 +132,7 @@
                   </td>
                   <td class="col-tipo-dato">
                     <div class="center div-select">
-                      <select [(ngModel)]="campoFijo.tipoDato" name="tipoDatoFijo{{$index}}" disabled>
+                      <select [(ngModel)]="campoFijo.tipo_dato" name="tipo_datoFijo{{$index}}" disabled>
                         @for(tipo of tiposDato ; track $index) {
                           <option value="{{tipo.value}}">{{tipo.nombre}}</option>
                         }
@@ -208,7 +208,7 @@
                     </td>
                     <td class="col-tipo-dato">
                       <div class="center div-select">
-                        <select [(ngModel)]="campo.tipoDato" name="tipoDato{{$index}}">
+                        <select [(ngModel)]="campo.tipo_dato" name="tipo_dato{{$index}}">
                           @for(tipo of tiposDato ; track $index) {
                             <option value="{{tipo.value}}">{{tipo.nombre}}</option>
                           }
@@ -237,7 +237,7 @@
                     </td>
                     <td class="col-eliminar">
                       <div class="center">
-                        <button mat-icon-button color="warn" (click)="eliminarCampo($index)" type="button">
+                        <button mat-icon-button color="warn" (click)="eliminarCampo($index)" type="button" [disabled]="campo.id != ''">
                           <mat-icon>delete</mat-icon>
                         </button> 
                       </div>
@@ -254,26 +254,30 @@
             </svg>
           </button>
 
-          <h2>Tarifas</h2>
-          <hr>
+          @if(!id_tipo_producto_editado){
+            <h2>Tarifas</h2>
+            <hr>
 
-          <fieldset class="input-group">
-            @for(tarifa of tarifas ; track tarifa.id){
-              <div class="input-container prima_del_seguro">
-                <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
-                <div class="input-suffix-container">
-                  <input [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
-                  <span class="input-suffix">€</span>
+            <fieldset class="input-group">
+              @for(tarifa of tarifas ; track tarifa.id){
+                <div class="input-container prima_del_seguro">
+                  <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
+                  <div class="input-suffix-container">
+                    <input [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
+                    <span class="input-suffix">€</span>
+                  </div>
                 </div>
-              </div>
-            }
-          </fieldset>
+              }
+            </fieldset>
+          }
 
           <footer class="form-footer">
             @if(cargandoNuevoProducto){
               <button class="button-disabled"><div class="spinner"></div></button>
             }@else {
-              <button>Crear nuevo tipo de producto</button>
+              <button>
+                {{ id_tipo_producto_editado ? 'Guardar cambios' : 'Crear nuevo producto' }}
+              </button>
             }
           </footer>
         </form>

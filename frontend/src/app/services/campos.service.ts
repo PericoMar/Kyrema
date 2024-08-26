@@ -31,6 +31,10 @@ export class CamposService {
     );
   }
 
+  editCamposPorTipoProducto(tipo_producto_id: any, campos: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/campos/${tipo_producto_id}`, campos);
+  }
+
 
 
 }
