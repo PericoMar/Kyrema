@@ -27,11 +27,18 @@ export class ProductsService {
       map((productos: any[]) => productos.filter(producto => producto.anulado == 1)));
   }
 
-  //Esto crea la tabla en BDD de los productos nuevos
-  crearTipoProducto(nuevoTipoProducto : any): Observable<any>{
-    const headers = new HttpHeaders();
-    headers.append('Content-Type', 'multipart/form-data');
-    return this.http.post<any>(`${this.apiUrl}/crear-tipo-producto`, nuevoTipoProducto,  { headers });
+  crearTipoProducto(nuevoTipoProducto: any, camposConOpciones: any[]): Observable<any> {
+    // Combina nuevoTipoProducto con camposConOpciones en un solo objeto
+    const data = {
+      ...nuevoTipoProducto,
+      camposConOpciones: camposConOpciones
+    };
+  
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json' // Cambiar si es necesario
+    });
+  
+    return this.http.post<any>(`${this.apiUrl}/crear-tipo-producto`, data, { headers });
   }
 
   subirPlantilla(letrasIdentificacion: any, plantilla: File): Observable<any>{

@@ -35,6 +35,16 @@ export class CamposService {
     return this.http.put<any>(`${this.apiUrl}/campos-update/${tipo_producto_id}`, {campos});
   }
 
+  getOpcionesPorCampo(campo_id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/opciones/${campo_id}`);
+  }
 
+  crearCampoConOpciones(campo: any, id_tipo_producto: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/create-campo-opciones/${id_tipo_producto}`, {campo});
+  }
+
+  actualizarCampoConOpciones(campo: any, id_tipo_producto: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/update-campo-opciones/${id_tipo_producto}`, {campo});
+  }
 
 }

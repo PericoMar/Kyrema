@@ -9,5 +9,5 @@ import { RouterModule } from '@angular/router';
   styleUrl: './layout-login.component.css'
 })
 export class LayoutLoginComponent {
-
+  
 }

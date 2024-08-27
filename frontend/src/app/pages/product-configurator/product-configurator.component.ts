@@ -18,6 +18,7 @@ import { appConfig } from '../../app.config';
 import { AppConfig } from '../../../config/app-config';
 import { CamposService } from '../../services/campos.service';
 import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 interface Campo {
@@ -29,6 +30,7 @@ interface Campo {
   visible: boolean;
   obligatorio: boolean;
   grupo: string;
+  opciones: {id:string , nombre: string, precio: string}[];
 }
 
 @Component({
@@ -39,7 +41,7 @@ interface Campo {
   styleUrl: './product-configurator.component.css'
 })
 export class ProductConfiguratorComponent {
-  tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }];
+  tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }, { nombre: 'Selector', value: 'select' }];
 
   fileName = '';
   selectedFile! : File;
@@ -91,7 +93,8 @@ export class ProductConfiguratorComponent {
     private ratesService : RatesService,
     private societyService : SocietyService,
     private camposService : CamposService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) {
     this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
       this.tiposProductos = tiposProducto;
@@ -121,6 +124,11 @@ export class ProductConfiguratorComponent {
             campo.visible = campo.visible == '1' ? true : false;
             campo.fila = campo.fila ? campo.fila : '';
             campo.columna = campo.columna ? campo.columna : '';
+            if(campo.opciones !== null) {
+              this.camposService.getOpcionesPorCampo(campo.id).subscribe((opciones) => {
+                campo.opciones = opciones;
+              });
+            }
             if(campo.grupo === 'datos_generales') {
               this.camposGenerales.push(campo);
             } else if(campo.grupo === 'datos_asegurado') {
@@ -132,32 +140,32 @@ export class ProductConfiguratorComponent {
         });
       } else {
         this.camposGenerales= [
-          { id: '', nombre: 'Codigo producto', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
-          { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
-          { id: '', nombre: 'Comercial', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
-          { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
-          { id: '', nombre: 'Prima del seguro', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
-          { id: '', nombre: 'Cuota de asociación', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
-          { id: '', nombre: 'Precio Total', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
-          { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales'},
-          { id: '', nombre: 'Numero anexos', tipo_dato: 'number', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales'},
+          { id: '', nombre: 'Codigo producto', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Comercial', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Prima del seguro', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Cuota de asociación', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Precio Total', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Numero anexos', tipo_dato: 'number', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
         ]
       
         this.camposAsegurado = [
-          { id: '', nombre: 'DNI', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado'},
-          { id: '', nombre: 'Nombre socio', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' },
-          { id: '', nombre: 'Apellido 1', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' },
-          { id: '', nombre: 'Apellido 2', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' },
-          { id: '', nombre: 'Email', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-          { id: '', nombre: 'Telefono', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' },
-          { id: '', nombre: 'Sexo', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado' },
-          { id: '', nombre: 'Dirección', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio:false, grupo: 'datos_asegurado' },
-          { id: '', nombre: 'Población', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' },
-          { id: '', nombre: 'Provincia', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado'},
-          { id: '', nombre: 'Codigo Postal', tipo_dato: 'number', fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' },
-          { id: '', nombre: 'Fecha de nacimiento', tipo_dato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado'},
+          { id: '', nombre: 'DNI', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado', opciones: []},
+          { id: '', nombre: 'Nombre socio', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Apellido 1', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Apellido 2', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Email', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Telefono', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Sexo', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Dirección', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio:false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Población', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Provincia', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado', opciones: []},
+          { id: '', nombre: 'Codigo Postal', tipo_dato: 'number', fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Fecha de nacimiento', tipo_dato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado', opciones: []},
         ];
-        this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' }];
+        this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
       }
     });
     
@@ -166,12 +174,39 @@ export class ProductConfiguratorComponent {
   
 
   agregarCampo() {
-    this.campos.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' });
+    this.campos.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' , opciones: []});
   }
 
   eliminarCampo(index: number) {
     this.campos.splice(index, 1);
   }
+
+  onTipoDatoChange(campo: any) {
+    if (campo.tipo_dato === 'select') {
+      // Inicializar el array de opciones si está indefinido
+      if (campo.opciones.length === 0) {
+        campo.opciones = [{id:'', nombre: '', precio: ''}];
+      }
+    } else {
+      // Limpiar las opciones si el tipo de dato no es 'select'
+      campo.opciones = [];
+    }
+  }
+
+  agregarOpcion(campo: any) {
+    // Verificar que el array de opciones esté inicializado
+    if (!campo.opciones) {
+      campo.opciones = [];
+    }
+    campo.opciones.push({id:'', nombre: '', precio: ''}); // Añadir una opción vacía
+  }
+
+  eliminarOpcion(campo: any, index: number) {
+    if (campo.opciones) {
+      campo.opciones.splice(index, 1); // Eliminar la opción en la posición `index`
+    }
+  }
+
 
   onFileSelected(event : any) {
 
@@ -236,11 +271,33 @@ export class ProductConfiguratorComponent {
 
       const nuevoProducto = {
         nombreProducto: this.nombreProducto,
-        letrasIdentificacion: this.letrasIdentificacion,
+        letrasIdentificacion: AppConfig.PREFIJO_LETRAS_IDENTIFICACION + this.letrasIdentificacion,
         campos: camposFormulario
       };
 
-      console.log(nuevoProducto);
+      // Crear un array para guardar los campos con opciones
+      const camposConOpciones : any[] = [];
+
+      // Recorrer los campos y separar los que tienen opciones
+      nuevoProducto.campos = nuevoProducto.campos.filter((campo) => {
+        if (campo.opciones) {
+          // Filtrar opciones vacías
+          campo.opciones = campo.opciones.filter((opcion) => opcion.nombre !== '');
+          
+          // Si el campo tiene opciones y no tiene ID (es nuevo), lo movemos a `camposConOpciones`
+          if (campo.opciones.length > 0) {
+            camposConOpciones.push(campo);
+            return false; // Excluir este campo del array de `nuevoProducto`
+          }
+        }
+        
+        // Incluir el campo en `nuevoProducto.campos` si no tiene opciones o si tiene un ID
+        return true;
+      });
+
+      console.log('Nuevo Producto:', nuevoProducto);
+      console.log('Campos con Opciones:', camposConOpciones);
+
       if(this.id_tipo_producto_editado) {
         //Borrar el tipo de producto antiguo
         this.camposService.editCamposPorTipoProducto(this.id_tipo_producto_editado, nuevoProducto.campos).subscribe((res) => {
@@ -264,9 +321,21 @@ export class ProductConfiguratorComponent {
           console.log(res);
         });
 
+        // Recorrer los campos con opciones y guardarlos o editarlos dependiendo de si tienen ID
+        camposConOpciones.forEach((campo) => {
+          if (campo.id != '' && campo.id != null) {
+            // Si el campo tiene ID, se actualiza
+            this.actualizarCampoConOpciones(campo, this.id_tipo_producto_editado);
+          } else {
+            // Si el campo no tiene ID, se crea un nuevo registro
+            this.crearCampoConOpciones(campo, this.id_tipo_producto_editado);
+          }
+          
+        });
+
       } else {
 
-        this.productService.crearTipoProducto(nuevoProducto).subscribe((res) => {
+        this.productService.crearTipoProducto(nuevoProducto, camposConOpciones).subscribe((res) => {
 
           // La respuesta contiene la información del nuevo tipo de producto
           const id_tipo_producto = res.id.toString();
@@ -285,8 +354,12 @@ export class ProductConfiguratorComponent {
             console.log(res);
             this.societyService.connectSocietyWithTipoProducto(AppConfig.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
               console.log(res);
-              // Recargar la pagina:
-              window.location.reload();
+              this.snackBar.open('Tipo de producto creado con éxito', 'Cerrar', {
+                duration: 3000, // Duración en milisegundos
+                horizontalPosition: 'right', // Posición horizontal: start, center, end, left, right
+                verticalPosition: 'bottom',  // Posición vertical: top, bottom
+                panelClass: ['custom-snackbar']
+              })
             });
           });
         },
@@ -294,9 +367,32 @@ export class ProductConfiguratorComponent {
           console.log(error);
         });
       }
+
+      
     
     }
   }
+
+  // Método para actualizar un campo con opciones
+  actualizarCampoConOpciones(campo: Campo, id_tipo_producto: string | null) {
+    // Lógica para actualizar el campo en la base de datos
+    this.camposService.actualizarCampoConOpciones(campo, id_tipo_producto).subscribe(response => {
+      console.log('Campo actualizado:', response);
+    }, error => {
+      console.error('Error al actualizar el campo:', error);
+    });
+  }
+
+  // Método para crear un nuevo campo con opciones
+  crearCampoConOpciones(campo: Campo , id_tipo_producto: string | null) {
+    // Lógica para crear un nuevo campo en la base de datos
+    this.camposService.crearCampoConOpciones(campo, id_tipo_producto).subscribe(response => {
+      console.log('Campo creado:', response);
+    }, error => {
+      console.error('Error al crear el campo:', error);
+    });
+  }
+
 
 
   //Funcion para comprobar que la plantilla no se esté usando ya en otro tipo de producto:
@@ -317,7 +413,7 @@ export class ProductConfiguratorComponent {
   private letrasIdentificacionEnUso() {
     //Recorremos el array de tipos de productos y comparamos letras_identificacion con el nombre del archivo seleccionado
     for (let i = 0; i < this.tiposProductos.length; i++) {
-      if (this.tiposProductos[i].letras_identificacion === this.letrasIdentificacion) {
+      if (this.tiposProductos[i].letras_identificacion === AppConfig.PREFIJO_LETRAS_IDENTIFICACION + this.letrasIdentificacion) {
         return true;
       }
     }

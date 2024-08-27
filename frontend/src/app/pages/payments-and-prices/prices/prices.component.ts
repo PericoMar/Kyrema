@@ -85,8 +85,17 @@ export class PricesComponent {
                 tarifa_sociedad: tarifa.id_sociedad
             };
         });
-}
+  }
+
   onSubmit() {
+
+    //Recorrer el array de tarifasPorTipoProducto y cambiar las , por . en los precios
+    this.tarifasPorTipoProducto.forEach(tarifa => {
+      tarifa.prima_seguro = tarifa.prima_seguro.replace(',', '.');
+      tarifa.cuota_asociacion = tarifa.cuota_asociacion.replace(',', '.');
+      tarifa.precio_total = tarifa.precio_total.replace(',', '.');
+    });
+
     if(this.todosLosPreciosFormatoCorrecto()) {
 
       console.log(this.tarifasPorTipoProducto);

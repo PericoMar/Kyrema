@@ -69,7 +69,7 @@ export class LayoutMainComponent {
       data => {
         this.society = data;
         this.societyService.setSociedadLocalStorage(this.society);
-        this.pageLoading = false;
+        
         this.societyService.getSociedadAndHijas(this.society.id).subscribe(
           (sociedad : Society[]) => {
             this.societyService.guardarSociedadesEnLocalStorage(sociedad);
@@ -81,6 +81,9 @@ export class LayoutMainComponent {
       },
       error => {
         console.error('Error al obtener la sociedad:', error);
+      },
+      () => {
+        this.pageLoading = false;
       }
     );
 

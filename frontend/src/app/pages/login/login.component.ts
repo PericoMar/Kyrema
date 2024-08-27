@@ -49,7 +49,7 @@ export class LoginComponent {
                 if(data.length > 0 && data[data.length-1].children.length > 0){
                   this.router.navigate([`${data[data.length-1].children[0].link}`]);  
                 } else {
-                  this.router.navigate(['/operaciones/1']);
+                  this.router.navigate(['/gestion-productos']);
                 }
                 
               }

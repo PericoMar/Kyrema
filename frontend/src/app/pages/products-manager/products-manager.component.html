@@ -1,37 +1,46 @@
 <main class="products-manager">
     <section class="products-table content-block">
       @if(insurances){
-        <form [formGroup]="insuranceForm" id="insurance-form">
-          <table mat-table [dataSource]="insurances">
-              <!-- Nombre Column -->
-              <ng-container matColumnDef="type">
-                  <th mat-header-cell *matHeaderCellDef> Nombre </th>
-                  <td mat-cell *matCellDef="let insurance"> {{ insurance.type }} </td>
-              </ng-container>
+        @if(insurances.length == 0) {
 
-              <!-- Acciones Column -->
-              <ng-container matColumnDef="actions">
-                  <th mat-header-cell *matHeaderCellDef> Acciones </th>
-                  <td mat-cell *matCellDef="let insurance; let i = index">
-                      <button mat-button color="primary"
-                              [routerLink]="['/configurador-productos', insurance.id]"
-                              style="margin-right: 8px;">
-                          Editar
-                      </button>
-                      <button mat-button color="warn" (click)="openDeleteDialog(insurance)">Borrar</button>
-                  </td>
-              </ng-container>
+          <p>No hay productos para mostrar</p>
+          <p>Prueba a crear uno</p>
 
-              <!-- Table Headers and Rows -->
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
+        } @else {
+          <form [formGroup]="insuranceForm" id="insurance-form">
+            <table mat-table [dataSource]="insurances">
+                <!-- Nombre Column -->
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                    <td mat-cell *matCellDef="let insurance"> {{ insurance.type }} </td>
+                </ng-container>
+  
+                <!-- Acciones Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let insurance; let i = index">
+                        <button mat-button color="primary"
+                                [routerLink]="['/configurador-productos', insurance.id]"
+                                style="margin-right: 8px;">
+                            Editar
+                        </button>
+                        <button mat-button color="warn" (click)="openDeleteDialog(insurance)">Borrar</button>
+                    </td>
+                </ng-container>
+  
+                <!-- Table Headers and Rows -->
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>          
+          </form>
+        }
 
-          <div class="button-container">
-              <button mat-raised-button color="primary" [routerLink]="['/configurador-productos']">Crear nuevo producto</button>
-          </div>
-      </form>
+        <div class="button-container">
+          <button mat-raised-button color="primary" [routerLink]="['/configurador-productos']">Crear nuevo producto</button>
+        </div>
+
       } @else {
+
         <div class="center">
           <app-spinner></app-spinner>
         </div>

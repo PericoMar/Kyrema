@@ -132,7 +132,7 @@ export class AnexosConfiguratorComponent {
       const nuevoTipoAnexo = {
         nombre: this.nombreAnexo,
         plantilla_path: this.selectedFile,
-        letras_identificacion: this.letrasIdentificacion,
+        letras_identificacion: AppConfig.PREFIJO_LETRAS_IDENTIFICACION_ANEXOS + this.letrasIdentificacion,
         campos: this.campos,
         tipoProductoAsociado: this.tipoProductoAsociado,
       }
@@ -171,7 +171,7 @@ export class AnexosConfiguratorComponent {
       }
     }
     for(let i = 0; i < this.tiposAnexos.length; i++) {
-      if(this.tiposAnexos[i].letras_identificacion === this.letrasIdentificacion) {
+      if(this.tiposAnexos[i].letras_identificacion === AppConfig.PREFIJO_LETRAS_IDENTIFICACION_ANEXOS + this.letrasIdentificacion) {
         return true;
       }
     }

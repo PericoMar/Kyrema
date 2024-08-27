@@ -208,7 +208,7 @@
                     </td>
                     <td class="col-tipo-dato">
                       <div class="center div-select">
-                        <select [(ngModel)]="campo.tipo_dato" name="tipo_dato{{$index}}">
+                        <select [(ngModel)]="campo.tipo_dato" name="tipo_dato{{$index}}" (change)="onTipoDatoChange(campo)">
                           @for(tipo of tiposDato ; track $index) {
                             <option value="{{tipo.value}}">{{tipo.nombre}}</option>
                           }
@@ -240,6 +240,23 @@
                         <button mat-icon-button color="warn" (click)="eliminarCampo($index)" type="button" [disabled]="campo.id != ''">
                           <mat-icon>delete</mat-icon>
                         </button> 
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Desplegable de opciones adicionales si se selecciona "select" -->
+                  <tr *ngIf="campo.tipo_dato === 'select'">
+                    <td colspan="6">
+                      <div class="additional-options">
+                        <h3 class="opt-header">Opciones para {{campo.nombre}}</h3>
+                        <div *ngFor="let opcion of campo.opciones; let j = index" class="flex-start">
+                          <input type="text" [(ngModel)]="campo.opciones[j].nombre" placeholder="Opción {{j + 1}}" name="opciones{{$index + j}}">
+                          <input type="text" [(ngModel)]="campo.opciones[j].precio" placeholder="Incremento precio {{j + 1}}" name="precio{{$index + j}}" class="incremento-precio">
+                          <button mat-icon-button color="warn" (click)="eliminarOpcion(campo, j)" type="button">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+                        <button mat-button (click)="agregarOpcion(campo)" type="button">Añadir opción</button>
                       </div>
                     </td>
                   </tr>

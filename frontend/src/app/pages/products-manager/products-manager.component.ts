@@ -17,7 +17,7 @@ import { DeleteProductDialogComponent } from '../../components/delete-product-di
   styleUrl: './products-manager.component.css'
 })
 export class ProductsManagerComponent {
-  insurances: any[] = [];
+  insurances!: any[];
   displayedColumns: string[] = ['type', 'actions'];
   insuranceForm: FormGroup;
 
