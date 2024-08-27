@@ -30,7 +30,7 @@ interface Campo {
   visible: boolean;
   obligatorio: boolean;
   grupo: string;
-  opciones: {id:string , nombre: string, precio: string}[];
+  opciones: {id:string , nombre: string, precio: string, created_at?:string, updated_at?: string}[];
 }
 
 @Component({
@@ -124,17 +124,22 @@ export class ProductConfiguratorComponent {
             campo.visible = campo.visible == '1' ? true : false;
             campo.fila = campo.fila ? campo.fila : '';
             campo.columna = campo.columna ? campo.columna : '';
+
+            // Se tienen que separar los campos con opciones de los que no tienen para que no cargue el formulario con los campos con opciones vacíos
             if(campo.opciones !== null) {
               this.camposService.getOpcionesPorCampo(campo.id).subscribe((opciones) => {
+                console.log(opciones);
                 campo.opciones = opciones;
+                this.campos.push(campo);
               });
-            }
-            if(campo.grupo === 'datos_generales') {
-              this.camposGenerales.push(campo);
-            } else if(campo.grupo === 'datos_asegurado') {
-              this.camposAsegurado.push(campo);
-            } else if(campo.grupo === 'datos_producto') {
-              this.campos.push(campo);
+            } else {
+              if(campo.grupo === 'datos_generales') {
+                this.camposGenerales.push(campo);
+              } else if(campo.grupo === 'datos_asegurado') {
+                this.camposAsegurado.push(campo);
+              } else if(campo.grupo === 'datos_producto') {
+                this.campos.push(campo);
+              }
             }
           });
         });
@@ -298,8 +303,23 @@ export class ProductConfiguratorComponent {
       console.log('Nuevo Producto:', nuevoProducto);
       console.log('Campos con Opciones:', camposConOpciones);
 
+
+      // EDITAR EL PRODUCTO:
       if(this.id_tipo_producto_editado) {
-        //Borrar el tipo de producto antiguo
+        
+        camposConOpciones.forEach((campo) => {
+          console.log(campo);
+          if (campo.id != '' && campo.id != null) {
+            // Si el campo tiene ID, se actualiza
+            this.actualizarCampoConOpciones(campo, campo.id);
+          } else {
+            // Si el campo no tiene ID, se crea un nuevo registro
+            this.crearCampoConOpciones(campo, this.id_tipo_producto_editado);
+          }
+          
+          
+        });
+
         this.camposService.editCamposPorTipoProducto(this.id_tipo_producto_editado, nuevoProducto.campos).subscribe((res) => {
           console.log(res);
         });
@@ -319,20 +339,21 @@ export class ProductConfiguratorComponent {
         const nuevosCampos = nuevoProducto.campos.filter((campo) => !campo.id);
         this.productService.addNuevosCampos(this.letrasIdentificacion, nuevosCampos).subscribe((res) => {
           console.log(res);
+          this.cargandoNuevoProducto = false;
+          this.snackBar.open('Tipo de producto editado con éxito', 'Cerrar', {
+            duration: 3000, // Duración en milisegundos
+            horizontalPosition: 'right', // Posición horizontal: start, center, end, left, right
+            verticalPosition: 'bottom',  // Posición vertical: top, bottom
+            panelClass: ['custom-snackbar']
+          })
         });
 
         // Recorrer los campos con opciones y guardarlos o editarlos dependiendo de si tienen ID
-        camposConOpciones.forEach((campo) => {
-          if (campo.id != '' && campo.id != null) {
-            // Si el campo tiene ID, se actualiza
-            this.actualizarCampoConOpciones(campo, this.id_tipo_producto_editado);
-          } else {
-            // Si el campo no tiene ID, se crea un nuevo registro
-            this.crearCampoConOpciones(campo, this.id_tipo_producto_editado);
-          }
-          
-        });
+        
 
+        
+
+      // CREAR UN NUEVO PRODUCTO
       } else {
 
         this.productService.crearTipoProducto(nuevoProducto, camposConOpciones).subscribe((res) => {
@@ -360,6 +381,7 @@ export class ProductConfiguratorComponent {
                 verticalPosition: 'bottom',  // Posición vertical: top, bottom
                 panelClass: ['custom-snackbar']
               })
+              this.cargandoNuevoProducto = false;
             });
           });
         },
@@ -374,9 +396,9 @@ export class ProductConfiguratorComponent {
   }
 
   // Método para actualizar un campo con opciones
-  actualizarCampoConOpciones(campo: Campo, id_tipo_producto: string | null) {
+  actualizarCampoConOpciones(campo: Campo, id_campo: string | null) {
     // Lógica para actualizar el campo en la base de datos
-    this.camposService.actualizarCampoConOpciones(campo, id_tipo_producto).subscribe(response => {
+    this.camposService.actualizarCampoConOpciones(campo, id_campo).subscribe(response => {
       console.log('Campo actualizado:', response);
     }, error => {
       console.error('Error al actualizar el campo:', error);
