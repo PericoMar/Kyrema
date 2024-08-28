@@ -12,6 +12,7 @@ import { ComisionButtonsComponent } from '../society-manager/society-table/comis
 import { ProductActionButtonsComponent } from '../../components/product-action-buttons/product-action-buttons.component';
 import { ProductNotificationService } from '../../services/product-notification.service';
 import { CommonModule } from '@angular/common';
+import { SnackBarService } from '../../services/snackBar/snack-bar.service';
 
 @Component({
   selector: 'app-product-operations',
@@ -32,6 +33,7 @@ export class ProductOperationsComponent {
   idsSociedades! : any[];
   camposFormulario: any;
   camposLoaded: boolean = false;
+  formLoaded: boolean = false;
 
   
 
@@ -42,7 +44,8 @@ export class ProductOperationsComponent {
     private productsService : ProductsService,
     private societyService : SocietyService,
     private router : Router,
-    private productNotificationService: ProductNotificationService
+    private productNotificationService: ProductNotificationService,
+    private snackBarService: SnackBarService,
   ) {
     
   }
@@ -74,19 +77,24 @@ export class ProductOperationsComponent {
   }
 
   public onProductSelectedChanged(product: any) {
-    this.isProductSelected = true;
-    
+    if(!this.formLoaded){
+      this.snackBarService.openSnackBar("Por favor, espere a que se carguen los campos del formulario");
+    } else {
+      this.isProductSelected = true;
+      
 
-    // Añadir el campo id a productSelected y actualizar sus valores
-    this.productSelected = { ...product };
+      // Añadir el campo id a productSelected y actualizar sus valores
+      this.productSelected = { ...product };
 
-    console.log("Producto seleccionado", this.productSelected);
+      console.log("Producto seleccionado", this.productSelected);
 
-    // Actualizar los valores de productSelected con los del producto seleccionado
-    for (const key in this.camposFormulario) {
-      if (this.camposFormulario.hasOwnProperty(key) && product.hasOwnProperty(key)) {
-        this.productSelected[key] = product[key];
+      // Actualizar los valores de productSelected con los del producto seleccionado
+      for (const key in this.camposFormulario) {
+        if (this.camposFormulario.hasOwnProperty(key) && product.hasOwnProperty(key)) {
+          this.productSelected[key] = product[key];
+        }
       }
+      this.snackBarService.openSnackBar("Producto seleccionado");
     }
   }
 
@@ -194,6 +202,12 @@ export class ProductOperationsComponent {
       return ProductActionButtonsComponent;
     }
     return null; // o cualquier valor por defecto
+  }
+
+  handleFormLoadedChange(isLoaded: boolean) {
+    console.log('Form is loaded:', isLoaded);
+    this.formLoaded = isLoaded;
+    // Aquí puedes manejar lo que sucede cuando el formulario está cargado
   }
 
 }

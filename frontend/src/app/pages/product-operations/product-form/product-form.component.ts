@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChildren } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, Renderer2, SimpleChanges, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { ProductsService } from '../../../services/products.service';
 import { SocietyService } from '../../../services/society.service';
@@ -10,10 +10,11 @@ import { ProductNotificationService } from '../../../services/product-notificati
 import { AnexosService } from '../../../services/anexos.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ButtonSpinnerComponent } from '../../../components/button-spinner/button-spinner.component';
 import { AppConfig } from '../../../../config/app-config';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
+import { CamposService } from '../../../services/campos.service';
+import { SnackBarService } from '../../../services/snackBar/snack-bar.service';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -40,7 +41,7 @@ interface CampoFormulario{
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, MatSnackBarModule, ButtonSpinnerComponent, SpinnerComponent],
+  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, ButtonSpinnerComponent, SpinnerComponent],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css']
 })
@@ -53,13 +54,19 @@ export class ProductFormComponent implements OnInit, OnChanges{
   sociedades: any;
   @Input() campos! : Campo[];
   camposFormularioPorGrupos!: any;
+
   formIsLoaded : boolean = false;
+  @Output() formLoadedChange = new EventEmitter<boolean>();
+
   tiposPago : {id:string, nombre:string}[] = [
     {id: '1', nombre: 'Tarjeta de crédito'},
     {id: '2', nombre: 'Transferencia bancaria'},
     {id: '3', nombre: 'Domiciliación bancaria'}
   ];
-  precioFinal! : any;
+
+  precioFinal! : number;
+  precioInicialSelects : number = 0;
+  previousSelections: { [key: string]: any } = {};
 
   tiposAnexos: any[] = [];
   formatosAnexos!: any;
@@ -77,9 +84,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
     private userService: UserService,
     private rateService : RatesService,
     private familyService: FamilyProductService,
+    private camposService: CamposService,
     private productNotificationService: ProductNotificationService,
     private anexosService: AnexosService,
-    private snackBar: MatSnackBar
+    private snackBarService: SnackBarService,
   ) { 
     
   }
@@ -90,10 +98,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
     
 
     
-    this.loadTipoProducto();
+    // this.loadTipoProducto();
     // Cargar las sociedades
-    this.loadSociedades();
-    this.createForm(this.campos);
+    // this.loadSociedades();
+    // this.createForm(this.campos);
 
     this.productForm.get('sociedad_id')!.valueChanges.subscribe(value => {
       if(!this.isLoadingProduct){
@@ -116,9 +124,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['product']) {
+    if (changes['product'] && !(changes['campos'] || changes['letras_identificacion'])) {
       this.isLoadingProduct = true;
-      console.log(this.product);  
       this.productForm.patchValue(this.product);
       if(this.product.id != null && this.product.id != ''){
         this.loadAnexoPorProducto();
@@ -274,6 +281,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     // Log para ver los resultados
     console.log('Formatos anexos: ', this.formatosAnexos);
     this.formIsLoaded = true;
+    this.formLoadedChange.emit(this.formIsLoaded);
   }
 
   loadAnexoPorProducto() {
@@ -305,7 +313,27 @@ export class ProductFormComponent implements OnInit, OnChanges{
             }
         });
     }
-}
+  }
+
+  changeOnSelect(event: Event, campo: any): void {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    const selectedOption = campo.opciones.find((opcion: any) => opcion.nombre === selectedValue);
+  
+    // Restar el precio de la opción previamente seleccionada, si existe
+    if (this.previousSelections[campo.name]) {
+      this.precioFinal -= this.previousSelections[campo.name].precio || 0;
+    }
+  
+    // Añadir el precio de la nueva opción seleccionada
+    // Convertir en number selectedOption.precio para evitar concatenación de cadenas
+    const precioSelectedOption = parseFloat(selectedOption.precio);
+    this.precioFinal += precioSelectedOption || 0;
+  
+    // Guardar la nueva opción seleccionada como la opción previa
+    this.previousSelections[campo.name] = selectedOption;
+  
+    console.log('Selected value:', selectedValue);
+  }
 
 
   addAnexo(tipo_anexo: any) {
@@ -375,16 +403,42 @@ export class ProductFormComponent implements OnInit, OnChanges{
       const tipo_dato = campo.tipo_dato;
       const obligatorio = campo.obligatorio;
 
-      // Saltar el procesamiento si el grupo es 'datos_asegurado'
-      if (campo.grupo !== 'datos_asegurado') {
-        this.productForm.addControl(
-          name,
-          obligatorio ? new FormControl('', Validators.required) : new FormControl('')
-        );
+      if(campo.tipo_dato == 'select'){
+
+        this.camposService.getOpcionesPorCampo(campo.id).subscribe({
+          next: (opciones: any) => {
+            this.productForm.addControl(
+              name,
+              obligatorio ? new FormControl('', Validators.required) : new FormControl('')
+            );
+            this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio, opciones});
+            this.productForm.controls[name].setValue('0');
+          },
+          error: (error: any) => {
+            console.error('Error loading opciones', error);
+          }
+        });
+
+
+      } else {
+        // Saltar el procesamiento si el grupo es 'datos_asegurado'
+        if (campo.grupo !== 'datos_asegurado') {
+          this.productForm.addControl(
+            name,
+            obligatorio ? new FormControl('', Validators.required) : new FormControl('')
+          );
+        }
+        
+        this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio});
       }
+
+
+
       
-      this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio});
     });
+
+
+    console.log('Campos formulario por grupos', this.camposFormularioPorGrupos);
 
   }
 
@@ -445,12 +499,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('precio_total')?.disable();
           this.productNotificationService.notifyChangesOnProducts();
           this.conectarAnexosConProductos(this.anexos, data.id);
-          this.snackBar.open('Seguro creado con éxito', 'Cerrar', {
-            duration: 3000, // Duración en milisegundos
-            horizontalPosition: 'right', // Posición horizontal: start, center, end, left, right
-            verticalPosition: 'bottom',  // Posición vertical: top, bottom
-            panelClass: ['custom-snackbar']
-          })
+          this.snackBarService.openSnackBar('Producto creado con exito')
           this.loadingAction = false;
         },
         error => {

@@ -3,14 +3,19 @@
     <section class="listado section-block">
         <header class="space-between-header">
             <h1>Listado de {{ productName }}</h1>
-            <a [routerLink]="['/anulados', productUrl]" routerLinkActive="active" class="button-historial">Ver historial</a>
+            <a [routerLink]="['/anulados', productUrl]" routerLinkActive="active" class="button-historial">Ver anulados</a>
         </header>
         <app-table (productSelectedChange)="onProductSelectedChanged($event)" [columnDefs]="columnDefs" [rowData]="rowData"></app-table>
     </section>
     <section class="datos-producto section-block">
         @if(camposLoaded){
             <h2>Formulario de gestión</h2>
-            <app-product-form [product]="productSelected" [letras_identificacion]="productUrl" [campos]="camposFormulario"></app-product-form>
+            <app-product-form 
+            [product]="productSelected" 
+            [letras_identificacion]="productUrl" 
+            [campos]="camposFormulario"
+            (formLoadedChange)="handleFormLoadedChange($event)"
+            ></app-product-form>
         } @else {
             <div>
                 <p>Cargando...</p>

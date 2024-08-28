@@ -14,11 +14,10 @@ import { RatesService } from '../../services/rates.service';
 import { Tarifa } from '../../interfaces/tarifa';
 import { SocietyService } from '../../services/society.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
-import { appConfig } from '../../app.config';
 import { AppConfig } from '../../../config/app-config';
 import { CamposService } from '../../services/campos.service';
 import { ActivatedRoute } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackBarService } from '../../services/snackBar/snack-bar.service';
 
 
 interface Campo {
@@ -94,7 +93,7 @@ export class ProductConfiguratorComponent {
     private societyService : SocietyService,
     private camposService : CamposService,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBarService: SnackBarService
   ) {
     this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
       this.tiposProductos = tiposProducto;
@@ -170,7 +169,40 @@ export class ProductConfiguratorComponent {
           { id: '', nombre: 'Codigo Postal', tipo_dato: 'number', fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
           { id: '', nombre: 'Fecha de nacimiento', tipo_dato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado', opciones: []},
         ];
-        this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
+        // this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
+        // Campos con opciones de prueba:
+        this.campos = [
+          {
+            id: '',
+            nombre: 'Color',
+            tipo_dato: 'select',
+            fila: '',
+            columna: '',
+            visible: true,
+            obligatorio: true,
+            grupo: 'datos_producto',
+            opciones: [
+              {id:'', nombre: 'Rojo', precio: '10'},
+              {id:'', nombre: 'Azul', precio: '20'},
+              {id:'', nombre: 'Verde', precio: '30'}
+            ]
+          },
+          {
+            id: '',
+            nombre: 'Talla',
+            tipo_dato: 'select',
+            fila: '',
+            columna: '',
+            visible: true,
+            obligatorio: true,
+            grupo: 'datos_producto',
+            opciones: [
+              {id:'', nombre: 'S', precio: '10'},
+              {id:'', nombre: 'M', precio: '20'},
+              {id:'', nombre: 'L', precio: '30'}
+            ]
+          }
+        ];
       }
     });
     
@@ -187,6 +219,7 @@ export class ProductConfiguratorComponent {
   }
 
   onTipoDatoChange(campo: any) {
+    console.log(this.campos);
     if (campo.tipo_dato === 'select') {
       // Inicializar el array de opciones si está indefinido
       if (campo.opciones.length === 0) {
@@ -226,6 +259,7 @@ export class ProductConfiguratorComponent {
     }
   }
 
+
   crearTipoProducto() {
 
     
@@ -234,6 +268,12 @@ export class ProductConfiguratorComponent {
     const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(camposFormulario);
 
     const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
+
+    const campoConOpcionesRepetidas = this.campoConOpcionesRepetidas(camposFormulario);
+
+    const campoConOpcionPrecioFormatoIncorrecto = this.precioOpcionesFormatoIncorrecto(camposFormulario);
+
+    
 
     if(this.campoVariableVacio()) {
         
@@ -271,7 +311,16 @@ export class ProductConfiguratorComponent {
 
       this.showErrorDialog('Hay campos con el mismo nombre');
 
+    } else if(campoConOpcionesRepetidas){
+
+      this.showErrorDialog('El campo selector ' + campoConOpcionesRepetidas.nombre + ' tiene opciones repetidas');
+
+    } else if(campoConOpcionPrecioFormatoIncorrecto) {
+
+      this.showErrorDialog('El precio de las opciones del campo selector ' + campoConOpcionPrecioFormatoIncorrecto.nombre + ' no tiene un formato correcto');
+
     } else {
+
       this.cargandoNuevoProducto = true;
 
       const nuevoProducto = {
@@ -292,6 +341,12 @@ export class ProductConfiguratorComponent {
           // Si el campo tiene opciones y no tiene ID (es nuevo), lo movemos a `camposConOpciones`
           if (campo.opciones.length > 0) {
             camposConOpciones.push(campo);
+            campo.opciones.forEach((opcion) => {
+              // Comprobar el formato del precio y si tiene com cambiar por punto
+              if(opcion.precio !== '') {
+                opcion.precio = opcion.precio.replace(',', '.');
+              }
+            });
             return false; // Excluir este campo del array de `nuevoProducto`
           }
         }
@@ -302,6 +357,10 @@ export class ProductConfiguratorComponent {
 
       console.log('Nuevo Producto:', nuevoProducto);
       console.log('Campos con Opciones:', camposConOpciones);
+      console.log('data' , {
+        ...nuevoProducto,
+        camposConOpciones: camposConOpciones
+      });
 
 
       // EDITAR EL PRODUCTO:
@@ -340,12 +399,7 @@ export class ProductConfiguratorComponent {
         this.productService.addNuevosCampos(this.letrasIdentificacion, nuevosCampos).subscribe((res) => {
           console.log(res);
           this.cargandoNuevoProducto = false;
-          this.snackBar.open('Tipo de producto editado con éxito', 'Cerrar', {
-            duration: 3000, // Duración en milisegundos
-            horizontalPosition: 'right', // Posición horizontal: start, center, end, left, right
-            verticalPosition: 'bottom',  // Posición vertical: top, bottom
-            panelClass: ['custom-snackbar']
-          })
+          this.snackBarService.openSnackBar('Tipo de producto editado con éxito');
         });
 
         // Recorrer los campos con opciones y guardarlos o editarlos dependiendo de si tienen ID
@@ -375,13 +429,9 @@ export class ProductConfiguratorComponent {
             console.log(res);
             this.societyService.connectSocietyWithTipoProducto(AppConfig.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
               console.log(res);
-              this.snackBar.open('Tipo de producto creado con éxito', 'Cerrar', {
-                duration: 3000, // Duración en milisegundos
-                horizontalPosition: 'right', // Posición horizontal: start, center, end, left, right
-                verticalPosition: 'bottom',  // Posición vertical: top, bottom
-                panelClass: ['custom-snackbar']
-              })
+              this.snackBarService.openSnackBar('Tipo de producto creado con éxito');
               this.cargandoNuevoProducto = false;
+              window.location.reload();
             });
           });
         },
@@ -416,6 +466,19 @@ export class ProductConfiguratorComponent {
   }
 
 
+  private campoConOpcionesRepetidas(campos: Campo[]): Campo | null {
+    for (const campo of campos) {
+      const nombres = campo.opciones.map((opcion) => opcion.nombre);
+      const nombresSet = new Set(nombres);
+      
+      // Si el tamaño del Set es menor que el array original, hay elementos duplicados
+      if (nombresSet.size !== nombres.length) {
+        return campo; // Retorna el campo con opciones repetidas
+      }
+    }
+    
+    return null; // Si no se encuentran campos con opciones repetidas, retorna null
+  }
 
   //Funcion para comprobar que la plantilla no se esté usando ya en otro tipo de producto:
   private plantillaEnUso() {
@@ -484,13 +547,34 @@ export class ProductConfiguratorComponent {
     return false;
   }
 
-  private tarifasFormatoIncorrecto() : boolean {
-    for(const tarifa of this.tarifas) {
-      if(isNaN(parseFloat(tarifa.valor.replace(',', '.')))) {
-        return true;
+  private tarifasFormatoIncorrecto(): boolean {
+    for (let tarifa of this.tarifas) {
+      const valor = tarifa.valor;
+        
+      // Expresión regular para validar formato numérico, permite números con coma o punto decimal
+      const formatoNumerico = /^\d+([.,]\d+)?$/;
+  
+      if (!formatoNumerico.test(valor)) {
+        return true; // Retorna true si se encuentra un valor con formato incorrecto
       }
     }
-    return false;
+    
+    return false; // Si todas las tarifas tienen formato correcto, retorna false
+  }
+  
+
+  private precioOpcionesFormatoIncorrecto(campos: Campo[]) : Campo | null {
+    const formatoNumerico = /^\d+([.,]\d+)?$/;
+    for(const campo of campos) {
+      if(campo.tipo_dato === 'select') {
+        for(const opcion of campo.opciones) {
+          if(!formatoNumerico.test(opcion.precio)) {
+            return campo;
+          }
+        }
+      }
+    }
+    return null;
   }
 
   nombreCamposRepetidos() {

@@ -101,8 +101,18 @@
         </header>
             <input id="id" formControlName="id" hidden>
             @for(campo of camposFormularioPorGrupos['datos_producto']; track campo.name){
-                <label [for]="campo.name" class="input-label">{{ campo.label }}</label>
-                <input [id]="campo.name" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field">
+                @if(campo.tipo_dato == 'select'){
+                    <label [for]="campo.name" class="input-label">{{ campo.label }}</label>
+                    <select [id]="campo.name" [formControlName]="campo.name" class="input-field" (change)="changeOnSelect($event, campo)">
+                        <option value="0">Seleccione una opcion...</option>
+                        @for(opcion of campo.opciones ; track opcion.id){
+                            <option [value]="opcion.nombre">{{ opcion.nombre }}</option>
+                        }
+                    </select>
+                } @else {
+                    <label [for]="campo.name" class="input-label">{{ campo.label }}</label>
+                    <input [id]="campo.name" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field">
+                }
             }
             <hr class="divider">
     }

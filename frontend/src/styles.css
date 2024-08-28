@@ -155,7 +155,7 @@ input.disabled{
         gap: 10px;
     }
 
-    .input-container.input-group{
+    div.input-container{
         width: 100% !important;
     }
 }

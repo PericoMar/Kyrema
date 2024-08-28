@@ -11,8 +11,8 @@
               <input type="text" class="nombre-producto" [(ngModel)]="nombreProducto" name="nombreProducto" placeholder="Escriba aquí el nombre del nuevo producto">
             </div>
             <div>
-              <label for="nombre_producto">Letras de identificación</label>
-              <input type="text" class="letras-identificacion" [(ngModel)]="letrasIdentificacion" name="letrasIdentificacion" placeholder="Escriba aquí las letras de identificación" [disabled]="letrasDisabled">
+              <label for="nombre_producto">Codigo de identificación</label>
+              <input type="text" class="letras-identificacion" [(ngModel)]="letrasIdentificacion" name="codigo_tipo_producto" placeholder="Escriba aquí las letras de identificación" [disabled]="letrasDisabled">
             </div>
             <div class="input-file">
               <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
@@ -250,8 +250,8 @@
                       <div class="additional-options">
                         <h3 class="opt-header">Opciones para {{campo.nombre}}</h3>
                         <div *ngFor="let opcion of campo.opciones; let j = index" class="flex-start">
-                          <input type="text" [(ngModel)]="campo.opciones[j].nombre" placeholder="Opción {{j + 1}}" name="opciones{{$index + j}}">
-                          <input type="text" [(ngModel)]="campo.opciones[j].precio" placeholder="Incremento precio {{j + 1}}" name="precio{{$index + j}}" class="incremento-precio">
+                          <input type="text" [(ngModel)]="campo.opciones[j].nombre" placeholder="Opción {{j + 1}}" name="{{campo.nombre}}opciones{{$index + j}}">
+                          <input type="text" [(ngModel)]="campo.opciones[j].precio" placeholder="Incremento precio {{j + 1}}" name="{{campo.nombre}}precio{{$index + j}}" class="incremento-precio">
                           <button mat-icon-button color="warn" (click)="eliminarOpcion(campo, j)" type="button">
                             <mat-icon>delete</mat-icon>
                           </button>

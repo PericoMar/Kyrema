@@ -31,7 +31,7 @@ export class FamilyProductService {
     return this.http.delete<any>(`${this.apiUrl}/tipo-producto/delete/${id_tipo_producto}`);
   }
   
-  editTipoProducto(id_tipo_producto: string, nombre: any): Observable<any> {
+  editTipoProducto(id_tipo_producto: string | null, nombre: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/tipo-producto/edit-nombre/${id_tipo_producto}`, {nombre});
   }
 
