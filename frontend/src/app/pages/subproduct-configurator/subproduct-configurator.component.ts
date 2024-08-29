@@ -1,4 +1,10 @@
 import { Component } from '@angular/core';
+import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
+import { FamilyProductService } from '../../services/family-product.service';
+import { MatDialog } from '@angular/material/dialog';
+import { RatesService } from '../../services/rates.service';
+import { AnexosService } from '../../services/anexos.service';
+import { AppConfig } from '../../../config/app-config';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,32 +13,29 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
-import { FamilyProductService } from '../../services/family-product.service';
-import { MatDialog } from '@angular/material/dialog';
-import { AnexosService } from '../../services/anexos.service';
-import { RatesService } from '../../services/rates.service';
-import { AppConfig } from '../../../config/app-config';
 
-interface CampoAnexo {
+
+interface Campo {
+  id? : string;
   nombre: string;
-  tipoDato: string;
+  tipo_dato: string;
   fila: string;
-  columna: string;
+  columna: string,
+  visible: boolean;
   obligatorio: boolean;
+  grupo: string;
+  opciones: {id:string , nombre: string, precio: string, created_at?:string, updated_at?: string}[];
 }
 
-
 @Component({
-  selector: 'app-anexos-configurator',
+  selector: 'app-subproduct-configurator',
   standalone: true,
   imports: [SpinnerComponent, CommonModule, FormsModule, MatIconModule, MatButtonModule, MatInputModule, MatSelectModule, MatCheckboxModule , ErrorDialogComponent],
-  templateUrl: './anexos-configurator.component.html',
-  styleUrl: './anexos-configurator.component.css'
+  templateUrl: './subproduct-configurator.component.html',
+  styleUrl: './subproduct-configurator.component.css'
 })
-export class AnexosConfiguratorComponent {
 
-
+export class SubproductConfiguratorComponent {
   constructor(
     private familyService: FamilyProductService,
     private dialog: MatDialog,
@@ -87,10 +90,10 @@ export class AnexosConfiguratorComponent {
     }
   ];
 
-  campos: CampoAnexo[] = [{ nombre: '', tipoDato: 'text', fila: '',columna: '' , obligatorio: false}];
+  campos: Campo[] = [{ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' , opciones: []}];
 
   agregarCampo() {
-    this.campos.push({ nombre: '', tipoDato: 'text', fila: '',columna: '', obligatorio: false });
+    this.campos.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' , opciones: []});
   }
 
   eliminarCampo(index: number) {
@@ -299,7 +302,7 @@ export class AnexosConfiguratorComponent {
     return false;
   }
 
-  private formatoIncorrectoFilasColumnas(camposFormulario: CampoAnexo[]): string | boolean {
+  private formatoIncorrectoFilasColumnas(camposFormulario: Campo[]): string | boolean {
     for (const campo of camposFormulario) {
         // Comprobar si las columnas son solo letras y las filas son solo números (Como en Excel)
         if (!(/^[a-zA-Z]*$/.test(campo.columna)) || !(/^[0-9]*$/.test(campo.fila))) {
@@ -318,7 +321,7 @@ export class AnexosConfiguratorComponent {
     return false;
   }
 
-  private filaColumnaYaEnUso(camposFormulario: CampoAnexo[]): string | boolean {
+  private filaColumnaYaEnUso(camposFormulario: Campo[]): string | boolean {
     const campos = camposFormulario.filter(campo => campo.fila !== '' && campo.columna !== '');
     const camposUnicos = new Set();
     for (const campo of campos) {

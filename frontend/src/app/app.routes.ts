@@ -8,7 +8,6 @@ import { ProductConfiguratorComponent } from './pages/product-configurator/produ
 import { LayoutLoginComponent } from './pages/layout-login/layout-login.component';
 import { LayoutMainComponent } from './pages/layout-main/layout-main.component';
 import { LoginComponent } from './pages/login/login.component';
-import { authGuard } from './auth.guard';
 import { TarifasComponent } from './pages/tarifas/tarifas.component';
 import { CommissionsComponent } from './pages/commissions/commissions.component';
 import { CommercialsCommissionsTableComponent } from './pages/commercials-commissions-table/commercials-commissions-table.component';
@@ -18,6 +17,8 @@ import { CommercialFormComponent } from './pages/commercial-form/commercial-form
 import { AnulacionesPageComponent } from './pages/anulaciones-page/anulaciones-page.component';
 import { AnexosManagerComponent } from './pages/anexos-manager/anexos-manager.component';
 import { AnexosConfiguratorComponent } from './pages/anexos-configurator/anexos-configurator.component';
+import { SubproductManagerComponent } from './pages/subproduct-manager/subproduct-manager.component';
+import { SubproductConfiguratorComponent } from './pages/subproduct-configurator/subproduct-configurator.component';
 
 export const routes: Routes = [
     {
@@ -67,6 +68,9 @@ export const routes: Routes = [
         { path: 'gestion-productos' , component: ProductsManagerComponent, },
         { path: 'configurador-productos' , component: ProductConfiguratorComponent},
         { path: 'configurador-productos/:id' , component: ProductConfiguratorComponent},
+        { path: 'subproductos/:product', component: SubproductManagerComponent, },
+        { path: 'configurador-subproductos' , component: SubproductConfiguratorComponent},
+        { path: 'configurador-subproductos/:id' , component: SubproductConfiguratorComponent},
     ]
     },
     { path: '**', redirectTo: 'login' },

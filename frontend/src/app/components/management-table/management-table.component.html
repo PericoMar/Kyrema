@@ -1,0 +1,59 @@
+<section class="table content-block">
+    @if(dataToManage){
+      @if(dataToManage.length == 0) {
+
+        <p>No hay ningun {{dataType}} para mostrar</p>
+        <p>Prueba a crear uno</p>
+
+      } @else {
+        <form id="data-form">
+          <table mat-table [dataSource]="dataToManage">
+              <!-- Nombre Column -->
+              <ng-container matColumnDef="nombre">
+                  <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                  <td mat-cell *matCellDef="let data"> {{ data.nombre }} </td>
+              </ng-container>
+
+              <!-- Acciones Column -->
+              <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                  <td mat-cell *matCellDef="let data; let i = index">
+                        <button 
+                            mat-button color="primary"        
+                            [routerLink]="[configUrl, data.id]"
+                            style="margin-right: 8px;">
+                            Editar
+                        </button>
+                        @if(dataType == 'producto') {
+                            <button 
+                                mat-button color="secondary" 
+                                [routerLink]="['/subproductos', data.id]">
+                                Subproductos
+                            </button>
+                        }
+                        <button 
+                            mat-button color="warn" 
+                            (click)="openDeleteDialog(data)">
+                            Borrar
+                        </button>
+                  </td>
+              </ng-container>
+
+              <!-- Table Headers and Rows -->
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>          
+        </form>
+      }
+
+      <div class="button-container">
+        <button mat-raised-button color="primary" [routerLink]="[configUrl]">Crear nuevo {{dataType}}</button>
+      </div>
+
+    } @else {
+
+      <div class="center">
+        <app-spinner></app-spinner>
+      </div>
+    }      
+  </section>

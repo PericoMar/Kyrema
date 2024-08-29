@@ -18,6 +18,7 @@ import { AppConfig } from '../../../config/app-config';
 import { CamposService } from '../../services/campos.service';
 import { ActivatedRoute } from '@angular/router';
 import { SnackBarService } from '../../services/snackBar/snack-bar.service';
+import { AnexosService } from '../../services/anexos.service';
 
 
 interface Campo {
@@ -55,7 +56,10 @@ export class ProductConfiguratorComponent {
   };
 
   cargandoNuevoProducto : boolean = false;
+
   tiposProductos : any[] = [];
+  tiposAnexos : any[] = [];
+
   tarifas : any[] = [
     {
       id: 1,
@@ -88,6 +92,7 @@ export class ProductConfiguratorComponent {
   constructor(
     private productService : ProductsService,
     private familyService : FamilyProductService,
+    private anexosService: AnexosService,
     public dialog: MatDialog,
     private ratesService : RatesService,
     private societyService : SocietyService,
@@ -99,6 +104,13 @@ export class ProductConfiguratorComponent {
       this.tiposProductos = tiposProducto;
     },
     (error) => {
+      console.log(error)
+    });
+    this.anexosService.getAllTiposAnexos().subscribe((tiposAnexos : any) => {
+      console.log(tiposAnexos);
+      this.tiposAnexos = tiposAnexos;
+    },
+    (error : any) => {
       console.log(error)
     });
 
@@ -115,6 +127,7 @@ export class ProductConfiguratorComponent {
           // Poner el campo de letrasIdentificacion como disabled
           this.letrasDisabled = true;
         });
+
 
         this.camposService.getCamposPorTipoProducto(this.id_tipo_producto_editado).subscribe((campos) => {
           // Cada campo tiene un campo 'grupo' dependiendo de ese grupo se metera en el array camposGenerales, camposAsegurado o campos
@@ -150,8 +163,8 @@ export class ProductConfiguratorComponent {
           { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
           { id: '', nombre: 'Prima del seguro', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
           { id: '', nombre: 'Cuota de asociación', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-          { id: '', nombre: 'Precio Total', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
-          { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Precio Total', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
           { id: '', nombre: 'Numero anexos', tipo_dato: 'number', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
         ]
       
@@ -259,67 +272,27 @@ export class ProductConfiguratorComponent {
     }
   }
 
+  /* Función para crear un nuevo tipo de producto 
+  /* Se comprueban los campos del formulario y
+  /* se crea un objeto con los campos necesarios para crear un nuevo tipo de producto
+  /* Se confirma si se esta editando o creando un nuevo tipo de producto
+  /* Se envía la petición al servicio de productos para crear un nuevo tipo de producto
+  */
 
   crearTipoProducto() {
 
     
     const camposFormulario = [...this.camposGenerales, ...this.camposAsegurado, ...this.campos]; // Concatenación de campos fijos y variables
-
-    const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(camposFormulario);
-
-    const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
-
-    const campoConOpcionesRepetidas = this.campoConOpcionesRepetidas(camposFormulario);
-
-    const campoConOpcionPrecioFormatoIncorrecto = this.precioOpcionesFormatoIncorrecto(camposFormulario);
-
     
+    const editando : boolean = this.id_tipo_producto_editado ? true : false;
 
-    if(this.campoVariableVacio()) {
-        
-      this.showErrorDialog('Hay un campo variable con el nombre vacío');
-  
-    } else if(this.letrasIdentificacionEnUso() && !this.id_tipo_producto_editado) {
-
-      this.showErrorDialog('Las letras de identificación seleccionadas ya están siendo usadas por otro producto');
-
-    }else if(this.plantillaEnUso() && !this.id_tipo_producto_editado) {
+    // Verificar datos del formulario
+    if (this.plantillaEnUso() && !editando) {
 
       this.showErrorDialog('El nombre de la plantilla seleccionada ya está siendo usado por otro producto');
 
-    } else if(campoUsoCaracteresEspeciales){
-
-      this.showErrorDialog('No está permitido el uso de caracteres especiales. Campo: '+ campoUsoCaracteresEspeciales);
-
-    } else if(campoFormatoFilasColumnasIncorrecto) {
-
-      this.showErrorDialog('El formato de las filas o columnas no es correcto en el campo: ' + campoFormatoFilasColumnasIncorrecto);
-
-    } else if(this.tarifasVacias() && !this.id_tipo_producto_editado) {
-
-      this.showErrorDialog('Hay tarifas sin rellenar');
-
-    } else if(this.plantillaVacia() && !this.id_tipo_producto_editado) {
-        
-      this.showErrorDialog('Por favor, seleccione una plantilla');
-
-    } else if(this.tarifasFormatoIncorrecto() && !this.id_tipo_producto_editado) {
-
-      this.showErrorDialog('El formato de las tarifas no es correcto');
-
-    } else if(this.nombreCamposRepetidos()) {
-
-      this.showErrorDialog('Hay campos con el mismo nombre');
-
-    } else if(campoConOpcionesRepetidas){
-
-      this.showErrorDialog('El campo selector ' + campoConOpcionesRepetidas.nombre + ' tiene opciones repetidas');
-
-    } else if(campoConOpcionPrecioFormatoIncorrecto) {
-
-      this.showErrorDialog('El precio de las opciones del campo selector ' + campoConOpcionPrecioFormatoIncorrecto.nombre + ' no tiene un formato correcto');
-
-    } else {
+    } else if(this.verificarCampos(camposFormulario, editando)) {
+    
 
       this.cargandoNuevoProducto = true;
 
@@ -465,6 +438,77 @@ export class ProductConfiguratorComponent {
     });
   }
 
+
+
+
+
+  // VERIFICAR FORMULARIO:
+  verificarCampos(camposFormulario: any[], editando : boolean): boolean {
+
+    
+    const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(camposFormulario);
+    const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
+    const campoConOpcionesRepetidas = this.campoConOpcionesRepetidas(camposFormulario);
+    const campoConOpcionPrecioFormatoIncorrecto = this.precioOpcionesFormatoIncorrecto(camposFormulario);
+  
+    if (this.campoVariableVacio()) {
+      this.showErrorDialog('Hay un campo variable con el nombre vacío');
+      return false;
+    } 
+    
+    if (this.letrasIdentificacionEnUso() && !editando) {
+      this.showErrorDialog('Las letras de identificación seleccionadas ya están siendo usadas por otro producto');
+      return false;
+    }
+    
+    if (this.plantillaEnUso() && !editando) {
+      this.showErrorDialog('El nombre de la plantilla seleccionada ya está siendo usado por otro producto');
+      return false;
+    }
+    
+    if (campoUsoCaracteresEspeciales) {
+      this.showErrorDialog('No está permitido el uso de caracteres especiales. Campo: ' + campoUsoCaracteresEspeciales);
+      return false;
+    }
+    
+    if (campoFormatoFilasColumnasIncorrecto) {
+      this.showErrorDialog('El formato de las filas o columnas no es correcto en el campo: ' + campoFormatoFilasColumnasIncorrecto);
+      return false;
+    }
+    
+    if (this.tarifasVacias() && !editando) {
+      this.showErrorDialog('Hay tarifas sin rellenar');
+      return false;
+    }
+    
+    if (this.plantillaVacia() && !editando) {
+      this.showErrorDialog('Por favor, seleccione una plantilla');
+      return false;
+    }
+    
+    if (this.tarifasFormatoIncorrecto() && !editando) {
+      this.showErrorDialog('El formato de las tarifas no es correcto');
+      return false;
+    }
+    
+    if (this.nombreCamposRepetidos()) {
+      this.showErrorDialog('Hay campos con el mismo nombre');
+      return false;
+    }
+    
+    if (campoConOpcionesRepetidas) {
+      this.showErrorDialog('El campo selector ' + campoConOpcionesRepetidas.nombre + ' tiene opciones repetidas');
+      return false;
+    }
+    
+    if (campoConOpcionPrecioFormatoIncorrecto) {
+      this.showErrorDialog('El precio de las opciones del campo selector ' + campoConOpcionPrecioFormatoIncorrecto.nombre + ' no tiene un formato correcto');
+      return false;
+    }
+  
+    return true;
+  }
+  
 
   private campoConOpcionesRepetidas(campos: Campo[]): Campo | null {
     for (const campo of campos) {

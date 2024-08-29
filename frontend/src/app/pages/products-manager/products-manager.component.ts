@@ -1,40 +1,33 @@
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
 import { FamilyProductService } from '../../services/family-product.service';
-import { SpinnerComponent } from '../../components/spinner/spinner.component';
-import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteProductDialogComponent } from '../../components/delete-product-dialog/delete-product-dialog.component';
+import { ManagementTableComponent } from '../../components/management-table/management-table.component';
 
 @Component({
   selector: 'app-products-manager',
   standalone: true,
-  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule, SpinnerComponent, ErrorDialogComponent],
+  imports: [ManagementTableComponent],
   templateUrl: './products-manager.component.html',
   styleUrl: './products-manager.component.css'
 })
 export class ProductsManagerComponent {
   insurances!: any[];
-  displayedColumns: string[] = ['type', 'actions'];
-  insuranceForm: FormGroup;
+  displayedColumns: string[] = ['nombre', 'actions'];
+  dataType :string = 'producto';
+  configUrl : string = '/configurador-productos';
 
   constructor(
     private familyService: FamilyProductService,
-    private fb: FormBuilder,
     private dialog: MatDialog
   ) {
-    this.insuranceForm = this.fb.group({
-      // Define any form controls if needed
-    });
+
   }
 
   ngOnInit(): void {
     this.familyService.getAllTipos().subscribe({
       next: (tipos: any[]) => {
-        this.insurances = tipos.map(tipo => ({ id: tipo.id, type: tipo.nombre }));
+        this.insurances = tipos.map(tipo => ({ id: tipo.id, nombre: tipo.nombre }));
         console.log('Insurances: ', this.insurances);
       },
       error: (error: any) => {

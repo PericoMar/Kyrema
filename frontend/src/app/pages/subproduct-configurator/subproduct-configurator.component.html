@@ -1,15 +1,15 @@
 <section class="anexos-configurator">
-    <h1>Configurador de tipo de anexo</h1>
+    <h1>Configurador de subproducto</h1>
     <main class="content-block new-anexo-form">
         
         <form (ngSubmit)="crearTipoAnexo()">
             <header class="form-header">
-                <h2>Descripción del anexo</h2>
+                <h2>Descripción del subproducto</h2>
                 <hr>
                 <div class="space-between">
                   <div>
-                    <label for="nombre_producto">Nombre del anexo</label>
-                    <input type="text" class="nombre-producto" [(ngModel)]="nombreAnexo" name="nombreProducto" placeholder="Escriba aquí el nombre del nuevo anexo">
+                    <label for="nombre_producto">Nombre del subproducto</label>
+                    <input type="text" class="nombre-producto" [(ngModel)]="nombreAnexo" name="nombreProducto" placeholder="Escriba aquí el nombre del nuevo subproducto">
                   </div>
                   <div>
                     <label for="nombre_producto">Letras de identificación</label>
@@ -79,7 +79,7 @@
                     </td>
                     <td class="col-tipo-dato">
                       <div class="center div-select">
-                        <select [(ngModel)]="campo.tipoDato" name="tipoDato{{$index}}">
+                        <select [(ngModel)]="campo.tipo_dato" name="tipoDato{{$index}}">
                           @for(tipo of tiposDato ; track $index) {
                             <option value="{{tipo.value}}">{{tipo.nombre}}</option>
                           }

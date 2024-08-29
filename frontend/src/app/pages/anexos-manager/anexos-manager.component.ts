@@ -9,18 +9,21 @@ import { CommonModule } from '@angular/common';
 import { DeleteAnexoDialogComponent } from '../../components/delete-anexo-dialog/delete-anexo-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
+import { ManagementTableComponent } from '../../components/management-table/management-table.component';
 
 
 @Component({
   selector: 'app-anexos-manager',
   standalone: true,
-  imports: [ReactiveFormsModule, MatTableModule, MatButtonModule, RouterModule, CommonModule, DeleteAnexoDialogComponent, SpinnerComponent],
+  imports: [ CommonModule, DeleteAnexoDialogComponent, ManagementTableComponent],
   templateUrl: './anexos-manager.component.html',
   styleUrl: './anexos-manager.component.css'
 })
 export class AnexosManagerComponent {
-  anexos: any[] = [];
+  anexos!: any[];
   displayedColumns: string[] = ['nombre', 'actions'];
+  configUrl: string = '/configurador-anexos';
+  dataType: string = 'anexo';
 
   constructor(
     private anexosService: AnexosService,
@@ -41,19 +44,6 @@ export class AnexosManagerComponent {
       }
     });
   }
-
-  // deleteAnexo(index: number): void {
-  //   const anexoId = this.anexos[index].id;
-  //   this.anexosService.deleteAnexo(anexoId).subscribe({
-  //     next: () => {
-  //       this.anexos.splice(index, 1); // Remove from UI
-  //       console.log('Anexo deleted successfully');
-  //     },
-  //     error: (error: any) => {
-  //       console.error('Error deleting anexo', error);
-  //     }
-  //   });
-  // }
 
   openDeleteDialog(data : any){
     this.dialog.open(DeleteAnexoDialogComponent, {
