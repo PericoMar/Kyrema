@@ -558,6 +558,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   getPrecioFinal() {
     // Asegúrate de que `precio_total` sea un número
+    // this.precioFinal = parseFloat(this.productForm.get('precio_final')?.value) === 0 ? parseFloat(this.productForm.get('precio_total')?.value) : 0;
     this.precioFinal = parseFloat(this.productForm.get('precio_total')?.value) || 0;
     
     // Sumar el precio de los anexos al precio total

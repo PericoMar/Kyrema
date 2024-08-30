@@ -182,40 +182,8 @@ export class ProductConfiguratorComponent {
           { id: '', nombre: 'Codigo Postal', tipo_dato: 'number', fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
           { id: '', nombre: 'Fecha de nacimiento', tipo_dato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado', opciones: []},
         ];
-        // this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
+        this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
         // Campos con opciones de prueba:
-        this.campos = [
-          {
-            id: '',
-            nombre: 'Color',
-            tipo_dato: 'select',
-            fila: '',
-            columna: '',
-            visible: true,
-            obligatorio: true,
-            grupo: 'datos_producto',
-            opciones: [
-              {id:'', nombre: 'Rojo', precio: '10'},
-              {id:'', nombre: 'Azul', precio: '20'},
-              {id:'', nombre: 'Verde', precio: '30'}
-            ]
-          },
-          {
-            id: '',
-            nombre: 'Talla',
-            tipo_dato: 'select',
-            fila: '',
-            columna: '',
-            visible: true,
-            obligatorio: true,
-            grupo: 'datos_producto',
-            opciones: [
-              {id:'', nombre: 'S', precio: '10'},
-              {id:'', nombre: 'M', precio: '20'},
-              {id:'', nombre: 'L', precio: '30'}
-            ]
-          }
-        ];
       }
     });
     
