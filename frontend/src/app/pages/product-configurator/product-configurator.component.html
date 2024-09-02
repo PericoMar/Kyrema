@@ -31,6 +31,89 @@
           </div>
           </header>
 
+          <h2>Duración</h2>
+          <hr>
+          <div class="overflow-scroll">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="col-nombre">Nombre del campo</th>
+                <th class="col-tipo-dato">
+                  <div class="center">
+                    Tipo de Duración
+                  </div>
+                </th>
+                <th class="col-posicion">
+                  <div class="center">
+                    Posición en el Certificado
+                  </div>
+                </th>
+                <th class="col-visible">
+                  <div class="center">
+                    Visible en la tabla
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (campoTiempo of camposTiempo; track $index) {
+                <tr>
+                  <td class="col-nombre">
+                    <div class="center">
+                      <input type="text" [placeholder]="campoTiempo.nombre" [(ngModel)]="campoTiempo.nombre" name="nombreTiempo{{$index}}" disabled>
+                    </div>
+                  </td>
+                  <td class="col-tipo-dato">
+                    <div class="center div-select">
+                      <select [(ngModel)]="campoTiempo.tipo_dato" name="tipo_datoTiempo{{$index}}" (change)="onTipoDatoChange(campoTiempo)">
+                        @for(tipo of tiposDuracion ; track $index) {
+                          <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                        }
+                      </select>
+                    </div>
+                  </td>
+                  <td class="col-posicion">
+                    <div class="center" style="gap:4px;">
+                      <div class="small-input">
+                        <input type="text" placeholder="Columna" [(ngModel)]="campoTiempo.columna" name="columnaTiempo{{$index}}">
+                      </div>
+                      <div class="small-input">
+                        <input type="text" placeholder="Fila" [(ngModel)]="campoTiempo.fila" name="filaTiempo{{$index}}">
+                      </div>
+                    </div>
+                  </td>
+                  <td class="col-visible">
+                    <div class="center">
+                      <mat-checkbox [(ngModel)]="campoTiempo.visible" name="visibleTiempo{{$index}}"></mat-checkbox>
+                    </div>
+                  </td>
+                </tr>   
+                <!-- Desplegable de opciones adicionales si se selecciona "select" -->
+                <tr *ngIf="campoTiempo.tipo_dato === 'selector_dias' || campoTiempo.tipo_dato === 'dias_delimitados'" >
+                  <td colspan="6">
+                    <div class="additional-options">
+                      <h3 class="opt-header">Número de días</h3>
+                      <div *ngFor="let opcion of campoTiempo.opciones; let j = index" class="flex-start">
+                        <input type="text" [(ngModel)]="campoTiempo.opciones[j].nombre" placeholder="Num días {{j + 1}}" name="{{campoTiempo.nombre}}opciones{{$index + j}}">
+                        <input type="text" [(ngModel)]="campoTiempo.opciones[j].precio" placeholder="Incremento precio {{j + 1}}" name="{{campoTiempo.nombre}}precio{{$index + j}}" class="incremento-precio">
+                        @if(campoTiempo.tipo_dato === 'selector_dias'){
+                          <button mat-icon-button color="warn" (click)="eliminarOpcion(campoTiempo, j)" type="button">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        }
+                      </div>
+                      @if(campoTiempo.tipo_dato === 'selector_dias'){
+                        <button mat-button (click)="agregarOpcion(campoTiempo)" type="button">Añadir opción</button>
+                      }
+                    </div>
+                  </td>
+                </tr>             
+              }
+            </tbody>
+          </table>
+          </div>
+
+
           <h2>Datos generales</h2>
           <hr>
           <div class="overflow-scroll">
@@ -166,7 +249,7 @@
           </div>
           <h2>Datos variables</h2>
           <hr>
-          <div class="overflow-scroll flexible">
+          <div class="overflow-scroll flexible table-variable-fields">
             <table class="table">
               <thead>
                 <tr>

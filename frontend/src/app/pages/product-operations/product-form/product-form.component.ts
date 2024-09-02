@@ -15,6 +15,7 @@ import { AppConfig } from '../../../../config/app-config';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { CamposService } from '../../../services/campos.service';
 import { SnackBarService } from '../../../services/snackBar/snack-bar.service';
+import { catchError, map, Observable, of } from 'rxjs';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -76,6 +77,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   loadingAction: boolean = false;
   downloadingAnexo: { [key: string]: boolean } = {};
+
+  duraciones: any;
+  duracion: any;
 
   constructor(
     private fb: FormBuilder,
@@ -169,6 +173,15 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.familyService.getTipoProductoPorLetras(this.letras_identificacion).subscribe(
       data => {
         this.tipo_producto = data;
+        this.getDuracion().subscribe({
+          next: (duracion: any) => {
+            this.duracion = duracion;
+            this.productForm.controls['duracion'].setValue(this.duracion);
+          },
+          error: (error: any) => {
+            console.error('Error loading duracion', error);
+          }
+        });
         this.loadPago(this.societyService.getCurrentSociety().id);
         // Aquí se cargan todos los datos necesarios para gestionar los anexos:
         this.loadTiposAnexos();
@@ -366,6 +379,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   createForm(campos: Campo[]) {
+    
     this.productForm = this.fb.group({
       id: [''],
       sociedad_id: ['', Validators.required],
@@ -385,7 +399,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
       cuota_de_asociación: [{value: '', disabled: true}, Validators.required],
       precio_total: [{value: '', disabled: true}, Validators.required],
       tipo_de_pago_id: ['', Validators.required],
+      duracion: [{value: '', disabled: true}, Validators.required],
     });
+    
     this.camposFormularioPorGrupos = {};
     campos.forEach((campo : Campo) => {
 
@@ -565,6 +581,24 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.precioFinal += this.anexos.reduce((acc: number, anexo: any) => {
       return acc + (parseFloat(anexo.tarifas.precio_total) || 0);
     }, 0);
+  }
+
+  getDuracion(): Observable<any> {
+    if (this.tipo_producto.tipo_duracion === 'selector_dias') {
+      return this.productsService.getDuraciones(this.tipo_producto.duracion).pipe(
+        map((duraciones: any) => {
+          this.duraciones = duraciones;
+          this.productForm.get('duracion')?.enable();
+          return this.duraciones[0].duracion;  // Devuelve la primera duración
+        }),
+        catchError((error) => {
+          console.error('Error loading duracion', error);
+          return of(null); // Retorna un valor por defecto o maneja el error
+        })
+      );
+    } else {
+      return of(this.tipo_producto.duracion);
+    }
   }
 
   downloadAnexo(tipoAnexo: any) {

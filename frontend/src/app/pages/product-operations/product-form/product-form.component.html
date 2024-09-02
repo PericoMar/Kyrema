@@ -114,11 +114,34 @@
                     <input [id]="campo.name" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field">
                 }
             }
+           
             <hr class="divider">
     }
 
+    @if(tipo_producto.tipo_duracion === 'selector_dias'){
+        <div class="input-container duracion">
+            <label for="duracion" class="input-label">Duración</label>
+            <div class="flex-start">
+                <select id="duracion" formControlName="duracion" type="text" class="input-field disabled">
+                    @for(duracion of duraciones ; track duracion){
+                        <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
+                    }
+                </select>
+                <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>            
+            </div>
+        </div>
+    } @else {
+        <div class="input-container duracion">
+            <label for="duracion" class="input-label">Duración</label>
+            <div class="flex-start">
+                <input id="duracion" formControlName="duracion" type="text" class="input-field disabled">
+                <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>            
+            </div>
+        </div>
+    }
     
 
+    <hr class="divider">
 
         <header class="form-header">
             <h3 class="form-section-title">Datos del pago</h3>
@@ -149,7 +172,7 @@
             </div>
             
             <div class="input-container">
-                <label for="sociedad" class="input-label">Tipo de pago</label>
+                <label for="tipo_pago_id" class="input-label">Tipo de pago</label>
                 <select name="tipo_de_pago_id" id="tipo_de_pago_id" formControlName="tipo_de_pago_id" class="input-field">
                     @for(tipoPago of tiposPago ; track tipoPago.id){
                         <option [value]="tipoPago.id">{{ tipoPago.nombre }}</option>

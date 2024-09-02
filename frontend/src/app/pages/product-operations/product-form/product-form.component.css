@@ -70,6 +70,10 @@
     width: 10%;
 }
 
+.duracion{
+    width: 10%;
+}
+
 .inputs-pago{
     width: 100%;
     align-items: end;
@@ -86,6 +90,10 @@ input.disabled{
 .divider{
     margin-bottom: 20px;
     opacity: 0.5;
+}
+
+.suffix{
+    margin-bottom: 5px;
 }
 
 
@@ -176,7 +184,7 @@ hr {
 
 /* Añadir media query para que cuando la pantalla sea menos de 1150px quitar el display flex  */
 @media (max-width: 1150px) {
-    .flex-start, .center, .space-between, .input-group{
+    .center, .space-between, .input-group{
         flex-direction: column;
         justify-content: baseline;
         align-items: flex-start;

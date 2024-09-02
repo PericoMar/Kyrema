@@ -12,7 +12,7 @@
 }
 
 .form-header{
-  margin-bottom: 40px;
+  margin-bottom: 60px;
 }
 
 hr{
@@ -33,7 +33,10 @@ input.nombre-producto{
   height: 100%;
   width: 100%;
   margin-bottom: 60px;
-  margin-top: 30px;
+}
+
+.table-variable-fields{
+  margin-bottom: 0px  ;
 }
 
 .flexible{

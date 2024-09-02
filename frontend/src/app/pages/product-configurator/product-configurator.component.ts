@@ -42,6 +42,13 @@ interface Campo {
 })
 export class ProductConfiguratorComponent {
   tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }, { nombre: 'Selector', value: 'select' }];
+  // a.	Diario
+  // b.	Anual
+  // c.	Días delimitados
+  // d.	Selector de días
+  // e.	Fecha exacta
+  tiposDuracion = [{ nombre: 'Diario', value: 'diario' }, { nombre: 'Anual', value: 'anual' }, { nombre: 'Días delimitados', value: 'dias_delimitados' }, { nombre: 'Selector de días', value: 'selector_dias' }, { nombre: 'Fecha exacta', value: 'fecha_exacta' }]; 
+
 
   fileName = '';
   selectedFile! : File;
@@ -81,6 +88,7 @@ export class ProductConfiguratorComponent {
     }
   ];
 
+  camposTiempo : Campo[] = [];
   camposGenerales : Campo[] = [];
   camposAsegurado : Campo[] = [];
   campos : Campo[] = [];
@@ -156,6 +164,8 @@ export class ProductConfiguratorComponent {
           });
         });
       } else {
+        this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_duracion', opciones: []}]
+
         this.camposGenerales= [
           { id: '', nombre: 'Codigo producto', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
           { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
@@ -183,7 +193,6 @@ export class ProductConfiguratorComponent {
           { id: '', nombre: 'Fecha de nacimiento', tipo_dato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado', opciones: []},
         ];
         this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
-        // Campos con opciones de prueba:
       }
     });
     
@@ -200,8 +209,7 @@ export class ProductConfiguratorComponent {
   }
 
   onTipoDatoChange(campo: any) {
-    console.log(this.campos);
-    if (campo.tipo_dato === 'select') {
+    if (campo.tipo_dato === 'select' || campo.tipo_dato === 'selector_dias' || campo.tipo_dato === 'dias_delimitados') {
       // Inicializar el array de opciones si está indefinido
       if (campo.opciones.length === 0) {
         campo.opciones = [{id:'', nombre: '', precio: ''}];
@@ -300,8 +308,16 @@ export class ProductConfiguratorComponent {
       console.log('Campos con Opciones:', camposConOpciones);
       console.log('data' , {
         ...nuevoProducto,
-        camposConOpciones: camposConOpciones
+        camposConOpciones: camposConOpciones,
+        duracion: this.camposTiempo
       });
+
+      const dataTipoProducto = {
+        ...nuevoProducto,
+        camposConOpciones: camposConOpciones,
+        duracion: this.camposTiempo
+      };
+      
 
 
       // EDITAR EL PRODUCTO:
@@ -316,8 +332,6 @@ export class ProductConfiguratorComponent {
             // Si el campo no tiene ID, se crea un nuevo registro
             this.crearCampoConOpciones(campo, this.id_tipo_producto_editado);
           }
-          
-          
         });
 
         this.camposService.editCamposPorTipoProducto(this.id_tipo_producto_editado, nuevoProducto.campos).subscribe((res) => {
@@ -351,7 +365,7 @@ export class ProductConfiguratorComponent {
       // CREAR UN NUEVO PRODUCTO
       } else {
 
-        this.productService.crearTipoProducto(nuevoProducto, camposConOpciones).subscribe((res) => {
+        this.productService.crearTipoProducto(dataTipoProducto).subscribe((res) => {
 
           // La respuesta contiene la información del nuevo tipo de producto
           const id_tipo_producto = res.id.toString();
@@ -413,7 +427,7 @@ export class ProductConfiguratorComponent {
   // VERIFICAR FORMULARIO:
   verificarCampos(camposFormulario: any[], editando : boolean): boolean {
 
-    
+    camposFormulario.push(...this.camposTiempo); // Añadir los campos de tiempo al array de campos
     const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(camposFormulario);
     const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
     const campoConOpcionesRepetidas = this.campoConOpcionesRepetidas(camposFormulario);

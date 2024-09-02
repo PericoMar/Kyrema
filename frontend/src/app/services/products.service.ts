@@ -27,18 +27,13 @@ export class ProductsService {
       map((productos: any[]) => productos.filter(producto => producto.anulado == 1)));
   }
 
-  crearTipoProducto(nuevoTipoProducto: any, camposConOpciones: any[]): Observable<any> {
-    // Combina nuevoTipoProducto con camposConOpciones en un solo objeto
-    const data = {
-      ...nuevoTipoProducto,
-      camposConOpciones: camposConOpciones
-    };
+  crearTipoProducto(dataTipoProducto : any): Observable<any> {
   
     const headers = new HttpHeaders({
       'Content-Type': 'application/json' // Cambiar si es necesario
     });
   
-    return this.http.post<any>(`${this.apiUrl}/crear-tipo-producto`, data, { headers });
+    return this.http.post<any>(`${this.apiUrl}/crear-tipo-producto`, dataTipoProducto, { headers });
   }
 
   subirPlantilla(letrasIdentificacion: any, plantilla: File): Observable<any>{
@@ -92,5 +87,9 @@ export class ProductsService {
 
   addNuevosCampos(letras_identificacion: any, campos :any): Observable<any>{
     return this.http.post<any>(`${this.apiUrl}/add-campos/${letras_identificacion}`, {campos});
+  }
+
+  getDuraciones(nombreTabla: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/duraciones/${nombreTabla}`);
   }
 }
