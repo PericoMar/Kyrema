@@ -1,0 +1,3 @@
+C:\Users\[Your Username]\AppData\Local\Temp\mpdf\ttfontdata\
+
+Deberás eliminar la carpeta ttfontdata para forzar a mPDF a regenerar los archivos de fuentes.
