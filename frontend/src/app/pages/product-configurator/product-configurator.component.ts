@@ -47,7 +47,7 @@ export class ProductConfiguratorComponent {
   // c.	Días delimitados
   // d.	Selector de días
   // e.	Fecha exacta
-  tiposDuracion = [{ nombre: 'Diario', value: 'diario' }, { nombre: 'Anual', value: 'anual' }, { nombre: 'Días delimitados', value: 'dias_delimitados' }, { nombre: 'Selector de días', value: 'selector_dias' }, { nombre: 'Fecha exacta', value: 'fecha_exacta' }]; 
+  tiposDuracion = [{ nombre: 'Diario - 1día', value: 'diario' }, {nombre: 'Mensual - 30días' , value: 'mensual'}, { nombre: 'Anual - 365días', value: 'anual' }, { nombre: 'Días delimitados', value: 'dias_delimitados' }, { nombre: 'Selector de días', value: 'selector_dias' }, { nombre: 'Fecha exacta', value: 'fecha_exacta' }]; 
 
 
   fileName = '';
@@ -164,10 +164,12 @@ export class ProductConfiguratorComponent {
           });
         });
       } else {
-        this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_duracion', opciones: []}]
+        this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_duracion', opciones: []}];
 
         this.camposGenerales= [
           { id: '', nombre: 'Codigo producto', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Fecha de inicio', tipo_dato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_fecha', opciones: []},
+          { id: '', nombre: 'Fecha de fin', tipo_dato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_fecha', opciones: []},
           { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
           { id: '', nombre: 'Comercial', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
           { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
@@ -262,6 +264,17 @@ export class ProductConfiguratorComponent {
     
     const editando : boolean = this.id_tipo_producto_editado ? true : false;
 
+    // Poner todas los precios de las opciones de los campos con opciones vacios a 0
+    camposFormulario.forEach((campo) => {
+      if(campo.tipo_dato === 'select') {
+        campo.opciones.forEach((opcion) => {
+          if(opcion.precio === '') {
+            opcion.precio = '0';
+          }
+        });
+      }
+    });
+
     // Verificar datos del formulario
     if (this.plantillaEnUso() && !editando) {
 
@@ -318,7 +331,6 @@ export class ProductConfiguratorComponent {
         duracion: this.camposTiempo
       };
       
-
 
       // EDITAR EL PRODUCTO:
       if(this.id_tipo_producto_editado) {
@@ -425,9 +437,9 @@ export class ProductConfiguratorComponent {
 
 
   // VERIFICAR FORMULARIO:
-  verificarCampos(camposFormulario: any[], editando : boolean): boolean {
+  verificarCampos(campos: any[], editando : boolean): boolean {
 
-    camposFormulario.push(...this.camposTiempo); // Añadir los campos de tiempo al array de campos
+    let camposFormulario = [...campos, ...this.camposTiempo]; // Añadir los campos de tiempo al array de campos
     const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(camposFormulario);
     const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
     const campoConOpcionesRepetidas = this.campoConOpcionesRepetidas(camposFormulario);

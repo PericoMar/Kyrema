@@ -134,6 +134,15 @@ export class ProductFormComponent implements OnInit, OnChanges{
       if(this.product.id != null && this.product.id != ''){
         this.loadAnexoPorProducto();
       }
+      this.getDuracion().subscribe({
+        next: (duracion: any) => {
+          this.duracion = duracion;
+          this.productForm.controls['duracion'].setValue(this.duracion);
+        },
+        error: (error: any) => {
+          console.error('Error loading duracion', error);
+        }
+      });
       this.getPrecioFinal();
       this.isLoadingProduct = false;
     }
@@ -447,9 +456,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
         
         this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio});
       }
-
-
-
       
     });
 
@@ -465,6 +471,15 @@ export class ProductFormComponent implements OnInit, OnChanges{
     console.log(this.productForm.value);
     this.anexos = [];
     this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
+    this.getDuracion().subscribe({
+      next: (duracion: any) => {
+        this.duracion = duracion;
+        this.productForm.controls['duracion'].setValue(this.duracion);
+      },
+      error: (error: any) => {
+        console.error('Error loading duracion', error);
+      }
+    });
   }
 
   isFieldRequired(grupo: string, field: string): boolean {
@@ -482,6 +497,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.productForm.get('prima_del_seguro')?.enable();
     this.productForm.get('cuota_de_asociación')?.enable();
     this.productForm.get('precio_total')?.enable();
+    this.productForm.get('duracion')?.enable();
     console.log(this.productForm.value);
     console.log('Anexos', this.anexos);
 
@@ -489,6 +505,34 @@ export class ProductFormComponent implements OnInit, OnChanges{
     
     this.loadingAction = true;
     const nuevoProducto = this.productForm.value;
+
+    //Agregar fecha de inicio y fecha de fin al objeto nuevoProducto
+    const fecha_inicio = new Date();
+    let fecha_fin = new Date();
+    if(this.tipo_producto.tipo_duracion === 'fecha_exacta'){
+      fecha_fin = new Date(this.duracion);
+      //Cambiar el valor de duracion a la diferencia de días entre la fecha de inicio y la fecha de fin
+      const diffTime = Math.abs(fecha_fin.getTime() - fecha_inicio.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      // Asignar la diferencia en el nuevoProducto
+      nuevoProducto.duracion = diffDays;
+    } else {
+      fecha_fin.setDate(fecha_fin.getDate() + parseInt(this.duracion));
+    }
+
+    const formatFecha = (fecha: Date) => {
+      // Obtener el año, mes y día de la fecha
+      const year = fecha.getFullYear();
+      const month = String(fecha.getMonth() + 1).padStart(2, '0'); // getMonth() devuelve de 0 a 11, por lo que se suma 1
+      const day = String(fecha.getDate()).padStart(2, '0');
+    
+      // Devolver la fecha en formato 'Y-m-d'
+      return `${year}-${month}-${day}`;
+    };
+
+    nuevoProducto.fecha_de_inicio = formatFecha(fecha_inicio);
+    nuevoProducto.fecha_de_fin = formatFecha(fecha_fin);
+    
     
     // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
     const sociedadSeleccionada = this.sociedades.find((sociedad :any)=> sociedad.id === nuevoProducto.sociedad_id);
@@ -504,6 +548,23 @@ export class ProductFormComponent implements OnInit, OnChanges{
     nuevoProducto.numero_anexos = this.anexos.length;
     nuevoProducto.precio_final = this.precioFinal;
 
+    console.log('Nuevo producto', nuevoProducto);
+
+    const arrayUnicoTodosCampos = Object.values(this.camposFormularioPorGrupos).reduce((acc : any, array) => acc.concat(array), []);
+
+    const camposVacios = this.verificarCamposObligatorios(arrayUnicoTodosCampos, nuevoProducto);
+    if(camposVacios.length > 0){
+      this.snackBarService.openSnackBar('Hay campos obligatorios sin rellenar.');
+      this.limpiarEstilosErrores();
+      this.aplicarEstilosErrores(camposVacios.map((campo: any) => campo.name));
+      this.productForm.get('prima_del_seguro')?.disable();
+      this.productForm.get('cuota_de_asociación')?.disable();
+      this.productForm.get('precio_total')?.disable();
+      this.productForm.get('duracion')?.disable();
+      this.loadingAction = false;
+      return;
+    }
+
     //Si no tiene id se está creando un nuevo producto
     if(this.productForm.value.id == null || this.productForm.value.id == ''){
       delete nuevoProducto.id;
@@ -513,6 +574,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('prima_del_seguro')?.disable();
           this.productForm.get('cuota_de_asociación')?.disable();
           this.productForm.get('precio_total')?.disable();
+          this.productForm.get('duracion')?.disable();
           this.productNotificationService.notifyChangesOnProducts();
           this.conectarAnexosConProductos(this.anexos, data.id);
           this.snackBarService.openSnackBar('Producto creado con exito')
@@ -531,12 +593,16 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('prima_del_seguro')?.disable();
           this.productForm.get('cuota_de_asociación')?.disable();
           this.productForm.get('precio_total')?.disable();
+          this.productForm.get('duracion')?.disable();
           this.productNotificationService.notifyChangesOnProducts();
           this.conectarAnexosConProductos(this.anexos, data.id);
           this.loadingAction = false; 
         },
         error => {
           console.log(error);
+        },
+        () => {
+          this.snackBarService.openSnackBar('Producto editado con exito');
         }
       )
     }
@@ -588,17 +654,31 @@ export class ProductFormComponent implements OnInit, OnChanges{
       return this.productsService.getDuraciones(this.tipo_producto.duracion).pipe(
         map((duraciones: any) => {
           this.duraciones = duraciones;
+          this.duracion = this.duraciones[0].duracion;
           this.productForm.get('duracion')?.enable();
-          return this.duraciones[0].duracion;  // Devuelve la primera duración
+          return this.duracion;  // Devuelve la primera duración
         }),
         catchError((error) => {
           console.error('Error loading duracion', error);
           return of(null); // Retorna un valor por defecto o maneja el error
         })
       );
+    } else if(this.tipo_producto.tipo_duracion === 'fecha_exacta') {
+
+      this.productForm.get('duracion')?.enable();
+      return of(this.tipo_producto.duracion);
+
     } else {
+
       return of(this.tipo_producto.duracion);
     }
+  }
+
+  changeDuracion(event : Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    const selectedOption = this.duraciones.find((opcion: any) => opcion.duracion === selectedValue);
+    this.productForm.controls['duracion'].setValue(selectedOption.duracion);
+    this.duracion = selectedOption.duracion;
   }
 
   downloadAnexo(tipoAnexo: any) {
@@ -631,6 +711,38 @@ export class ProductFormComponent implements OnInit, OnChanges{
       complete: () => {
         // Restablece el estado de carga solo para el botón específico
         this.downloadingAnexo[tipoAnexo.id] = false;
+      }
+    });
+  }
+
+  verificarCamposObligatorios(arrayUnicoTodosCampos : any, nuevoProducto : any) : any[] {
+    let camposVacios : any = [];
+    arrayUnicoTodosCampos.forEach((campo : any) => {
+      if (campo.obligatorio === '1') {  // Si el campo es obligatorio
+        console.log(nuevoProducto[campo.name]);
+        if (!nuevoProducto[campo.name] || nuevoProducto[campo.name] === '') {
+          camposVacios.push(campo);
+        }
+      }
+    });
+
+    return camposVacios;
+  }
+
+  limpiarEstilosErrores() {
+    // Quitar la clase de error de todos los campos
+    const campos = document.querySelectorAll('input');
+    campos.forEach((campo: HTMLInputElement) => {
+      campo.classList.remove('input-error');
+    });
+  }
+
+  aplicarEstilosErrores(camposVacios: string[]) {
+    // Aplicar la clase de error a los campos vacíos
+    camposVacios.forEach(campoNombre => {
+      const campo = document.getElementById(campoNombre);
+      if (campo) {
+        campo.classList.add('input-error');
       }
     });
   }

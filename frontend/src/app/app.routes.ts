@@ -69,8 +69,8 @@ export const routes: Routes = [
         { path: 'configurador-productos' , component: ProductConfiguratorComponent},
         { path: 'configurador-productos/:id' , component: ProductConfiguratorComponent},
         { path: 'subproductos/:product', component: SubproductManagerComponent, },
-        { path: 'configurador-subproductos' , component: SubproductConfiguratorComponent},
-        { path: 'configurador-subproductos/:id' , component: SubproductConfiguratorComponent},
+        { path: 'configurador-subproductos/:producto-asociado' , component: SubproductConfiguratorComponent},
+        { path: 'configurador-subproductos/:producto-asociado/:id' , component: SubproductConfiguratorComponent},
     ]
     },
     { path: '**', redirectTo: 'login' },

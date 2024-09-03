@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ActivatedRoute } from '@angular/router';
 
 
 interface Campo {
@@ -40,7 +41,8 @@ export class SubproductConfiguratorComponent {
     private familyService: FamilyProductService,
     private dialog: MatDialog,
     private anexosService: AnexosService,
-    private ratesService : RatesService
+    private ratesService : RatesService,
+    private route: ActivatedRoute
   ) {
     this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
       this.tiposProductos = tiposProducto;
@@ -55,8 +57,20 @@ export class SubproductConfiguratorComponent {
     (error : any) => {
       console.log(error)
     });
+
+    this.route.paramMap.subscribe(params => {
+      this.id_tipo_producto = params.get('producto-asociado');
+      this.subprodcuto_id = params.get('id');
+      this.tiposProductos.find((tipo : any) => {
+        if(tipo.id == this.id_tipo_producto) {
+          this.tipoProductoAsociado = tipo;
+        }
+      });
+    });
    }
-  
+
+  subprodcuto_id! : any;
+  id_tipo_producto! : any;
   
   fileName = '';
   selectedFile! : File;
@@ -165,6 +179,10 @@ export class SubproductConfiguratorComponent {
         console.log(error);
       });
     }
+  }
+
+  changeOnHeredadas(event : any) {
+    console.log(event);
   }
 
   // VERIFICAR FORMULARIO:

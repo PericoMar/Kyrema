@@ -27,6 +27,7 @@ export class SubproductManagerComponent {
   ) {
     this.route.paramMap.subscribe(params => {
       this.productId = params.get('product');
+      this.configUrl = `/configurador-subproductos/${this.productId}`;
     });
   }
   ngOnInit(): void {

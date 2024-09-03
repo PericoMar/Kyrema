@@ -39,7 +39,7 @@
                   </div>
                 </div>
                 </header>
-            <h2>Datos del anexo</h2>
+            <h2>Datos adicionales del subproducto</h2>
 
             <hr>
             <div class="overflow-scroll flexible">
@@ -123,6 +123,13 @@
           <h2>Tarifas</h2>
           <hr>
 
+          <!-- Input para comprobar si son heredadas del producto padre -->
+          <div class="input-container">
+            <label for="heredadas" class="input-label">Heredadas del producto padre</label>
+            <div class="input-suffix-container">
+              <mat-checkbox (change)="changeOnHeredadas($event)" name="heredadas"></mat-checkbox>
+            </div>
+          </div>
           <fieldset class="input-group">
             @for(tarifa of tarifas ; track tarifa.id){
               <div class="input-container prima_del_seguro">

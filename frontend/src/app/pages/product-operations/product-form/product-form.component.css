@@ -87,6 +87,10 @@ input.disabled{
     width: 30%;
 }
 
+.date{
+    width: 10%;
+}
+
 .divider{
     margin-bottom: 20px;
     opacity: 0.5;
@@ -96,6 +100,11 @@ input.disabled{
     margin-bottom: 5px;
 }
 
+
+.input-error {
+    border-color: rgb(252, 130, 130);
+    background-color: rgb(252, 243, 243);
+}
 
 
 .clean-inputs {
@@ -193,6 +202,10 @@ hr {
 
     .input-container.input-group{
         width: 100% !important;
+    }
+
+    .date{
+        width: 100%;
     }
   }
 
