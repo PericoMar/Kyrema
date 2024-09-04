@@ -3,7 +3,7 @@
     <section class="listado section-block">
         <header class="space-between-header">
             <h1>Listado de {{ productName }}</h1>
-            <a [routerLink]="['/anulados', productUrl]" routerLinkActive="active" class="button-historial">Ver anulados</a>
+              <a [routerLink]="['/anulados', productUrl]" routerLinkActive="active" class="button-historial">Ver anulados</a>
         </header>
         <app-table (productSelectedChange)="onProductSelectedChanged($event)" [columnDefs]="columnDefs" [rowData]="rowData"></app-table>
     </section>
