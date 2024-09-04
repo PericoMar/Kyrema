@@ -408,6 +408,7 @@ export class ProductConfiguratorComponent {
 
       
     
+      }
     }
   }
 
