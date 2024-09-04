@@ -437,7 +437,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
               obligatorio ? new FormControl('', Validators.required) : new FormControl('')
             );
             this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio, opciones});
-            this.productForm.controls[name].setValue('0');
+            this.productForm.controls[name].setValue('');
           },
           error: (error: any) => {
             console.error('Error loading opciones', error);
@@ -447,7 +447,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
       } else {
         // Saltar el procesamiento si el grupo es 'datos_asegurado'
-        if (campo.grupo !== 'datos_asegurado') {
+        if (campo.grupo !== 'datos_asegurado' && campo.grupo !== 'datos_duracion') {
           this.productForm.addControl(
             name,
             obligatorio ? new FormControl('', Validators.required) : new FormControl('')
@@ -556,6 +556,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
     const camposVacios = this.verificarCamposObligatorios(arrayUnicoTodosCampos, nuevoProducto);
     if(camposVacios.length > 0){
+      console.log(nuevoProducto.duracion);
       this.snackBarService.openSnackBar('Hay campos obligatorios sin rellenar.');
       console.log('Campos vacios', camposVacios);
       this.limpiarEstilosErrores();
@@ -725,7 +726,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
     let camposVacios : any = [];
     arrayUnicoTodosCampos.forEach((campo : any) => {
       if (campo.obligatorio === '1') {  // Si el campo es obligatorio
-        console.log(nuevoProducto[campo.name]);
         if (!nuevoProducto[campo.name] || nuevoProducto[campo.name] === '') {
           camposVacios.push(campo);
         }

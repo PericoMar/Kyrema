@@ -109,7 +109,7 @@ export class ProductOperationsComponent {
         this.camposService.getCamposVisiblesPorTipoProducto(this.familyProduct.id).subscribe(
           data => {
             this.columnDefs = data.map((campo : any) => {
-              return { headerName: campo.nombre, field: campo.nombre.replace(/\s/g, '_').toLowerCase() };
+              return { headerName: campo.nombre, field: campo.nombre_codigo ? campo.nombre_codigo : campo.nombre.toLowerCase().replace(/ /g, "_") };
             });
             // Agrega la columna 'Acciones'
             this.columnDefs.push({

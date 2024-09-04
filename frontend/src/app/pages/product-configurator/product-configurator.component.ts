@@ -164,7 +164,7 @@ export class ProductConfiguratorComponent {
           });
         });
       } else {
-        this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_duracion', opciones: []}];
+        this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_duracion', opciones: []}];
 
         this.camposGenerales= [
           { id: '', nombre: 'Codigo producto', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_generales', opciones: []},
