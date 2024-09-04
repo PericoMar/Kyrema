@@ -92,4 +92,5 @@ export class ProductsService {
   getDuraciones(nombreTabla: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/duraciones/${nombreTabla}`);
   }
+
 }

@@ -75,6 +75,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
   anexos: any[] = [];
   camposAnexo!: any;
 
+  subproductos: any[] = [];
+
   loadingAction: boolean = false;
   downloadingAnexo: { [key: string]: boolean } = {};
 
@@ -147,7 +149,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.isLoadingProduct = false;
     }
 
-    if(changes['campos'] || changes['letras_identificacion']){
+    if(changes['letras_identificacion']){
       this.loadTipoProducto();      
       this.createForm(this.campos);
       this.loadSociedades(); 
@@ -191,6 +193,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
             console.error('Error loading duracion', error);
           }
         });
+        // this.loadSubproductos(this.tipo_producto.id);
         this.loadPago(this.societyService.getCurrentSociety().id);
         // Aquí se cargan todos los datos necesarios para gestionar los anexos:
         this.loadTiposAnexos();
@@ -215,6 +218,17 @@ export class ProductFormComponent implements OnInit, OnChanges{
         console.error(error);
       });
   }
+
+  // loadSubproductos(padre_id : any){
+  //   this.familyService.getSubproductosByPadreId(padre_id).subscribe({
+  //     next: (subproductos: any[]) => {
+  //       this.subproductos = subproductos;
+  //     },
+  //     error: (error: any) => {
+  //       console.error('Error loading subproductos', error);
+  //     }
+  //   }); 
+  // }
 
   loadTiposAnexos(){
     //  Cargar los tipos de anexos asociados al tipo de producto

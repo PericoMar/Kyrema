@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute } from '@angular/router';
+import { ProductsService } from '../../services/products.service';
 
 
 interface Campo {
@@ -41,7 +42,7 @@ export class SubproductConfiguratorComponent {
   constructor(
     private familyService: FamilyProductService,
     private dialog: MatDialog,
-    private anexosService: AnexosService,
+    private productsService: ProductsService,
     private ratesService : RatesService,
     private route: ActivatedRoute
   ) {
@@ -54,7 +55,7 @@ export class SubproductConfiguratorComponent {
       console.log(error)
     });
 
-    this.anexosService.getAllTiposAnexos().subscribe((tiposAnexos : any) => {
+    this.familyService.getAllTipos().subscribe((tiposAnexos : any) => {
       this.tiposAnexos = tiposAnexos;
     },
     (error : any) => {
@@ -78,7 +79,7 @@ export class SubproductConfiguratorComponent {
   tiposAnexos: any[] = [];
   tipoProductoAsociado = '';
   padre_id! : any;
-  nombreAnexo = '';
+  nombreSubproducto = '';
   letrasIdentificacion = '';
 
   cargandoNuevoAnexo : boolean = false;
@@ -116,7 +117,7 @@ export class SubproductConfiguratorComponent {
     this.campos.splice(index, 1);
   }
 
-  crearTipoAnexo(){
+  crearSubproducto(){
     this.cargandoNuevoAnexo = true;
     const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(this.campos);
 
@@ -140,7 +141,7 @@ export class SubproductConfiguratorComponent {
 
       this.showErrorDialog('El formato de las filas o columnas no es correcto en el campo: ' + campoFormatoFilasColumnasIncorrecto);
 
-    } else if(this.tarifasVacias()) {
+    } else if(this.tarifasVacias() && !this.tarifasHeredadas) {
 
       this.showErrorDialog('Hay tarifas sin rellenar');
 
@@ -149,18 +150,18 @@ export class SubproductConfiguratorComponent {
       this.showErrorDialog('La fila y columna del campo: ' + campoFilaColumnaRepetida + ' ya están siendo usadas');
 
     } else {
-      const nuevoTipoAnexo = {
-        nombre: this.nombreAnexo,
+      const nuevoSubproducto = {
+        nombre: this.nombreSubproducto,
         plantilla_path: this.selectedFile,
         letras_identificacion: AppConfig.PREFIJO_LETRAS_IDENTIFICACION_ANEXOS + this.letrasIdentificacion,
         campos: this.campos,
         padre_id: this.padre_id,
       }
 
-      this.anexosService.createTipoAnexo(nuevoTipoAnexo).subscribe((response: any) => {
+      this.productsService.crearTipoProducto(nuevoSubproducto).subscribe((response: any) => {
         console.log(response);
 
-        this.anexosService.subirPlantillaAnexo(response.letras_identificacion, this.selectedFile).subscribe((response: any) => {
+        this.productsService.subirPlantilla(response.letras_identificacion, this.selectedFile).subscribe((response: any) => {
           console.log(response);
         });
 
