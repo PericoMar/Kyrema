@@ -563,7 +563,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.productForm.get('prima_del_seguro')?.disable();
       this.productForm.get('cuota_de_asociación')?.disable();
       this.productForm.get('precio_total')?.disable();
-      this.productForm.get('duracion')?.disable();
+      if(this.tipo_producto.tipo_duracion != 'selector_dias' && this.tipo_producto.tipo_duracion != 'fecha_exacta'){
+        console.log("Entro en desactivar duracion");
+        this.productForm.get('duracion')?.disable();
+      }
       this.loadingAction = false;
       return;
     }
