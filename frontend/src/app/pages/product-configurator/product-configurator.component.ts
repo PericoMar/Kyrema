@@ -405,7 +405,6 @@ export class ProductConfiguratorComponent {
         (error) => {
           console.log(error);
         });
-      }
 
       
     

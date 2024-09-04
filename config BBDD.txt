@@ -12,5 +12,9 @@ Ejecutar una sola migración:
 php artisan migrate --path=/database/migrations/2024_06_19_102058_create_sociedad_table.php
 
 	
- Lista de rutas
+Lista de rutas
 php artisan route:list
+
+Borrar un tipo de producto
+php artisan delete:product-data 7
+
