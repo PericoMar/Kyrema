@@ -27,6 +27,7 @@ export class ProductsManagerComponent {
   ngOnInit(): void {
     this.familyService.getAllTipos().subscribe({
       next: (tipos: any[]) => {
+        tipos = tipos.filter(tipo => tipo.padre_id === null);
         this.insurances = tipos.map(tipo => ({ id: tipo.id, nombre: tipo.nombre }));
         console.log('Insurances: ', this.insurances);
       },

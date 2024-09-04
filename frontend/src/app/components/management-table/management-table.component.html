@@ -24,7 +24,7 @@
                             style="margin-right: 8px;">
                             Editar
                         </button>
-                        @if(dataType == 'producto') {
+                        @if(dataType == 'producto' && data.padre_id == null) {
                             <button 
                                 mat-button color="secondary" 
                                 [routerLink]="['/subproductos', data.id]">

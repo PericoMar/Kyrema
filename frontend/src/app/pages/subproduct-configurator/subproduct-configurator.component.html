@@ -17,11 +17,11 @@
                   </div>
                   <div>
                     <label for="nombre_producto">Tipo producto asociado</label>
-                    <select [(ngModel)]="tipoProductoAsociado" name="tipoProductoAsociado">
-                        @for(tipo of tiposProductos ; track $index) {
+                    <select [(ngModel)]="padre_id" name="tipoProductoAsociado">
+                        @for(tipo of tiposProductos ; track tipo.id) {
                           <option value="{{tipo.id}}">{{tipo.nombre}}</option>
                         }
-                      </select>
+                    </select>
                   </div>
                   <div class="input-file">
                     <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
@@ -124,23 +124,25 @@
           <hr>
 
           <!-- Input para comprobar si son heredadas del producto padre -->
-          <div class="input-container">
-            <label for="heredadas" class="input-label">Heredadas del producto padre</label>
+          <div class="heredadas">
+            <label for="heredadas" class="label-heredadas">Heredadas del producto padre</label>
             <div class="input-suffix-container">
               <mat-checkbox (change)="changeOnHeredadas($event)" name="heredadas"></mat-checkbox>
             </div>
           </div>
-          <fieldset class="input-group">
-            @for(tarifa of tarifas ; track tarifa.id){
-              <div class="input-container prima_del_seguro">
-                <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
-                <div class="input-suffix-container">
-                  <input [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
-                  <span class="input-suffix">€</span>
+          @if(!tarifasHeredadas){
+            <fieldset class="input-group">
+              @for(tarifa of tarifas ; track tarifa.id){
+                <div class="input-container prima_del_seguro">
+                  <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
+                  <div class="input-suffix-container">
+                    <input [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
+                    <span class="input-suffix">€</span>
+                  </div>
                 </div>
-              </div>
-            }
-          </fieldset>
+              }
+            </fieldset>
+          }
 
           <footer class="form-footer">
             @if(cargandoNuevoAnexo){

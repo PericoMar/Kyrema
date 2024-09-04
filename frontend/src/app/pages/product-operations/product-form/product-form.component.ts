@@ -542,6 +542,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
     const comercial_id = this.userService.getCurrentUser().id;
     nuevoProducto.comercial_id = comercial_id;
 
+    nuevoProducto.comercial = this.userService.getCurrentUser().nombre;
+
     const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
     nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
 
@@ -555,6 +557,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     const camposVacios = this.verificarCamposObligatorios(arrayUnicoTodosCampos, nuevoProducto);
     if(camposVacios.length > 0){
       this.snackBarService.openSnackBar('Hay campos obligatorios sin rellenar.');
+      console.log('Campos vacios', camposVacios);
       this.limpiarEstilosErrores();
       this.aplicarEstilosErrores(camposVacios.map((campo: any) => campo.name));
       this.productForm.get('prima_del_seguro')?.disable();
@@ -695,7 +698,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
         const nombreSocio = this.productForm.value.nombre_socio ? `_${this.productForm.value.nombre_socio}` : '';
         const apellido1 = this.productForm.value.apellido_1 ? `_${this.productForm.value.apellido_1}` : '';
         const apellido2 = this.productForm.value.apellido_2 ? `_${this.productForm.value.apellido_2}` : '';
-        const nombreArchivo = `${tipoAnexo.nombre}_${this.productForm.value.codigo_producto}${nombreSocio}${apellido1}${apellido2}.pdf`;
+        const nombreArchivo = `${tipoAnexo.letras_identificacion}_${this.productForm.value.codigo_producto}${nombreSocio}${apellido1}${apellido2}.pdf`;
 
         a.download = nombreArchivo;
 

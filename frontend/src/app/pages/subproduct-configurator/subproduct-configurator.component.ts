@@ -37,6 +37,7 @@ interface Campo {
 })
 
 export class SubproductConfiguratorComponent {
+  
   constructor(
     private familyService: FamilyProductService,
     private dialog: MatDialog,
@@ -46,6 +47,8 @@ export class SubproductConfiguratorComponent {
   ) {
     this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
       this.tiposProductos = tiposProducto;
+      this.tipoProductoAsociado = this.tiposProductos.find((tipo : any) => tipo.id == this.padre_id);
+      console.log(this.tipoProductoAsociado);
     },
     (error) => {
       console.log(error)
@@ -59,13 +62,9 @@ export class SubproductConfiguratorComponent {
     });
 
     this.route.paramMap.subscribe(params => {
-      this.id_tipo_producto = params.get('producto-asociado');
+      this.padre_id = params.get('producto-asociado');
       this.subprodcuto_id = params.get('id');
-      this.tiposProductos.find((tipo : any) => {
-        if(tipo.id == this.id_tipo_producto) {
-          this.tipoProductoAsociado = tipo;
-        }
-      });
+      
     });
    }
 
@@ -78,6 +77,7 @@ export class SubproductConfiguratorComponent {
   tiposProductos: any[] = [];
   tiposAnexos: any[] = [];
   tipoProductoAsociado = '';
+  padre_id! : any;
   nombreAnexo = '';
   letrasIdentificacion = '';
 
@@ -103,6 +103,8 @@ export class SubproductConfiguratorComponent {
       valor: ""
     }
   ];
+
+  tarifasHeredadas: boolean = false;
 
   campos: Campo[] = [{ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' , opciones: []}];
 
@@ -152,7 +154,7 @@ export class SubproductConfiguratorComponent {
         plantilla_path: this.selectedFile,
         letras_identificacion: AppConfig.PREFIJO_LETRAS_IDENTIFICACION_ANEXOS + this.letrasIdentificacion,
         campos: this.campos,
-        tipoProductoAsociado: this.tipoProductoAsociado,
+        padre_id: this.padre_id,
       }
 
       this.anexosService.createTipoAnexo(nuevoTipoAnexo).subscribe((response: any) => {
@@ -182,7 +184,7 @@ export class SubproductConfiguratorComponent {
   }
 
   changeOnHeredadas(event : any) {
-    console.log(event);
+    this.tarifasHeredadas = !this.tarifasHeredadas;
   }
 
   // VERIFICAR FORMULARIO:

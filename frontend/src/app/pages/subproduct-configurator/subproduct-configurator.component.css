@@ -255,6 +255,17 @@
   .add-field:hover svg {
     transform: rotate(360deg);
   }
+
+  .heredadas{
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .label-heredadas{
+    width: 250px;
+  }
   
   .form-footer{
     display: flex;
