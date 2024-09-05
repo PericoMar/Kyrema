@@ -35,6 +35,8 @@ export class ProductOperationsComponent {
   camposLoaded: boolean = false;
   formLoaded: boolean = false;
 
+  camposSubproductos: any[] = [];
+
   
 
   constructor(
@@ -95,6 +97,7 @@ export class ProductOperationsComponent {
         }
       }
       this.snackBarService.openSnackBar("Producto seleccionado");
+      this.limpiarEstilosErrores();
     }
   }
 
@@ -105,6 +108,7 @@ export class ProductOperationsComponent {
       (data : any) => {
         this.familyProduct = data;
         this.productName = this.familyProduct.nombre;
+        this.getAllCamposSubproductos(data.subproductos);
         console.log("Data",this.familyProduct);
         this.camposService.getCamposVisiblesPorTipoProducto(this.familyProduct.id).subscribe(
           data => {
@@ -208,6 +212,25 @@ export class ProductOperationsComponent {
     console.log('Form is loaded:', isLoaded);
     this.formLoaded = isLoaded;
     // Aquí puedes manejar lo que sucede cuando el formulario está cargado
+  }
+
+  getAllCamposSubproductos(subproductos : any){
+    subproductos.forEach((subproducto : any) => {
+      subproducto.campos.forEach((campo : any) => {
+        if(campo.grupo === "datos_producto"){
+          this.camposSubproductos.push(campo);
+        }
+      });
+    });
+    console.log("Campos subproductos", this.camposSubproductos);
+  }
+
+  limpiarEstilosErrores() {
+    // Quitar la clase de error de todos los campos
+    const campos = document.querySelectorAll('input');
+    campos.forEach((campo: HTMLInputElement) => {
+      campo.classList.remove('input-error');
+    });
   }
 
 }

@@ -18,7 +18,6 @@ import { AnulacionesPageComponent } from './pages/anulaciones-page/anulaciones-p
 import { AnexosManagerComponent } from './pages/anexos-manager/anexos-manager.component';
 import { AnexosConfiguratorComponent } from './pages/anexos-configurator/anexos-configurator.component';
 import { SubproductManagerComponent } from './pages/subproduct-manager/subproduct-manager.component';
-import { SubproductConfiguratorComponent } from './pages/subproduct-configurator/subproduct-configurator.component';
 
 export const routes: Routes = [
     {
@@ -69,8 +68,8 @@ export const routes: Routes = [
         { path: 'configurador-productos' , component: ProductConfiguratorComponent},
         { path: 'configurador-productos/:id' , component: ProductConfiguratorComponent},
         { path: 'subproductos/:product', component: SubproductManagerComponent, },
-        { path: 'configurador-subproductos/:producto-asociado' , component: SubproductConfiguratorComponent},
-        { path: 'configurador-subproductos/:producto-asociado/:id' , component: SubproductConfiguratorComponent},
+        { path: 'configurador-subproductos/:padre_id' , component: ProductConfiguratorComponent},
+        { path: 'configurador-subproductos/:padre_id/:id' , component: ProductConfiguratorComponent},
     ]
     },
     { path: '**', redirectTo: 'login' },

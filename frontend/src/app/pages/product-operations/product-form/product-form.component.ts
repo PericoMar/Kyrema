@@ -36,7 +36,9 @@ interface Campo {
 interface CampoFormulario{
   name: string,
   label: string,
-  tipo_dato: string,  
+  tipo_dato: string, 
+  obligatorio: boolean,
+  opciones?: any[] 
 }
 
 @Component({
@@ -74,8 +76,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   tarifasAnexos!: any;
   anexos: any[] = [];
   camposAnexo!: any;
-
-  subproductos: any[] = [];
+  @Input() camposSubproductos!: any[];
 
   loadingAction: boolean = false;
   downloadingAnexo: { [key: string]: boolean } = {};
@@ -149,7 +150,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.isLoadingProduct = false;
     }
 
-    if(changes['letras_identificacion']){
+    if(changes['campos']){
       this.loadTipoProducto();      
       this.createForm(this.campos);
       this.loadSociedades(); 
@@ -351,6 +352,26 @@ export class ProductFormComponent implements OnInit, OnChanges{
     }
   }
 
+  onSubproductoChange(event: Event) {
+    this.eliminateCamposSubproducto();
+
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    console.log('Selected value:', selectedValue);
+    // Coger el subproducto de la lista de subproductos this.tipo_producto.subproductos
+    const selectedSubproducto = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id == selectedValue);
+    console.log('Selected subproducto:', selectedSubproducto);
+    // Actualizar el precio total con el precio del subproducto seleccionado
+    this.productForm.controls['prima_del_seguro'].setValue(selectedSubproducto.tarifas.prima_seguro);
+    this.productForm.controls['cuota_de_asociación'].setValue(selectedSubproducto.tarifas.cuota_asociacion);
+    this.productForm.controls['precio_total'].setValue(selectedSubproducto.tarifas.precio_total);
+
+    selectedSubproducto.campos.forEach((campo: any) => {
+      this.añadirCampoAlFormulario(campo);
+    });
+
+    this.getPrecioFinal();
+  }
+
   changeOnSelect(event: Event, campo: any): void {
     const selectedValue = (event.target as HTMLSelectElement).value;
     const selectedOption = campo.opciones.find((opcion: any) => opcion.nombre === selectedValue);
@@ -402,7 +423,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   createForm(campos: Campo[]) {
-    
+    const today = new Date().toISOString().split('T')[0];
+
     this.productForm = this.fb.group({
       id: [''],
       sociedad_id: ['', Validators.required],
@@ -418,58 +440,19 @@ export class ProductFormComponent implements OnInit, OnChanges{
       provincia: ['', Validators.required],
       codigo_postal: ['', Validators.required],
       fecha_de_nacimiento: ['', Validators.required],
+      subproducto: ['', Validators.required],
+      fecha_de_inicio: [today , Validators.required],
+      duracion: [{value: '', disabled: true}, Validators.required],
       prima_del_seguro: [{value: '', disabled: true}, Validators.required],
       cuota_de_asociación: [{value: '', disabled: true}, Validators.required],
       precio_total: [{value: '', disabled: true}, Validators.required],
       tipo_de_pago_id: ['', Validators.required],
-      duracion: [{value: '', disabled: true}, Validators.required],
     });
     
     this.camposFormularioPorGrupos = {};
     campos.forEach((campo : Campo) => {
 
-      // Este if lo que hace es que si no existe el grupo en el array asociativo lo crea:
-      if (this.camposFormularioPorGrupos[campo.grupo] == null) {
-        this.camposFormularioPorGrupos[campo.grupo] = [];
-      }
-      let name; 
-      if(campo.nombre_codigo != null){
-        name = campo.nombre_codigo;
-      } else {
-        name = campo.nombre.replace(/ /g, '_').toLowerCase();
-      }
-      const label = campo.nombre;
-      const tipo_dato = campo.tipo_dato;
-      const obligatorio = campo.obligatorio;
-
-      if(campo.tipo_dato == 'select'){
-
-        this.camposService.getOpcionesPorCampo(campo.id).subscribe({
-          next: (opciones: any) => {
-            this.productForm.addControl(
-              name,
-              obligatorio ? new FormControl('', Validators.required) : new FormControl('')
-            );
-            this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio, opciones});
-            this.productForm.controls[name].setValue('');
-          },
-          error: (error: any) => {
-            console.error('Error loading opciones', error);
-          }
-        });
-
-
-      } else {
-        // Saltar el procesamiento si el grupo es 'datos_asegurado'
-        if (campo.grupo !== 'datos_asegurado' && campo.grupo !== 'datos_duracion') {
-          this.productForm.addControl(
-            name,
-            obligatorio ? new FormControl('', Validators.required) : new FormControl('')
-          );
-        }
-        
-        this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio});
-      }
+      this.añadirCampoAlFormulario(campo);
       
     });
 
@@ -521,12 +504,12 @@ export class ProductFormComponent implements OnInit, OnChanges{
     const nuevoProducto = this.productForm.value;
 
     //Agregar fecha de inicio y fecha de fin al objeto nuevoProducto
-    const fecha_inicio = new Date();
+    const fecha_emision = new Date();
     let fecha_fin = new Date();
     if(this.tipo_producto.tipo_duracion === 'fecha_exacta'){
       fecha_fin = new Date(this.duracion);
       //Cambiar el valor de duracion a la diferencia de días entre la fecha de inicio y la fecha de fin
-      const diffTime = Math.abs(fecha_fin.getTime() - fecha_inicio.getTime());
+      const diffTime = Math.abs(fecha_fin.getTime() - fecha_emision.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       // Asignar la diferencia en el nuevoProducto
       nuevoProducto.duracion = diffDays;
@@ -544,7 +527,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
       return `${year}-${month}-${day}`;
     };
 
-    nuevoProducto.fecha_de_inicio = formatFecha(fecha_inicio);
+
+    nuevoProducto.fecha_de_emision = formatFecha(fecha_emision);
     nuevoProducto.fecha_de_fin = formatFecha(fecha_fin);
     
     
@@ -766,5 +750,84 @@ export class ProductFormComponent implements OnInit, OnChanges{
       }
     });
   }
+
+  eliminateCamposSubproducto() {
+    console.log('Antes', this.camposFormularioPorGrupos);
+    console.log('Campos subproductos', this.camposSubproductos);
+    this.camposSubproductos.forEach(campo => {
+        // Verifica si el campo está en el formulario
+        if (this.productForm.contains(campo.name)) {
+            // Elimina el campo del formulario
+            this.productForm.removeControl(campo.name);
+
+            console.log('entra', this.camposFormularioPorGrupos['datos_producto']);
+            // Filtra el campo del array 'camposFormularioPorGrupos' basado en su grupo
+            if (this.camposFormularioPorGrupos['datos_producto']) {
+                
+
+                this.camposFormularioPorGrupos['datos_producto'] = this.camposFormularioPorGrupos['datos_producto'].filter(
+                    (campoFormulario: any) => {
+                      console.log(campo.name);
+                      console.log(campoFormulario);
+                      return campoFormulario.nombre_codigo !== campo.name
+                    }
+                );
+            }
+        }
+    });
+
+    // Log para verificar el estado final de los grupos
+    console.log(this.camposFormularioPorGrupos);
+  }
+
+
+  añadirCampoAlFormulario(campo: Campo) {
+    // Este if lo que hace es que si no existe el grupo en el array asociativo lo crea:
+    if (this.camposFormularioPorGrupos[campo.grupo] == null) {
+      this.camposFormularioPorGrupos[campo.grupo] = [];
+    }
+    let name; 
+    if(campo.nombre_codigo != null){
+      name = campo.nombre_codigo;
+    } else {
+      name = campo.nombre.replace(/ /g, '_').toLowerCase();
+    }
+    const label = campo.nombre;
+    const tipo_dato = campo.tipo_dato;
+    const obligatorio = campo.obligatorio;
+
+    if(campo.tipo_dato == 'select'){
+
+      this.camposService.getOpcionesPorCampo(campo.id).subscribe({
+        next: (opciones: any) => {
+          this.productForm.addControl(
+            name,
+            obligatorio ? new FormControl('', Validators.required) : new FormControl('')
+          );
+          this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio, opciones});
+          this.productForm.controls[name].setValue('');
+        },
+        error: (error: any) => {
+          console.error('Error loading opciones', error);
+        }
+      });
+
+
+    } else {
+      // Saltar el procesamiento si el grupo es 'datos_asegurado'
+      if (campo.grupo !== 'datos_asegurado' && campo.grupo !== 'datos_duracion' && campo.grupo !== 'datos_fecha') {
+        this.productForm.addControl(
+          name,
+          obligatorio ? new FormControl('', Validators.required) : new FormControl('')
+        );
+      }
+      
+      this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio});
+    }
+
+    console.log(this.camposFormularioPorGrupos);
+  }
+
+  
 
 }

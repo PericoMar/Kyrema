@@ -104,7 +104,7 @@
                 @if(campo.tipo_dato == 'select'){
                     <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_producto', campo.name)" class="span-required">*</span></label>
                     <select [id]="campo.name" [formControlName]="campo.name" class="input-field" (change)="changeOnSelect($event, campo)">
-                        <option value="">Seleccione una opcion...</option>
+                        <option value="" disabled>Seleccione una opcion...</option>
                         @for(opcion of campo.opciones ; track opcion.id){
                             <option [value]="opcion.nombre">{{ opcion.nombre }}</option>
                         }
@@ -114,35 +114,49 @@
                     <input [id]="campo.name" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field" [ngClass]="{'date' : campo.tipo_dato == 'date'}">
                 }
             }
+        <hr class="divider">
            
-            <hr class="divider">
     }
 
     <!-- Input de fecha fin -->
-    <div class="input-container duracion">
-        @if(tipo_producto.tipo_duracion === 'fecha_exacta'){
-            <label for="duracion" class="input-label">Día de finalización <span class="span-required">*</span></label>
-        } @else {
-            <label for="duracion" class="input-label">Duración <span class="span-required">*</span></label>
-        }
-        <div class="flex-start">
-            @if(tipo_producto.tipo_duracion === 'selector_dias'){
-                <select id="duracion" formControlName="duracion" type="text" class="input-field disabled" (change)="changeDuracion($event)">
-                    @for(duracion of duraciones ; track duracion){
-                        <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
-                    }
-                </select>
-                <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>  
-            } @else if (tipo_producto.tipo_duracion === 'fecha_exacta'){
-                <input id="duracion" formControlName="duracion" type="date" class="input-field">
-            } @else {
-                <input id="duracion" formControlName="duracion" type="text" class="input-field disabled">
-                <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>          
-            }
-            
+     <fieldset class="input-group">
+        <div class="input-container subproducto">
+            <label for="subproducto" class="input-label">Producto</label>
+            <select id="subproducto" formControlName="subproducto" class="input-field" (change)="onSubproductoChange($event)">
+                <option value="" disabled>Seleccione un producto...</option>
+                @for(subproducto of tipo_producto.subproductos ; track subproducto.id){
+                    <option [value]="subproducto.id">{{ subproducto.nombre }}</option>
+                }
+            </select>
         </div>
-    </div>
-    
+        <div class="input-container date">
+            <label for="fecha_de_inicio" class="input-label">Fecha de inicio <span *ngIf="isFieldRequired('datos_producto', 'fecha_de_inicio')" class="span-required">*</span></label>
+            <input id="fecha_de_inicio" formControlName="fecha_de_inicio" type="date" class="input-field">
+        </div>
+        <div class="input-container duracion">
+            @if(tipo_producto.tipo_duracion === 'fecha_exacta'){
+                <label for="duracion" class="input-label">Día de finalización <span class="span-required">*</span></label>
+            } @else {
+                <label for="duracion" class="input-label">Duración <span class="span-required">*</span></label>
+            }
+            <div class="flex-start">
+                @if(tipo_producto.tipo_duracion === 'selector_dias'){
+                    <select id="duracion" formControlName="duracion" type="text" class="input-field disabled" (change)="changeDuracion($event)">
+                        @for(duracion of duraciones ; track duracion){
+                            <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
+                        }
+                    </select>
+                    <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>  
+                } @else if (tipo_producto.tipo_duracion === 'fecha_exacta'){
+                    <input id="duracion" formControlName="duracion" type="date" class="input-field">
+                } @else {
+                    <input id="duracion" formControlName="duracion" type="text" class="input-field disabled">
+                    <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>          
+                }
+                
+            </div>
+        </div>
+    </fieldset>
 
     <hr class="divider">
 

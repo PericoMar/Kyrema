@@ -125,10 +125,11 @@ input[type="text"], select {
   width: 100%;
   box-sizing: border-box; /* Incluye padding y border en el ancho total */
   font-size: 12px; /* Tamaño de la letra */
-  border: 1px solid transparent;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   background-color: transparent; /* Fondo transparente para mezclar con la celda */
   padding: 8px; /* Espaciado interno para que el input llene toda la celda */
-  background-color: #f5f5f5;
+  background-color: #fffefe;
 
 }
 
@@ -149,9 +150,9 @@ input[type="text"]:focus, select:focus {
 
 input[disabled], select[disabled] {
   cursor: not-allowed; /* Cambia el cursor a not-allowed */
-  background-color: white; /* Fondo gris claro */
-  color: #b8b8b8; /* Texto gris claro */
-  border: none;
+  background-color: rgb(241, 239, 239); /* Fondo gris claro */
+  color: #999999; /* Texto gris claro */
+  border: none; 
   box-sizing: border-box; 
 }
 
@@ -206,7 +207,7 @@ input[disabled], select[disabled] {
 }
 
 .div-select{
-  padding-right: 40px;
+  padding: 0 10px;
 }
 
 .opt-header{
@@ -215,6 +216,17 @@ input[disabled], select[disabled] {
 
 input.incremento-precio{
   width: 20%;
+}
+
+.heredadas{
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.label-heredadas{
+  width: 220px;
 }
 
 .add-field {

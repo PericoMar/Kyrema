@@ -74,6 +74,10 @@
     width: 10%;
 }
 
+.subproducto{
+    width: 20%;
+}
+
 .inputs-pago{
     width: 100%;
     align-items: end;

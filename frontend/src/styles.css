@@ -151,9 +151,13 @@ input.disabled{
 @media (max-width: 1150px) {
     .center, .space-between, .input-group{
         flex-direction: column;
-        justify-content: baseline;
+        justify-content:flex-start;
         align-items: flex-start;
         gap: 10px;
+    }
+
+    .space-between div{
+        width: 100%;
     }
 
     div.input-container{

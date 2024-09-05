@@ -17,7 +17,7 @@ export class RatesService {
     return this.http.get<any>(`${this.apiUrl}/tarifas/sociedad/${id_sociedad}`);
   }
 
-  getTarifasPorSociedadAndTipoProducto(id_sociedad: string, tipo_producto_id:string): Observable<any> {
+  getTarifasPorSociedadAndTipoProducto(id_sociedad: string, tipo_producto_id:string | null): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/tarifas-producto/sociedad/${id_sociedad}?tipo_producto_id=${tipo_producto_id}`);
   }
 
