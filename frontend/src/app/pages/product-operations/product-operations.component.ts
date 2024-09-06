@@ -108,7 +108,9 @@ export class ProductOperationsComponent {
       (data : any) => {
         this.familyProduct = data;
         this.productName = this.familyProduct.nombre;
-        this.getAllCamposSubproductos(data.subproductos);
+        if(data.subproductos && data.subproductos.length > 0){
+          this.getAllCamposSubproductos(data.subproductos);
+        }
         console.log("Data",this.familyProduct);
         this.camposService.getCamposVisiblesPorTipoProducto(this.familyProduct.id).subscribe(
           data => {

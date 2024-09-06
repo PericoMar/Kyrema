@@ -99,7 +99,7 @@ export class ProductConfiguratorComponent {
   letrasDisabled : boolean = false;
   padre_id!: string | null;
   areTarifasHeredadas: boolean = false;
-  tarifasHeredadas!: Tarifa;
+  tarifasHeredadas!: Tarifa[];
 
   constructor(
     private productService : ProductsService,
@@ -113,6 +113,7 @@ export class ProductConfiguratorComponent {
     private snackBarService: SnackBarService
   ) {
     this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
+      tiposProducto = tiposProducto.filter((tipo : any) => tipo.padre_id === null);
       this.tiposProductos = tiposProducto;
     },
     (error) => {
@@ -131,13 +132,15 @@ export class ProductConfiguratorComponent {
     this.route.paramMap.subscribe(params => {
       this.id_tipo_producto_editado = params.get('id');
       this.padre_id = params.get('padre_id');
+      console.log(this.padre_id);
       if(this.padre_id) {
+        // Añadir el primero del array de tipos duracion
+        this.tiposDuracion.push({ nombre: 'Heredada', value: 'heredada' });
         this.ratesService.getTarifasPorSociedadAndTipoProducto(AppConfig.SOCIEDAD_ADMIN_ID, this.padre_id).subscribe((tarifas) => {
           this.tarifasHeredadas = tarifas;
           console.log(tarifas);
         });
       }
-      console.log(this.padre_id);
       if(this.id_tipo_producto_editado) {
         this.familyService.getTipoProductoPorId(this.id_tipo_producto_editado).subscribe((tipoProducto) => {
           this.nombreProducto = tipoProducto.nombre;
@@ -195,7 +198,12 @@ export class ProductConfiguratorComponent {
           });
         });
       } else {
+
         this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_duracion', opciones: []}];
+
+        if(this.padre_id) {
+          this.camposTiempo[0].tipo_dato = 'heredada';
+        }
 
         if(!this.padre_id) {
           this.camposGenerales= [
@@ -424,9 +432,9 @@ export class ProductConfiguratorComponent {
           const tarifaNuevoProducto: Tarifa = {
             tipo_producto_id: id_tipo_producto,
             id_sociedad: AppConfig.SOCIEDAD_ADMIN_ID,
-            prima_seguro: this.areTarifasHeredadas ? this.tarifasHeredadas.prima_seguro : this.tarifas[0].valor.replace(',', '.'),
-            cuota_asociacion: this.areTarifasHeredadas ? this.tarifasHeredadas.cuota_asociacion : this.tarifas[1].valor.replace(',', '.'),
-            precio_total: this.areTarifasHeredadas ? this.tarifasHeredadas.precio_total : this.tarifas[2].valor.replace(',', '.')
+            prima_seguro: this.areTarifasHeredadas ? this.tarifasHeredadas[0].prima_seguro : this.tarifas[0].valor.replace(',', '.'),
+            cuota_asociacion: this.areTarifasHeredadas ? this.tarifasHeredadas[0].cuota_asociacion : this.tarifas[1].valor.replace(',', '.'),
+            precio_total: this.areTarifasHeredadas ? this.tarifasHeredadas[0].precio_total : this.tarifas[2].valor.replace(',', '.')
           };
           this.ratesService.setTarifasPorSociedadAndTipoProducto(tarifaNuevoProducto).subscribe((res:any) => {
             console.log(res);
@@ -516,7 +524,7 @@ export class ProductConfiguratorComponent {
       return false;
     }
     
-    if (this.tarifasVacias() && !editando) {
+    if (this.tarifasVacias() && !editando && !this.areTarifasHeredadas) {
       this.showErrorDialog('Hay tarifas sin rellenar');
       return false;
     }
@@ -526,7 +534,7 @@ export class ProductConfiguratorComponent {
       return false;
     }
     
-    if (this.tarifasFormatoIncorrecto() && !editando) {
+    if (this.tarifasFormatoIncorrecto() && !editando && !this.areTarifasHeredadas) {
       this.showErrorDialog('El formato de las tarifas no es correcto');
       return false;
     }

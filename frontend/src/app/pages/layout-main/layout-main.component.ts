@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SocietyService } from '../../services/society.service';
 import { NavService } from '../../services/nav.service';
@@ -52,6 +52,7 @@ export class LayoutMainComponent {
     private userService : UserService,
     private societyService : SocietyService,
     private navService : NavService,
+    private router : Router
   ){}
 
   ngOnInit(): void {
@@ -76,6 +77,7 @@ export class LayoutMainComponent {
           },
           (error) => {
             console.error('Error fetching societies:', error);
+            this.router.navigate(['/login']);
           }
         )
       },

@@ -369,6 +369,19 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.añadirCampoAlFormulario(campo);
     });
 
+    this.letras_identificacion = selectedSubproducto.letras_identificacion;
+
+    if(selectedSubproducto.tipo_duracion !== 'heredada'){
+      this.getDuracion(selectedSubproducto).subscribe({
+        next: (duracion: any) => {
+          this.duracion = duracion;
+          this.productForm.controls['duracion'].setValue(this.duracion);
+        },
+        error: (error: any) => {
+          console.error('Error loading duracion', error);
+        }
+      });
+    }
     this.getPrecioFinal();
   }
 
@@ -528,8 +541,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
     };
 
 
-    nuevoProducto.fecha_de_emision = formatFecha(fecha_emision);
+    nuevoProducto.fecha_de_emisión = formatFecha(fecha_emision);
     nuevoProducto.fecha_de_fin = formatFecha(fecha_fin);
+
+    nuevoProducto.subproducto = this.productForm.get('subproducto')?.value;
+    nuevoProducto.subproducto_codigo = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id === nuevoProducto.subproducto_id)?.letras_identificacion.replace(AppConfig.PREFIJO_LETRAS_IDENTIFICACION, '') || '';
     
     
     // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
@@ -614,6 +630,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
     
   }
 
+  /************************************/
+  /************************************/
+  /************************************/
+  /************************************/
+
   getDefaultValue(tipoDato: string): any {
     switch (tipoDato) {
       case 'text':
@@ -654,9 +675,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
     }, 0);
   }
 
-  getDuracion(): Observable<any> {
-    if (this.tipo_producto.tipo_duracion === 'selector_dias') {
-      return this.productsService.getDuraciones(this.tipo_producto.duracion).pipe(
+  getDuracion(subproducto : any = null): Observable<any> {
+    const productoCalculoDuracion = subproducto ? subproducto : this.tipo_producto;
+    if (productoCalculoDuracion.tipo_duracion === 'selector_dias') {
+      return this.productsService.getDuraciones(productoCalculoDuracion.duracion).pipe(
         map((duraciones: any) => {
           this.duraciones = duraciones;
           this.duracion = this.duraciones[0].duracion;
@@ -668,14 +690,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
           return of(null); // Retorna un valor por defecto o maneja el error
         })
       );
-    } else if(this.tipo_producto.tipo_duracion === 'fecha_exacta') {
+    } else if(productoCalculoDuracion.tipo_duracion === 'fecha_exacta') {
 
       this.productForm.get('duracion')?.enable();
-      return of(this.tipo_producto.duracion);
+      return of(productoCalculoDuracion.duracion);
 
     } else {
 
-      return of(this.tipo_producto.duracion);
+      return of(productoCalculoDuracion.duracion);
     }
   }
 
@@ -752,15 +774,13 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   eliminateCamposSubproducto() {
-    console.log('Antes', this.camposFormularioPorGrupos);
-    console.log('Campos subproductos', this.camposSubproductos);
+    
     this.camposSubproductos.forEach(campo => {
-        // Verifica si el campo está en el formulario
-        if (this.productForm.contains(campo.name)) {
-            // Elimina el campo del formulario
-            this.productForm.removeControl(campo.name);
 
-            console.log('entra', this.camposFormularioPorGrupos['datos_producto']);
+        if (this.productForm.get(campo.nombre_codigo)) {
+            // Elimina el campo del formulario
+            this.productForm.removeControl(campo.nombre_codigo);
+
             // Filtra el campo del array 'camposFormularioPorGrupos' basado en su grupo
             if (this.camposFormularioPorGrupos['datos_producto']) {
                 
@@ -769,15 +789,13 @@ export class ProductFormComponent implements OnInit, OnChanges{
                     (campoFormulario: any) => {
                       console.log(campo.name);
                       console.log(campoFormulario);
-                      return campoFormulario.nombre_codigo !== campo.name
+                      return campoFormulario.name !== campo.nombre_codigo;
                     }
                 );
             }
         }
     });
 
-    // Log para verificar el estado final de los grupos
-    console.log(this.camposFormularioPorGrupos);
   }
 
 
@@ -825,7 +843,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio});
     }
 
-    console.log(this.camposFormularioPorGrupos);
   }
 
   

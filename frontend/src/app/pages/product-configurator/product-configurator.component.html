@@ -368,13 +368,14 @@
           @if(!id_tipo_producto_editado){
             <h2>Tarifas</h2>
             <hr>
-
-            <div class="heredadas">
-              <label for="heredadas" class="label-heredadas">Heredadas del producto padre</label>
-              <div>
-                <mat-checkbox (change)="changeOnHeredadas($event)" name="heredadas"></mat-checkbox>
+            @if(padre_id){
+              <div class="heredadas">
+                <label for="heredadas" class="label-heredadas">Heredadas del producto padre</label>
+                <div>
+                  <mat-checkbox (change)="changeOnHeredadas($event)" name="heredadas"></mat-checkbox>
+                </div>
               </div>
-            </div>
+            }
             @if(!areTarifasHeredadas){
             <fieldset class="input-group">
               @for(tarifa of tarifas ; track tarifa.id){

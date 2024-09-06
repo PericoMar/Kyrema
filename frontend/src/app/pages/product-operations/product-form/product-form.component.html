@@ -104,7 +104,7 @@
                 @if(campo.tipo_dato == 'select'){
                     <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_producto', campo.name)" class="span-required">*</span></label>
                     <select [id]="campo.name" [formControlName]="campo.name" class="input-field" (change)="changeOnSelect($event, campo)">
-                        <option value="" disabled>Seleccione una opcion...</option>
+                        <option value="">Seleccione una opcion...</option>
                         @for(opcion of campo.opciones ; track opcion.id){
                             <option [value]="opcion.nombre">{{ opcion.nombre }}</option>
                         }
@@ -120,15 +120,17 @@
 
     <!-- Input de fecha fin -->
      <fieldset class="input-group">
-        <div class="input-container subproducto">
-            <label for="subproducto" class="input-label">Producto</label>
-            <select id="subproducto" formControlName="subproducto" class="input-field" (change)="onSubproductoChange($event)">
-                <option value="" disabled>Seleccione un producto...</option>
-                @for(subproducto of tipo_producto.subproductos ; track subproducto.id){
-                    <option [value]="subproducto.id">{{ subproducto.nombre }}</option>
-                }
-            </select>
-        </div>
+        @if(tipo_producto.subproductos){
+            <div class="input-container subproducto">
+                <label for="subproducto" class="input-label">Producto</label>
+                <select id="subproducto" formControlName="subproducto" class="input-field" (change)="onSubproductoChange($event)">
+                    <option value="" disabled>Seleccione un producto...</option>
+                    @for(subproducto of tipo_producto.subproductos ; track subproducto.id){
+                        <option [value]="subproducto.id">{{ subproducto.nombre }}</option>
+                    }
+                </select>
+            </div>
+        }
         <div class="input-container date">
             <label for="fecha_de_inicio" class="input-label">Fecha de inicio <span *ngIf="isFieldRequired('datos_producto', 'fecha_de_inicio')" class="span-required">*</span></label>
             <input id="fecha_de_inicio" formControlName="fecha_de_inicio" type="date" class="input-field">
