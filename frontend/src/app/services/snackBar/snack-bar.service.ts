@@ -12,12 +12,12 @@ export class SnackBarService {
     private snackBar: MatSnackBar
   ) { }
 
-  openSnackBar(message: string, action: string = this.defaultActionValue, duration:number = 3000 ,  classNames: string[] = this.defaultClassNames): void {
+  openSnackBar(message: string, action: string = this.defaultActionValue, duration:number = 3000): void {
     this.snackBar.open(message, action, {
       duration: duration, // Duración en milisegundos
       horizontalPosition: 'right', // Posición horizontal: start, center, end, left, right
       verticalPosition: 'bottom',  // Posición vertical: top, bottom
-      panelClass: classNames
+      panelClass: this.defaultClassNames
     })
   }
 }

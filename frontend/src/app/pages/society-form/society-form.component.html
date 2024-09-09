@@ -38,7 +38,8 @@
                 <!-- Nombre (obligatorio) -->
                 <div class="input-container nombre">
                     <label for="nombre" class="input-label">Nombre <span class="span-required">*</span></label>
-                    <input id="nombre" formControlName="nombre" class="input-field" placeholder="Ej: Sociedad Anónima" required>
+                    <input id="nombre" formControlName="nombre" class="input-field" placeholder="Ej: Sociedad Anónima" 
+                           [ngClass]="{'input-error': societyForm.get('nombre')?.invalid && formularioMandado}">
                 </div>
 
                 <!-- CIF (opcional) -->
@@ -50,7 +51,8 @@
                 <!-- Correo Electrónico (obligatorio) -->
                 <div class="input-container correo_electronico">
                     <label for="correo_electronico" class="input-label">Correo Electrónico <span class="span-required">*</span></label>
-                    <input id="correo_electronico" formControlName="correo_electronico" type="email" class="input-field" placeholder="Ej: ejemplo@dominio.com" required>
+                    <input id="correo_electronico" formControlName="correo_electronico" type="email" class="input-field" placeholder="Ej: ejemplo@dominio.com" 
+                           [ngClass]="{'input-error': societyForm.get('correo_electronico')?.invalid && formularioMandado}">
                 </div>
 
                 
@@ -89,7 +91,7 @@
             
                 <!-- Población (opcional) -->
                 <div class="input-container poblacion">
-                    <label for="poblacion" class="input-label">Población <span class="span-required">*</span></label>
+                    <label for="poblacion" class="input-label">Población </label>
                     <input id="poblacion" formControlName="poblacion" class="input-field" placeholder="Ej: Madrid">
                 </div>
             
@@ -101,8 +103,9 @@
             
                 <!-- Código Postal (opcional) -->
                 <div class="input-container codigo_postal">
-                    <label for="codigo_postal" class="input-label">Código Postal</label>
-                    <input id="codigo_postal" formControlName="codigo_postal" type="number" class="input-field" placeholder="Ej: 28001">
+                    <label for="codigo_postal" class="input-label">Código Postal <span class="span-required">*</span></label>
+                    <input id="codigo_postal" formControlName="codigo_postal" type="number" class="input-field" placeholder="Ej: 28001"
+                        [ngClass]="{'input-error': societyForm.get('codigo_postal')?.invalid && formularioMandado}">
                 </div>
             </fieldset>
 
@@ -191,15 +194,18 @@
             </fieldset>
 
             <footer class="form-footer">
-                @if(sociedad_id){
-                    <button type="submit" class="submit-button">
-                        Guardar cambios
-                    </button>
-                } @else { 
-                    <button type="submit" class="submit-button">
-                        Crear sociedad
-                    </button>
-                }
+                <button type="submit" class="submit-button">
+                    @if(cargandoSociedad){
+                        <app-button-spinner></app-button-spinner>
+                    } @else {
+                        @if(sociedad_id){
+                            Guardar cambios
+                        } @else { 
+                            Crear sociedad
+                            
+                        }
+                    }
+                </button>
             </footer>
         </form>
     </main>

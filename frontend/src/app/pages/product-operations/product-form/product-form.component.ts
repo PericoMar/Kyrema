@@ -61,11 +61,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   formIsLoaded : boolean = false;
   @Output() formLoadedChange = new EventEmitter<boolean>();
 
-  tiposPago : {id:string, nombre:string}[] = [
-    {id: '1', nombre: 'Tarjeta de crédito'},
-    {id: '2', nombre: 'Transferencia bancaria'},
-    {id: '3', nombre: 'Domiciliación bancaria'}
-  ];
+  tiposPago! : {id:string, nombre:string}[];
 
   precioFinal! : number;
   precioInicialSelects : number = 0;
@@ -114,6 +110,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
       if(!this.isLoadingProduct){
         this.onSociedadChange(value);
       }
+    });
+
+    this.productForm.get('subproducto')?.valueChanges.subscribe(selectedValue => {
+      const event = { target: { value: selectedValue } }; // simula el evento
+      this.onSubproductoChange(event as unknown as Event); // llama al método cuando cambie el valor
     });
     
   }
@@ -212,7 +213,15 @@ export class ProductFormComponent implements OnInit, OnChanges{
         this.productForm.controls['prima_del_seguro'].setValue(data[0].prima_seguro);
         this.productForm.controls['cuota_de_asociación'].setValue(data[0].cuota_asociacion);
         this.productForm.controls['precio_total'].setValue(data[0].precio_total);
-        this.productForm.controls['tipo_de_pago_id'].setValue(this.tiposPago[0].id);
+        this.rateService.getTipoPagoProductoPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
+          data => {
+            this.tiposPago = data;
+            this.productForm.controls['tipo_de_pago_id'].setValue(data[0].id);
+          },
+          error => {
+            console.error(error);
+          }
+        );
         this.getPrecioFinal();
       },
       error => {
@@ -481,6 +490,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
     console.log(this.productForm.value);
     this.anexos = [];
     this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
+    this.productForm.patchValue({tipo_de_pago_id: this.tiposPago[0].id});
+    this.productForm.patchValue({fecha_de_inicio: new Date().toISOString().split('T')[0]});
     this.getDuracion().subscribe({
       next: (duracion: any) => {
         this.duracion = duracion;

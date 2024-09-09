@@ -90,4 +90,8 @@ export class SocietyService {
   getSociedadesPadres(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/sociedades/padres`);
   }
+
+  connectPaymentTypesFromSocietyToAnother(sociedad_padre_id: string, sociedad_hija_id: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/sociedad/${sociedad_padre_id}/hija/${sociedad_hija_id}/tipos-pago`, {});
+  }
 }

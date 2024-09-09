@@ -18,3 +18,4 @@ php artisan route:list
 Borrar un tipo de producto
 php artisan delete:product-data 7
 
+php artisan migrate --path=/database/migrations/2024_09_09_075630_create_tipo_pago_producto_sociedad_table.php
