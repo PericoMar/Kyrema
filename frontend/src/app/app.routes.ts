@@ -53,6 +53,7 @@ export const routes: Routes = [
         { path: 'comercial' , component: CommercialFormComponent },
         { path: 'anexos', component: AnexosManagerComponent},
         { path: 'configurador-anexos', component: AnexosConfiguratorComponent},
+        { path: 'configurador-anexos/:id', component: AnexosConfiguratorComponent},
         { path: 'comercial/:comercial' , component: CommercialFormComponent },
         { path: 'comisiones' , component: SocietyManagerComponent },
         { path: 'comisiones/:sociedad' , component: CommissionsComponent},

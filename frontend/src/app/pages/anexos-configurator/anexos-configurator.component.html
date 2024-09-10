@@ -3,42 +3,122 @@
     <main class="content-block new-anexo-form">
         
         <form (ngSubmit)="crearTipoAnexo()">
-            <header class="form-header">
-                <h2>Descripción del anexo</h2>
-                <hr>
-                <div class="space-between">
-                  <div>
-                    <label for="nombre_producto">Nombre del anexo</label>
-                    <input type="text" class="nombre-producto" [(ngModel)]="nombreAnexo" name="nombreProducto" placeholder="Escriba aquí el nombre del nuevo anexo">
+          <header class="form-header">
+            <h2>Descripción del anexo</h2>
+            <hr>
+            <div class="space-between">
+              <div>
+                <label for="nombre_producto">Nombre del anexo</label>
+                <input type="text" class="nombre-producto" 
+                  [(ngModel)]="nombreAnexo" name="nombreProducto" 
+                  placeholder="Escriba aquí el nombre del nuevo anexo" 
+                  [disabled]="id_tipo_anexo_editado != ''">
+              </div>
+              <div>
+                <label for="nombre_producto">Letras de identificación</label>
+                <input type="text" class="nombre-producto" 
+                [(ngModel)]="letrasIdentificacion" 
+                name="letrasIdentificacion" 
+                placeholder="Escriba aquí las letras de identificación"
+                [disabled]="id_tipo_anexo_editado != ''">
+              </div>
+              <div>
+                <label for="nombre_producto">Tipo producto asociado</label>
+                <select [(ngModel)]="tipoProductoAsociado" name="tipoProductoAsociado" [disabled]="id_tipo_anexo_editado != ''">
+                    @for(tipo of tiposProductos ; track $index) {
+                      <option value="{{tipo.id}}">{{tipo.nombre}}</option>
+                    }
+                  </select>
+              </div>
+              <div class="input-file">
+                <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
+                  (change)="onFileSelected($event)" #fileUpload>
+  
+                  <div class="file-upload">
+  
+                  {{fileName || "No has añadido ninguna plantilla aún."}}
+  
+                    <button type="button" mat-mini-fab color="primary" class="upload-btn"
+                      (click)="fileUpload.click()">
+                        <mat-icon>attach_file</mat-icon>
+                    </button>
                   </div>
-                  <div>
-                    <label for="nombre_producto">Letras de identificación</label>
-                    <input type="text" class="nombre-producto" [(ngModel)]="letrasIdentificacion" name="letrasIdentificacion" placeholder="Escriba aquí las letras de identificación">
-                  </div>
-                  <div>
-                    <label for="nombre_producto">Tipo producto asociado</label>
-                    <select [(ngModel)]="tipoProductoAsociado" name="tipoProductoAsociado">
-                        @for(tipo of tiposProductos ; track $index) {
-                          <option value="{{tipo.id}}">{{tipo.nombre}}</option>
-                        }
-                      </select>
-                  </div>
-                  <div class="input-file">
-                    <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
-                      (change)="onFileSelected($event)" #fileUpload>
-      
-                      <div class="file-upload">
-      
-                      {{fileName || "No has añadido ninguna plantilla aún."}}
-      
-                        <button type="button" mat-mini-fab color="primary" class="upload-btn"
-                          (click)="fileUpload.click()">
-                            <mat-icon>attach_file</mat-icon>
-                        </button>
+              </div>
+            </div>
+          </header>
+
+              <h2>Duración</h2>
+              <hr>
+              <div class="overflow-scroll">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="col-nombre">Nombre del campo</th>
+                    <th class="col-tipo-dato">
+                      <div class="center">
+                        Tipo de Duración
                       </div>
-                  </div>
-                </div>
-                </header>
+                    </th>
+                    <th class="col-posicion">
+                      <div class="center">
+                        Posición en el Certificado
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (campoTiempo of camposTiempo; track $index) {
+                    <tr>
+                      <td class="col-nombre">
+                        <div class="center">
+                          <input type="text" [placeholder]="campoTiempo.nombre" [(ngModel)]="campoTiempo.nombre" name="nombreTiempo{{$index}}" disabled>
+                        </div>
+                      </td>
+                      <td class="col-tipo-dato">
+                        <div class="center div-select">
+                          <select [(ngModel)]="campoTiempo.tipoDato" name="tipo_datoTiempo{{$index}}" (change)="onTipoDatoChange(campoTiempo)">
+                            @for(tipo of tiposDuracion ; track $index) {
+                              <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                            }
+                          </select>
+                        </div>
+                      </td>
+                      <td class="col-posicion">
+                        <div class="center" style="gap:4px;">
+                          <div class="small-input">
+                            <input type="text" placeholder="Columna" [(ngModel)]="campoTiempo.columna" name="columnaTiempo{{$index}}">
+                          </div>
+                          <div class="small-input">
+                            <input type="text" placeholder="Fila" [(ngModel)]="campoTiempo.fila" name="filaTiempo{{$index}}">
+                          </div>
+                        </div>
+                      </td>
+                    </tr>   
+                    <!-- Desplegable de opciones adicionales si se selecciona "select" -->
+                    <tr *ngIf="campoTiempo.tipoDato === 'selector_dias' || campoTiempo.tipoDato === 'dias_delimitados'" >
+                      <td colspan="6">
+                        <div class="additional-options">
+                          <h3 class="opt-header">Número de días</h3>
+                          <div *ngFor="let opcion of campoTiempo.opciones; let j = index" class="flex-start">
+                            <input type="text" [(ngModel)]="campoTiempo.opciones[j].nombre!" placeholder="Num días {{j + 1}}" name="{{campoTiempo.nombre}}opciones{{$index + j}}">
+                            @if(campoTiempo.tipoDato === 'selector_dias'){
+                              <input type="text" [(ngModel)]="campoTiempo.opciones[j].precio" placeholder="Incremento precio {{j + 1}}" name="{{campoTiempo.nombre}}precio{{$index + j}}" class="incremento-precio">
+                              <button mat-icon-button color="warn" (click)="eliminarOpcion(campoTiempo, j)" type="button">
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            }
+                          </div>
+                          @if(campoTiempo.tipoDato === 'selector_dias'){
+                            <button mat-button (click)="agregarOpcion(campoTiempo)" type="button">Añadir opción</button>
+                          }
+                        </div>
+                      </td>
+                    </tr>             
+                  }
+                </tbody>
+              </table>
+              </div>
+
             <h2>Datos del anexo</h2>
 
             <hr>
@@ -74,7 +154,7 @@
                   <tr>
                     <td class="col-nombre">
                       <div class="center">
-                        <input type="text" placeholder="Nombre" [(ngModel)]="campo.nombre" name="nombre{{$index}}" >
+                        <input type="text" placeholder="Nombre" [(ngModel)]="campo.nombre" name="nombre{{$index}}" [disabled]="campo.id != ''">
                       </div>
                     </td>
                     <td class="col-tipo-dato">
@@ -103,7 +183,7 @@
                     </td>
                     <td class="col-eliminar">
                       <div class="center">
-                        <button mat-icon-button color="warn" (click)="eliminarCampo($index)" type="button">
+                        <button mat-icon-button color="warn" (click)="eliminarCampo($index)" type="button" [disabled]="campo.id != ''">
                           <mat-icon>delete</mat-icon>
                         </button> 
                       </div>
@@ -120,20 +200,23 @@
             </svg>
           </button>
 
-          <h2>Tarifas</h2>
-          <hr>
 
-          <fieldset class="input-group">
-            @for(tarifa of tarifas ; track tarifa.id){
-              <div class="input-container prima_del_seguro">
-                <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
-                <div class="input-suffix-container">
-                  <input [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
-                  <span class="input-suffix">€</span>
+          @if(id_tipo_anexo_editado == ''){
+            <h2>Tarifas</h2>
+            <hr>
+
+            <fieldset class="input-group">
+              @for(tarifa of tarifas ; track tarifa.id){
+                <div class="input-container prima_del_seguro">
+                  <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
+                  <div class="input-suffix-container">
+                    <input [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
+                    <span class="input-suffix">€</span>
+                  </div>
                 </div>
-              </div>
-            }
-          </fieldset>
+              }
+            </fieldset>
+          }
 
           <footer class="form-footer">
             @if(cargandoNuevoAnexo){
@@ -142,6 +225,7 @@
               <button>Crear nuevo tipo de anexo</button>
             }
           </footer>
+
         </form>
     </main>
 </section>

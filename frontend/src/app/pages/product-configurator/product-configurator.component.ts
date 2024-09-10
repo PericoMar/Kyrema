@@ -263,7 +263,7 @@ export class ProductConfiguratorComponent {
       // Limpiar las opciones si el tipo de dato no es 'select'
       campo.opciones = [];
     }
-  }
+  } 
 
   agregarOpcion(campo: any) {
     // Verificar que el array de opciones esté inicializado
