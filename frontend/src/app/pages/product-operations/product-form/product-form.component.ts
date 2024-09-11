@@ -388,7 +388,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.eliminateCamposSubproducto();
 
     const selectedValue = (event.target as HTMLSelectElement).value;
-    if(selectedValue !== ''){
+    if(selectedValue){
       console.log('Selected value:', selectedValue);
       // Coger el subproducto de la lista de subproductos this.tipo_producto.subproductos
       const selectedSubproducto = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id == selectedValue);
@@ -501,7 +501,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       provincia: ['', Validators.required],
       codigo_postal: ['', Validators.required],
       fecha_de_nacimiento: ['', Validators.required],
-      subproducto: ['', Validators.required],
+      // subproducto: [null, Validators.required],
       fecha_de_inicio: [today , Validators.required],
       duracion: [{value: '', disabled: true}, Validators.required],
       prima_del_seguro: [{value: '', disabled: true}, Validators.required],
@@ -516,6 +516,17 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.añadirCampoAlFormulario(campo);
       
     });
+
+
+    // Comprobar si this.tipo_producto.subproductos existe
+    if(this.tipo_producto && this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
+
+      this.productForm.addControl(
+        'subproducto',
+        new FormControl(null, Validators.required)
+      );
+
+    }
 
 
     console.log('Campos formulario por grupos', this.camposFormularioPorGrupos);
@@ -594,8 +605,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
     nuevoProducto.fecha_de_emisión = formatFecha(fecha_emision);
     nuevoProducto.fecha_de_fin = formatFecha(fecha_fin);
 
-    nuevoProducto.subproducto = this.productForm.get('subproducto')?.value;
-    nuevoProducto.subproducto_codigo = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id === nuevoProducto.subproducto_id)?.letras_identificacion.replace(AppConfig.PREFIJO_LETRAS_IDENTIFICACION, '') || '';
+    if(this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
+      nuevoProducto.subproducto = this.productForm.get('subproducto')?.value;
+      nuevoProducto.subproducto_codigo = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id === nuevoProducto.subproducto_id)?.letras_identificacion.replace(AppConfig.PREFIJO_LETRAS_IDENTIFICACION, '') || '';
+    }
     
     
     // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto

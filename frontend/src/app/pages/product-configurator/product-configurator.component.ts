@@ -499,7 +499,12 @@ export class ProductConfiguratorComponent {
     const campoConOpcionesRepetidas = this.campoConOpcionesRepetidas(camposFormulario);
     const campoConOpcionPrecioFormatoIncorrecto = this.precioOpcionesFormatoIncorrecto(camposFormulario);
   
-    if (this.campoVariableVacio()) {
+    if(this.nombreCampoRepetido(camposFormulario)) {
+      this.showErrorDialog('Hay un campo con el nombre repetido');
+      return false;
+    } 
+    
+    if(this.campoVariableVacio()) {
       this.showErrorDialog('Hay un campo variable con el nombre vacío');
       return false;
     } 
@@ -556,7 +561,12 @@ export class ProductConfiguratorComponent {
   
     return true;
   }
-  
+
+
+  private nombreCampoRepetido(campos: Campo[]): string | boolean {
+    const nombres = campos.map((campo) => campo.nombre);
+    return nombres.some((nombre, index) => nombres.indexOf(nombre) !== index);
+  }
 
   private campoConOpcionesRepetidas(campos: Campo[]): Campo | null {
     for (const campo of campos) {

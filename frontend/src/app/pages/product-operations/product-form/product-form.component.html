@@ -111,7 +111,7 @@
                     </select>
                 } @else {
                     <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_producto', campo.name)" class="span-required">*</span></label>
-                    <input [id]="campo.name" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field" [ngClass]="{'date' : campo.tipo_dato == 'date'}">
+                    <input [id]="campo.name" [placeholder]="campo.label" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field" [ngClass]="{'date' : campo.tipo_dato == 'date'}">
                 }
             }
         <hr class="divider">
@@ -191,7 +191,7 @@
             </div>
             
             <div class="input-container">
-                <label for="tipo_pago_id" class="input-label">Tipo de pago</label>
+                <label for="tipo_pago_id" class="input-label">Tipo de pago <span class="span-required">*</span></label>
                 <select name="tipo_de_pago_id" id="tipo_de_pago_id" formControlName="tipo_de_pago_id" class="input-field">
                     @for(tipoPago of tiposPago ; track tipoPago.id){
                         <option [value]="tipoPago.id">{{ tipoPago.nombre }}</option>
