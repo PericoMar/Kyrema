@@ -16,6 +16,7 @@ import { SpinnerComponent } from '../../../components/spinner/spinner.component'
 import { CamposService } from '../../../services/campos.service';
 import { SnackBarService } from '../../../services/snackBar/snack-bar.service';
 import { catchError, map, Observable, of } from 'rxjs';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -46,7 +47,26 @@ interface CampoFormulario{
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, ButtonSpinnerComponent, SpinnerComponent],
   templateUrl: './product-form.component.html',
-  styleUrls: ['./product-form.component.css']
+  styleUrls: ['./product-form.component.css'],
+  animations: [
+    trigger('expandCollapse', [
+      state('void', style({
+        height: '0px',
+        opacity: 0,
+        overflow: 'hidden',
+      })),
+      state('*', style({
+        height: '*',
+        opacity: 1,
+      })),
+      transition(':enter', [
+        animate('300ms ease-out')
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in')
+      ])
+    ])
+  ]
 })
 export class ProductFormComponent implements OnInit, OnChanges{
   @Input() product!: any | null;
@@ -72,6 +92,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   tarifasAnexos!: any;
   anexos: any[] = [];
   camposAnexo!: any;
+
   @Input() camposSubproductos!: any[];
 
   loadingAction: boolean = false;
@@ -153,6 +174,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
     if(changes['campos']){
       this.loadTipoProducto();      
+      this.anexos = [];
       this.createForm(this.campos);
       this.loadSociedades(); 
       if(this.product.id != null && this.product.id != ''){
@@ -267,7 +289,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
         this.anexosService.getCamposPorTipoAnexo(tipoAnexo.id).subscribe({
           next: (camposAnexo: any[]) => {
             // Asignar los campos al tipo de anexo correspondiente
-            this.camposAnexo[tipoAnexo.id] = camposAnexo;
+            this.camposAnexo[tipoAnexo.id] = camposAnexo.filter((campo: any) => campo.grupo === 'datos_producto');
             resolve(); // Resolver la promesa cuando la carga se complete
           },
           error: (error: any) => {
@@ -345,7 +367,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
                     return {
                         ...anexo,
                         formato: nuevoFormato, // Usar la copia independiente del formato
-                        tarifas: tarifa // Añadir la tarifa
+                        tarifas: tarifa, // Añadir la tarifa
+                        abierto: true
                     };
                 });
 
@@ -365,31 +388,33 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.eliminateCamposSubproducto();
 
     const selectedValue = (event.target as HTMLSelectElement).value;
-    console.log('Selected value:', selectedValue);
-    // Coger el subproducto de la lista de subproductos this.tipo_producto.subproductos
-    const selectedSubproducto = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id == selectedValue);
-    console.log('Selected subproducto:', selectedSubproducto);
-    // Actualizar el precio total con el precio del subproducto seleccionado
-    this.productForm.controls['prima_del_seguro'].setValue(selectedSubproducto.tarifas.prima_seguro);
-    this.productForm.controls['cuota_de_asociación'].setValue(selectedSubproducto.tarifas.cuota_asociacion);
-    this.productForm.controls['precio_total'].setValue(selectedSubproducto.tarifas.precio_total);
+    if(selectedValue !== ''){
+      console.log('Selected value:', selectedValue);
+      // Coger el subproducto de la lista de subproductos this.tipo_producto.subproductos
+      const selectedSubproducto = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id == selectedValue);
+      console.log('Selected subproducto:', selectedSubproducto);
+      // Actualizar el precio total con el precio del subproducto seleccionado
+      this.productForm.controls['prima_del_seguro'].setValue(selectedSubproducto.tarifas.prima_seguro);
+      this.productForm.controls['cuota_de_asociación'].setValue(selectedSubproducto.tarifas.cuota_asociacion);
+      this.productForm.controls['precio_total'].setValue(selectedSubproducto.tarifas.precio_total);
 
-    selectedSubproducto.campos.forEach((campo: any) => {
-      this.añadirCampoAlFormulario(campo);
-    });
-
-    this.letras_identificacion = selectedSubproducto.letras_identificacion;
-
-    if(selectedSubproducto.tipo_duracion !== 'heredada'){
-      this.getDuracion(selectedSubproducto).subscribe({
-        next: (duracion: any) => {
-          this.duracion = duracion;
-          this.productForm.controls['duracion'].setValue(this.duracion);
-        },
-        error: (error: any) => {
-          console.error('Error loading duracion', error);
-        }
+      selectedSubproducto.campos.forEach((campo: any) => {
+        this.añadirCampoAlFormulario(campo);
       });
+
+      this.letras_identificacion = selectedSubproducto.letras_identificacion;
+
+      if(selectedSubproducto.tipo_duracion !== 'heredada'){
+        this.getDuracion(selectedSubproducto).subscribe({
+          next: (duracion: any) => {
+            this.duracion = duracion;
+            this.productForm.controls['duracion'].setValue(this.duracion);
+          },
+          error: (error: any) => {
+            console.error('Error loading duracion', error);
+          }
+        });
+      } 
     }
     this.getPrecioFinal();
   }
@@ -423,7 +448,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
         id: '',
         formato: nuevoFormato, // Usar la copia independiente
         tipo_anexo: tipo_anexo,
-        tarifas: this.tarifasAnexos[tipo_anexo.id] // Asumiendo que esto no necesita ser clonado
+        tarifas: this.tarifasAnexos[tipo_anexo.id], // Asumiendo que esto no necesita ser clonado
+        abierto: true
     });
 
     console.log('Anexos', this.anexos);
@@ -443,6 +469,19 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.anexos.splice(index , 1);
     this.getPrecioFinal();
   }
+
+  agrupar(arr: any[], tamano: number): any[][] {
+    const grupos = [];
+    for (let i = 0; i < arr.length; i += tamano) {
+      grupos.push(arr.slice(i, i + tamano));
+    }
+    return grupos;
+  }
+
+  toggleAnexo(index: number) {
+    this.anexos[index].abierto = !this.anexos[index].abierto;
+  }
+  
 
   createForm(campos: Campo[]) {
     const today = new Date().toISOString().split('T')[0];

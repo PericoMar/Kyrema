@@ -76,7 +76,7 @@
                       </td>
                       <td class="col-tipo-dato">
                         <div class="center div-select">
-                          <select [(ngModel)]="campoTiempo.tipoDato" name="tipo_datoTiempo{{$index}}" (change)="onTipoDatoChange(campoTiempo)">
+                          <select [(ngModel)]="campoTiempo.tipo_dato" name="tipo_datoTiempo{{$index}}" (change)="onTipoDatoChange(campoTiempo)">
                             @for(tipo of tiposDuracion ; track $index) {
                               <option value="{{tipo.value}}">{{tipo.nombre}}</option>
                             }
@@ -95,20 +95,20 @@
                       </td>
                     </tr>   
                     <!-- Desplegable de opciones adicionales si se selecciona "select" -->
-                    <tr *ngIf="campoTiempo.tipoDato === 'selector_dias' || campoTiempo.tipoDato === 'dias_delimitados'" >
+                    <tr *ngIf="campoTiempo.tipo_dato === 'selector_dias' || campoTiempo.tipo_dato === 'dias_delimitados'" >
                       <td colspan="6">
                         <div class="additional-options">
                           <h3 class="opt-header">Número de días</h3>
                           <div *ngFor="let opcion of campoTiempo.opciones; let j = index" class="flex-start">
                             <input type="text" [(ngModel)]="campoTiempo.opciones[j].nombre!" placeholder="Num días {{j + 1}}" name="{{campoTiempo.nombre}}opciones{{$index + j}}">
-                            @if(campoTiempo.tipoDato === 'selector_dias'){
+                            @if(campoTiempo.tipo_dato === 'selector_dias'){
                               <input type="text" [(ngModel)]="campoTiempo.opciones[j].precio" placeholder="Incremento precio {{j + 1}}" name="{{campoTiempo.nombre}}precio{{$index + j}}" class="incremento-precio">
                               <button mat-icon-button color="warn" (click)="eliminarOpcion(campoTiempo, j)" type="button">
                                 <mat-icon>delete</mat-icon>
                               </button>
                             }
                           </div>
-                          @if(campoTiempo.tipoDato === 'selector_dias'){
+                          @if(campoTiempo.tipo_dato === 'selector_dias'){
                             <button mat-button (click)="agregarOpcion(campoTiempo)" type="button">Añadir opción</button>
                           }
                         </div>
@@ -159,7 +159,7 @@
                     </td>
                     <td class="col-tipo-dato">
                       <div class="center div-select">
-                        <select [(ngModel)]="campo.tipoDato" name="tipoDato{{$index}}">
+                        <select [(ngModel)]="campo.tipo_dato" name="tipo_dato{{$index}}">
                           @for(tipo of tiposDato ; track $index) {
                             <option value="{{tipo.value}}">{{tipo.nombre}}</option>
                           }
@@ -210,7 +210,7 @@
                 <div class="input-container prima_del_seguro">
                   <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
                   <div class="input-suffix-container">
-                    <input [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
+                    <input (input)="calculatePrecioTotal()"  [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
                     <span class="input-suffix">€</span>
                   </div>
                 </div>

@@ -15,11 +15,12 @@ import { RatesService } from '../../services/rates.service';
 import { AppConfig } from '../../../config/app-config';
 import { ActivatedRoute } from '@angular/router';
 import { ProductsService } from '../../services/products.service';
+import { SnackBarService } from '../../services/snackBar/snack-bar.service';
 
 interface CampoAnexo {
   id: string;
   nombre: string;
-  tipoDato: string;
+  tipo_dato: string;
   fila: string;
   columna: string;
   obligatorio: boolean;
@@ -82,7 +83,8 @@ export class AnexosConfiguratorComponent {
     private anexosService: AnexosService,
     private ratesService : RatesService,
     private route : ActivatedRoute,
-    private productService: ProductsService
+    private productService: ProductsService,
+    private snackBar : SnackBarService
   ) {
     this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
       this.tiposProductos = tiposProducto;
@@ -142,21 +144,34 @@ export class AnexosConfiguratorComponent {
         });
 
       } else {
-        this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipoDato: 'diario', fila: '',columna: '', obligatorio: true, grupo: 'datos_duracion', opciones: []}];
+        this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', obligatorio: true, grupo: 'datos_duracion', opciones: []}];
 
-        this.campos = [{ id: '', nombre: '', tipoDato: 'text', fila: '',columna: '' , grupo: 'datos_producto', obligatorio: false, opciones: []}];
+        this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '' , grupo: 'datos_producto', obligatorio: false, opciones: []}];
       }
     });
    }
 
 
   agregarCampo() {
-    this.campos.push({id: '', nombre: '', tipoDato: 'text', fila: '',columna: '', obligatorio: false , grupo: 'datos_producto', opciones: []});
+    this.campos.push({id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', obligatorio: false , grupo: 'datos_producto', opciones: []});
   }
 
   eliminarCampo(index: number) {
     this.campos.splice(index, 1);
   }
+
+  onTipoDatoChange(campo: CampoAnexo) {
+    if (campo.tipo_dato === 'select' || campo.tipo_dato === 'selector_dias' || campo.tipo_dato === 'dias_delimitados') {
+      // Inicializar el array de opciones si está indefinido
+      if (campo.opciones.length === 0) {
+        campo.opciones = [{id:'', nombre: '', precio: ''}];
+      }
+    } else {
+      // Limpiar las opciones si el tipo de dato no es 'select'
+      campo.opciones = [];
+    }
+  }
+
 
   agregarOpcion(campo: any) {
     // Verificar que el array de opciones esté inicializado
@@ -173,38 +188,17 @@ export class AnexosConfiguratorComponent {
   } 
 
   crearTipoAnexo(){
-    this.cargandoNuevoAnexo = true;
-    const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(this.campos);
 
-    const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
+    const editando : boolean = this.id_tipo_anexo_editado ? true : false;
 
-    const campoFilaColumnaRepetida = this.filaColumnaYaEnUso(this.campos);
+    if(this.plantillaEnUso()) {
+      this.showErrorDialog('El nombre de la plantilla seleccionada ya está siendo usado por otro producto');
+      return;
+    }
 
-    if(this.campoVariableVacio()) {
-        
-      this.showErrorDialog('Hay un campo variable con el nombre vacío');
-  
-    } else if(this.letrasIdentificacionEnUso()) {
+    if(this.verificarCampos(this.campos, editando)) {
+      this.cargandoNuevoAnexo = true;
 
-      this.showErrorDialog('Las letras de identificación seleccionadas ya están siendo usadas por otro producto');
-
-    }else if(campoUsoCaracteresEspeciales){
-
-      this.showErrorDialog('No está permitido el uso de caracteres especiales. Campo: '+ campoUsoCaracteresEspeciales);
-
-    } else if(campoFormatoFilasColumnasIncorrecto) {
-
-      this.showErrorDialog('El formato de las filas o columnas no es correcto en el campo: ' + campoFormatoFilasColumnasIncorrecto);
-
-    } else if(this.tarifasVacias()) {
-
-      this.showErrorDialog('Hay tarifas sin rellenar');
-
-    } else if(campoFilaColumnaRepetida){
-
-      this.showErrorDialog('La fila y columna del campo: ' + campoFilaColumnaRepetida + ' ya están siendo usadas');
-
-    } else {
       const nuevoTipoAnexo = {
         nombre: this.nombreAnexo,
         plantilla_path: this.selectedFile,
@@ -213,6 +207,9 @@ export class AnexosConfiguratorComponent {
         tipoProductoAsociado: this.tipoProductoAsociado,
         duracion: this.camposTiempo
       }
+
+
+      console.log(nuevoTipoAnexo);
 
       this.anexosService.createTipoAnexo(nuevoTipoAnexo).subscribe((response: any) => {
         console.log(response);
@@ -232,26 +229,23 @@ export class AnexosConfiguratorComponent {
         this.ratesService.setTarifaPorSociedadAndTipoAnexo(tarifaAnexo).subscribe((response: any) => {
           console.log(response);
           this.cargandoNuevoAnexo = false;
+          this.snackBar.openSnackBar('Anexo creado correctamente', 'success');
+          window.location.reload();
         });
       },
       (error : any) => {
         console.log(error);
       });
-    }
+    } 
   }
 
-  onTipoDatoChange(campo: any) {
-    if (campo.tipo_dato === 'select' || campo.tipo_dato === 'selector_dias' || campo.tipo_dato === 'dias_delimitados') {
-      // Inicializar el array de opciones si está indefinido
-      if (campo.opciones.length === 0) {
-        campo.opciones = [{id:'', nombre: '', precio: ''}];
-      }
-    } else {
-      // Limpiar las opciones si el tipo de dato no es 'select'
-      campo.opciones = [];
-    }
-  }
 
+  calculatePrecioTotal() {
+    const prima = parseFloat(this.tarifas[0].valor.replace(',', '.')) ? parseFloat(this.tarifas[0].valor.replace(',', '.')) : 0;
+    const cuota = parseFloat(this.tarifas[1].valor.replace(',', '.')) ? parseFloat(this.tarifas[1].valor.replace(',', '.')) : 0;
+    this.tarifas[2].valor = (prima + cuota).toString();
+  }
+  
   // VERIFICAR FORMULARIO:
   verificarCampos(camposFormulario: any[], editando : boolean): boolean {
 
