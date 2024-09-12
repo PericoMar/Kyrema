@@ -208,6 +208,13 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.familyService.getTipoProductoPorLetras(this.letras_identificacion).subscribe(
       data => {
         this.tipo_producto = data;
+        if(this.tipo_producto && this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
+          console.log('crear subproducto');
+          this.productForm.addControl(
+            'subproducto',
+            new FormControl(null, Validators.required)
+          );
+        }
         this.getDuracion().subscribe({
           next: (duracion: any) => {
             this.duracion = duracion;
@@ -518,15 +525,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
     });
 
 
-    // Comprobar si this.tipo_producto.subproductos existe
-    if(this.tipo_producto && this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
-
-      this.productForm.addControl(
-        'subproducto',
-        new FormControl(null, Validators.required)
-      );
-
-    }
 
 
     console.log('Campos formulario por grupos', this.camposFormularioPorGrupos);
@@ -542,6 +540,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
     this.productForm.patchValue({tipo_de_pago_id: this.tiposPago[0].id});
     this.productForm.patchValue({fecha_de_inicio: new Date().toISOString().split('T')[0]});
+    this.loadPago(this.sociedades[0].id);
+    // Si el productForm tiene subproducto, ponerlo a null
+    if(this.productForm.get('subproducto')){
+      this.productForm.get('subproducto')?.setValue(null);
+    }
     this.getDuracion().subscribe({
       next: (duracion: any) => {
         this.duracion = duracion;

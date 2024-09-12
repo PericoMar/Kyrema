@@ -35,6 +35,10 @@ export class ProductOperationsComponent {
   camposLoaded: boolean = false;
   formLoaded: boolean = false;
 
+  currentPage: number = 1;
+  paginationPageSize: number = 10;
+  loadingRows!: boolean;
+
   camposSubproductos: any[] = [];
 
   
@@ -55,6 +59,8 @@ export class ProductOperationsComponent {
   ngOnInit(): void {
     // Suscríbete a los parámetros de la ruta para obtener el nombre del producto
     this.route.paramMap.subscribe(params => {
+      this.rowData = [];
+      this.loadingRows = true;
       this.productUrl = params.get('product')!;
       this.loadProductData(this.productUrl);
       this.societyService.getSociedadesHijasObservable().subscribe({
@@ -77,6 +83,12 @@ export class ProductOperationsComponent {
       }
     );
   }
+
+  // onPageChanged(page: number) {
+  //   this.currentPage = page;
+  //   console.log('Page changed:', page);
+  //   // this.loadRowData();
+  // }
 
   public onProductSelectedChanged(product: any) {
     if(!this.formLoaded){
@@ -192,6 +204,7 @@ export class ProductOperationsComponent {
     this.productsService.getProductosByTipoAndSociedadesNoAnulados(this.familyProduct.letras_identificacion, this.idsSociedades).subscribe(
       data => {
         this.rowData = data;
+        this.loadingRows = false;
       },
       error => {
         console.log(error); 

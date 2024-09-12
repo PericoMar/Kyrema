@@ -124,7 +124,7 @@
             <div class="input-container subproducto">
                 <label for="subproducto" class="input-label">Producto</label>
                 <select id="subproducto" formControlName="subproducto" class="input-field" (change)="onSubproductoChange($event)">
-                    <option [value]="'' || null" disabled>Seleccione un producto...</option>
+                    <option value="null" disabled>Seleccione un producto...</option>
                     @for(subproducto of tipo_producto.subproductos ; track subproducto.id){
                         <option [value]="subproducto.id">{{ subproducto.nombre }}</option>
                     }
