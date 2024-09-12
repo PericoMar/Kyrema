@@ -1,8 +1,18 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
-import { ColDef} from 'ag-grid-community'; 
+import { ClientSideRowModelModule } from "ag-grid-community";
+import {
+  ColDef,
+  ColGroupDef,
+  GridApi,
+  GridOptions,
+  GridReadyEvent,
+  ModuleRegistry,
+  createGrid,
+} from "ag-grid-community";
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 
 @Component({
@@ -108,7 +118,7 @@ export class TableComponent implements OnChanges{
   };
 
   @Input() loadingRows! : boolean;
-  private gridApi: any;
+  private gridApi!: GridApi<any>;
   private gridColumnApi: any;
 
   // @Output() pageChanged = new EventEmitter<number>();
@@ -157,16 +167,14 @@ export class TableComponent implements OnChanges{
   }
 
   setLoadingRows(isLoading: boolean) {
-    this.gridApi!.setGridOption("loading", isLoading);
+    if(isLoading) {
+      this.gridApi.showLoadingOverlay();
+    }
   }
 
   onGridReady(params: any) {
     params.api.sizeColumnsToFit();
-
     this.gridApi = params.api;
-    this.gridColumnApi = params.columnApi;
-
-    this.gridApi.showLoadingOverlay();
   }
 
   

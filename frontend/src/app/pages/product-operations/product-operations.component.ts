@@ -59,7 +59,6 @@ export class ProductOperationsComponent {
   ngOnInit(): void {
     // Suscríbete a los parámetros de la ruta para obtener el nombre del producto
     this.route.paramMap.subscribe(params => {
-      this.rowData = [];
       this.loadingRows = true;
       this.productUrl = params.get('product')!;
       this.loadProductData(this.productUrl);
