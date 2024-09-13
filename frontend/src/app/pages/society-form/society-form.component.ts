@@ -89,6 +89,7 @@ export class SocietyFormComponent {
       this.societyService.getSocietyById(this.sociedad_id).subscribe(response => {
         // PatchValues para rellenar el formulario con los datos de la sociedad.
         this.societyForm.patchValue(response);
+        this.societyForm.controls['sociedad_padre_id'].disable();
       });
     } 
     

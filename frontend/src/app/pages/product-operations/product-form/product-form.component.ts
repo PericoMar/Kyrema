@@ -72,10 +72,15 @@ export class ProductFormComponent implements OnInit, OnChanges{
   @Input() product!: any | null;
   isLoadingProduct: boolean = false;
   productForm: FormGroup = this.fb.group({});
+
   @Input() letras_identificacion!: any;
   tipo_producto!: any;
-  sociedades: any;
   @Input() campos! : Campo[];
+
+  sociedades: any;
+  comercialActual: any = this.userService.getCurrentUser();
+  comerciales!: any[];
+
   camposFormularioPorGrupos!: any;
 
   formIsLoaded : boolean = false;
@@ -100,6 +105,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   duraciones: any;
   duracion: any;
+  
 
   constructor(
     private fb: FormBuilder,
@@ -130,6 +136,16 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.productForm.get('sociedad_id')!.valueChanges.subscribe(value => {
       if(!this.isLoadingProduct){
         this.onSociedadChange(value);
+      }
+    });
+
+    this.userService.getComercialesPorSociedad(this.societyService.getCurrentSociety().id).subscribe({
+      next: (comerciales: any[]) => {
+        this.comerciales = comerciales;
+        console.log('Comerciales', this.comerciales);
+      },
+      error: (error: any) => {
+        console.error('Error loading comerciales', error);
       }
     });
 
@@ -619,9 +635,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
     nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
 
     // Agregar el id del comercial al objeto nuevoProducto
-    const comercial_id = this.userService.getCurrentUser().id;
-    nuevoProducto.comercial_id = comercial_id;
-
+    const comercial_id = this.comercialActual.id;
+    if(nuevoProducto.comercial_id == null || nuevoProducto.comercial_id == ''){
+      nuevoProducto.comercial_id = comercial_id;
+    }
     nuevoProducto.comercial = this.userService.getCurrentUser().nombre;
 
     const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
@@ -739,6 +756,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.precioFinal += this.anexos.reduce((acc: number, anexo: any) => {
       return acc + (parseFloat(anexo.tarifas.precio_total) || 0);
     }, 0);
+
+    return this.precioFinal;
   }
 
   getDuracion(subproducto : any = null): Observable<any> {

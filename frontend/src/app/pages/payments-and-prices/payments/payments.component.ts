@@ -121,6 +121,7 @@ export class PaymentsComponent {
       },
       error => {
         this.cargandoGuardado = false;
+        console.error('Error al guardar los datos', error);
         this.snackBarService.openSnackBar('Error al guardar los datos', 'Cerrar');
       }
     );

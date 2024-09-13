@@ -4,6 +4,7 @@ export interface Commercial{
     id_sociedad: string;
     usuario: string;
     email: string;
+    responsable: number;
     contraseña: string;
     dni: string;
     sexo: string;

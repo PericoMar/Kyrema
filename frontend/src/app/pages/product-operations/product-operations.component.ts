@@ -13,6 +13,8 @@ import { ProductActionButtonsComponent } from '../../components/product-action-b
 import { ProductNotificationService } from '../../services/product-notification.service';
 import { CommonModule } from '@angular/common';
 import { SnackBarService } from '../../services/snackBar/snack-bar.service';
+import { UserService } from '../../services/user.service';
+import { Commercial } from '../../interfaces/commercial';
 
 @Component({
   selector: 'app-product-operations',
@@ -28,7 +30,7 @@ export class ProductOperationsComponent {
   rowData! : any[] | null;
   productSelected! : any;
   isProductSelected : boolean = false;
-  familyProduct! : any;
+  tipo_producto! : any;
   sociedadesBusqueda! : any[];
   idsSociedades! : any[];
   camposFormulario: any;
@@ -40,6 +42,7 @@ export class ProductOperationsComponent {
   loadingRows!: boolean;
 
   camposSubproductos: any[] = [];
+  comercial!: Commercial;
 
   
 
@@ -52,6 +55,7 @@ export class ProductOperationsComponent {
     private router : Router,
     private productNotificationService: ProductNotificationService,
     private snackBarService: SnackBarService,
+    private userService: UserService
   ) {
     
   }
@@ -59,6 +63,8 @@ export class ProductOperationsComponent {
   ngOnInit(): void {
     // Suscríbete a los parámetros de la ruta para obtener el nombre del producto
     this.route.paramMap.subscribe(params => {
+      this.comercial = this.userService.getCurrentUser();
+      console.log("Comercial", this.comercial);
       this.loadingRows = true;
       this.productUrl = params.get('product')!;
       this.loadProductData(this.productUrl);
@@ -76,8 +82,8 @@ export class ProductOperationsComponent {
 
     this.productNotificationService.productNotification$.subscribe(
       () => {
-        if(this.familyProduct){
-          this.loadRowData();
+        if(this.tipo_producto){
+          this.comercial.responsable == 1 ? this.loadRowData() : this.loadComercialRowData();
         }
       }
     );
@@ -117,13 +123,13 @@ export class ProductOperationsComponent {
     // Aquí puedes implementar la lógica para cargar los datos del producto
     this.familyService.getTipoProductoPorLetras(productUrl).subscribe(
       (data : any) => {
-        this.familyProduct = data;
-        this.productName = this.familyProduct.nombre;
+        this.tipo_producto = data;
+        this.productName = this.tipo_producto.nombre;
         if(data.subproductos && data.subproductos.length > 0){
           this.getAllCamposSubproductos(data.subproductos);
         }
-        console.log("Data",this.familyProduct);
-        this.camposService.getCamposVisiblesPorTipoProducto(this.familyProduct.id).subscribe(
+        console.log("Data",this.tipo_producto);
+        this.camposService.getCamposVisiblesPorTipoProducto(this.tipo_producto.id).subscribe(
           data => {
             this.columnDefs = data.map((campo : any) => {
               return { headerName: campo.nombre, field: campo.nombre_codigo ? campo.nombre_codigo : campo.nombre.toLowerCase().replace(/ /g, "_") };
@@ -145,10 +151,11 @@ export class ProductOperationsComponent {
           }
         )
 
-        this.loadRowData();
+        this.comercial.responsable == 1 ? this.loadRowData() : this.loadComercialRowData();
+        
 
         //Recoger los campos del formulario
-        this.camposService.getCamposPorTipoProducto(this.familyProduct.id).subscribe(
+        this.camposService.getCamposPorTipoProducto(this.tipo_producto.id).subscribe(
           (camposFormulario:any) => {
 
             const resultObject : any = {
@@ -162,7 +169,7 @@ export class ProductOperationsComponent {
 
               // Asignar valor según el tipo de dato
               let value;
-              switch (item.tipo_dato) {
+              switch (item.tipo_producto) {
                   case "texto":
                   case "numero":
                       value = "";
@@ -200,7 +207,7 @@ export class ProductOperationsComponent {
 
   loadRowData() {
     //Recoger todos los valores de la tabla
-    this.productsService.getProductosByTipoAndSociedadesNoAnulados(this.familyProduct.letras_identificacion, this.idsSociedades).subscribe(
+    this.productsService.getProductosByTipoAndSociedadesNoAnulados(this.tipo_producto.letras_identificacion, this.idsSociedades).subscribe(
       data => {
         this.rowData = data;
         this.loadingRows = false;
@@ -208,7 +215,21 @@ export class ProductOperationsComponent {
       error => {
         console.log(error); 
       }
-    )
+    );
+
+  }
+
+  loadComercialRowData() {
+    //Recoger todos los valores de la tabla
+    this.productsService.getProductosByTipoAndComercialNoAnulados(this.tipo_producto.letras_identificacion, this.comercial.id).subscribe(
+      data => {
+        this.rowData = data;
+        this.loadingRows = false;
+      },
+      error => {
+        console.log(error); 
+      }
+    );
   }
 
   getCellRenderer(route: string) {

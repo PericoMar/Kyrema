@@ -27,8 +27,11 @@ export class ProductsService {
       map((productos: any[]) => productos.filter(producto => producto.anulado == 1)));
   }
 
+  getProductosByTipoAndComercialNoAnulados(letras_identificacion: string, comercial_id: string | undefined): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/productos/${letras_identificacion}/comercial/${comercial_id}`);
+  }
+
   crearTipoProducto(dataTipoProducto : any): Observable<any> {
-  
     const headers = new HttpHeaders({
       'Content-Type': 'application/json' // Cambiar si es necesario
     });
