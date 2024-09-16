@@ -1,3 +1,5 @@
+@import "@ng-select/ng-select/themes/default.theme.css";
+
 /* You can add global styles to this file, and also import other style files */
 :root{
     --main-bg-color: #ebeff2;   
@@ -92,6 +94,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border-radius: 4px;
     box-sizing: border-box;
     margin-bottom: 10px;
+}
+
+.ng-select-field{
+    width: 100%;
 }
 
 .input-group{

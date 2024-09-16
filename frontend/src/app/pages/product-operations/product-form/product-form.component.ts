@@ -17,6 +17,9 @@ import { CamposService } from '../../../services/campos.service';
 import { SnackBarService } from '../../../services/snackBar/snack-bar.service';
 import { catchError, map, Observable, of } from 'rxjs';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { MatInput, MatInputModule } from '@angular/material/input';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -45,7 +48,7 @@ interface CampoFormulario{
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, ButtonSpinnerComponent, SpinnerComponent],
+  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, ButtonSpinnerComponent, SpinnerComponent, NgSelectModule],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css'],
   animations: [
@@ -142,6 +145,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.userService.getComercialesPorSociedad(this.societyService.getCurrentSociety().id).subscribe({
       next: (comerciales: any[]) => {
         this.comerciales = comerciales;
+        console.log('Comercial Actual ', this.comercialActual);
+        if(this.comercialActual.responsable == '1'){
+          console.log('reponsable')
+          this.productForm.addControl('comercial_id', new FormControl(this.comercialActual.id, Validators.required));
+        }
         console.log('Comerciales', this.comerciales);
       },
       error: (error: any) => {
@@ -172,6 +180,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
     if (changes['product'] && !(changes['campos'] || changes['letras_identificacion'])) {
       this.isLoadingProduct = true;
       this.productForm.patchValue(this.product);
+
+      const sociedadId = Number(this.product.sociedad_id);
+      this.productForm.controls['sociedad_id'].setValue(sociedadId);
       if(this.product.id != null && this.product.id != ''){
         this.loadAnexoPorProducto();
       }
@@ -202,10 +213,28 @@ export class ProductFormComponent implements OnInit, OnChanges{
   onSociedadChange(sociedad_id: string) {
     this.loadPago(sociedad_id);
     this.loadTarifasPorAnexo(sociedad_id);
+    if(this.comercialActual.responsable == '1'){
+      this.loadComercialesPorSociedad(sociedad_id);
+    }
+  }
+
+  loadComercialesPorSociedad(sociedad_id: string) {
+    this.productForm.get('comercial_id')?.disable();
+    this.userService.getComercialesPorSociedad(sociedad_id).subscribe({
+      next: (comerciales: any[]) => {
+        this.comerciales = comerciales;
+        this.productForm.controls['comercial_id'].setValue(this.comerciales[0].id);
+        this.productForm.get('comercial_id')?.enable();
+        console.log('Comerciales', this.comerciales);
+      },
+      error: (error: any) => {
+        console.error('Error loading comerciales', error);
+      }
+    });
   }
 
   loadSociedades(): void {
-    this.societyService.getSociedadesHijasObservable().subscribe(
+    this.societyService.getSociedadesHijasPorTipoProducto(this.letras_identificacion, this.societyService.getCurrentSociety().id).subscribe(
       data => {
         this.sociedades = data;
         console.log("Sociedades hijas", this.sociedades);
@@ -224,6 +253,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.familyService.getTipoProductoPorLetras(this.letras_identificacion).subscribe(
       data => {
         this.tipo_producto = data;
+        // Cuando cojo el tipo_producto si tiene subproductos añado el campo subproducto al formulario
         if(this.tipo_producto && this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
           console.log('crear subproducto');
           this.productForm.addControl(
@@ -338,7 +368,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.rateService.getTarifaPorSociedadAndTipoAnexo(AppConfig.SOCIEDAD_ADMIN_ID, tipoAnexo.id).subscribe({
         next: (tarifas: any[]) => {
           this.tarifasAnexos[tipoAnexo.id] = tarifas;
-          
+          // this.getPrecioFinal();
         },
         error: (error: any) => {
           console.error('Error loading tarifas por anexo', error);
@@ -512,6 +542,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.productForm = this.fb.group({
       id: [''],
       sociedad_id: ['', Validators.required],
+      comercial_creador_id: [this.comercialActual.id],
       nombre_socio: ['', Validators.required],
       apellido_1: ['', Validators.required],
       apellido_2: ['', Validators.required],
@@ -635,11 +666,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
     nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
 
     // Agregar el id del comercial al objeto nuevoProducto
-    const comercial_id = this.comercialActual.id;
-    if(nuevoProducto.comercial_id == null || nuevoProducto.comercial_id == ''){
-      nuevoProducto.comercial_id = comercial_id;
+    if(nuevoProducto.comercial_id != this.comercialActual.id){
+      nuevoProducto.comercial_creador_id = this.comercialActual.id;
     }
-    nuevoProducto.comercial = this.userService.getCurrentUser().nombre;
+    nuevoProducto.comercial = this.comercialActual.nombre;
 
     const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
     nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';

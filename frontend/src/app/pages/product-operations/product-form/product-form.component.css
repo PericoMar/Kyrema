@@ -110,6 +110,11 @@ input.disabled{
     background-color: rgb(252, 243, 243);
 }
 
+::ng-deep .input-error .ng-select-container {
+    border-color: rgb(252, 130, 130);
+    background-color: rgb(252, 243, 243);
+}
+
 
 .clean-inputs {
     background-color: #4c78af;

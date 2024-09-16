@@ -26,7 +26,7 @@ export class AuthService {
             this.isLoged = true;
         
             // Extraer los datos específicos del objeto response.comercial
-            const { id, nivel, id_sociedad, nombre, usuario } = response.comercial;
+            const { id, nivel, id_sociedad, nombre, usuario,responsable } = response.comercial;
         
             // Crear el objeto comercial con los datos extraídos
             const comercial = {
@@ -34,7 +34,8 @@ export class AuthService {
                 nivel,
                 id_sociedad,
                 nombre,
-                usuario
+                usuario,
+                responsable
             };
         
             // Guardar el objeto comercial y el token en localStorage

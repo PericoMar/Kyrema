@@ -54,6 +54,10 @@ export class SocietyService {
     return of(sociedades ? JSON.parse(sociedades) : null);
   }
 
+  getSociedadesHijasPorTipoProducto(letras_identificacion : string, sociedad_id :string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/sociedad/${sociedad_id}/hijas/tipo-producto/${letras_identificacion}`);
+  }
+
   setSociedadLocalStorage(sociedad : any){
     localStorage.setItem(this.SOCIETY_KEY, JSON.stringify(sociedad));
   }

@@ -67,14 +67,20 @@ export class ProductOperationsComponent {
       console.log("Comercial", this.comercial);
       this.loadingRows = true;
       this.productUrl = params.get('product')!;
-      this.loadProductData(this.productUrl);
       this.societyService.getSociedadesHijasObservable().subscribe({
-        next: (data) => {
-          this.sociedadesBusqueda = data;
-          this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
-          console.log("ids", this.idsSociedades);
+        next: (data : any) => {
+          try {
+            this.sociedadesBusqueda = data;
+            this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
+            this.loadProductData(this.productUrl);
+            console.log("ids", this.idsSociedades);
+          } catch (error) {
+            console.log(error);
+            // Recargar la pagina
+            this.snackBarService.openSnackBar("Error al cargar las sociedades, prueba a recargar la página");
+          }
         },
-        error: (error) => {
+        error: (error : any) => {
           console.log(error);
         }
       });

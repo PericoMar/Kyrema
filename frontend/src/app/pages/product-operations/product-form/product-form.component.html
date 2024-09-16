@@ -9,29 +9,38 @@
     </header>
 
     <fieldset class="input-group">
-        <div class="input-container">
+        <div class="input-container select">
             @if(sociedades.length > 0){
-                <label for="sociedad" class="input-label">Sociedad</label>
-                <select formControlName="sociedad_id" id="sociedad" class="input-field select">
-                    <option value="">Selecciona el comercial...</option>
-                    @for(sociedad of sociedades ; track sociedad.id){
-                        <option [value]="sociedad.id">{{ sociedad.nombre }}</option>
-                    }
-                </select>
+                <label for="sociedad" class="input-label">Sociedad <span class="span-required">*</span></label>
+                <ng-select
+                    [items]="sociedades"
+                    bindLabel="nombre"
+                    bindValue="id"
+                    formControlName="sociedad_id"
+                    [searchable]="true"
+                    class="ng-select-field"
+                    id="sociedad">
+                </ng-select>
                 <!-- <select formControlName="sociedad_id" id="sociedad" class="input-field select" *ngIf="sociedades.length > 0">
                     <option *ngFor="let sociedad of sociedades" [value]="sociedad.id">{{ sociedad.nombre }}</option>
                 </select> -->
             }
         </div>
         
-        <div class="input-container">
-            <label for="comercial_id" class="input-label">Referido </label>
-            <select name="comercial_id" id="comercial_id" formControlName="comercial_id" class="input-field select">
-                @for(comercial of comerciales ; track comercial.id){
-                    <option [value]="comercial.id">{{ comercial.nombre }}</option>
-                }
-            </select>
-        </div>
+        @if(comercialActual.responsable == 1){
+            <div class="input-container select">
+                <label for="comercial_id" class="input-label">Emisor </label>
+                <ng-select
+                    [items]="comerciales"
+                    bindLabel="nombre"
+                    bindValue="id"
+                    formControlName="comercial_id"
+                    [searchable]="true"
+                    class="ng-select-field"
+                    placeholder="Seleccione un comercial...">
+                </ng-select>
+            </div>
+        }
     </fieldset>
 
 

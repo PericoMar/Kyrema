@@ -12,7 +12,6 @@ import {
 } from "ag-grid-community";
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 
 @Component({
@@ -167,7 +166,7 @@ export class TableComponent implements OnChanges{
   }
 
   setLoadingRows(isLoading: boolean) {
-    if(isLoading) {
+    if(isLoading && this.gridApi) {
       this.gridApi.showLoadingOverlay();
     }
   }
