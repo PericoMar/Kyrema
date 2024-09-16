@@ -93,6 +93,7 @@ input.disabled{
 
 .date{
     width: 10%;
+    min-width: 135px;
 }
 
 .divider{

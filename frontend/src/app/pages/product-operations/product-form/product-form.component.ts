@@ -182,7 +182,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.productForm.patchValue(this.product);
 
       const sociedadId = Number(this.product.sociedad_id);
+      const comercial_id = Number(this.product.comercial_id);
       this.productForm.controls['sociedad_id'].setValue(sociedadId);
+      this.productForm.controls['comercial_id'].setValue(comercial_id);
       if(this.product.id != null && this.product.id != ''){
         this.loadAnexoPorProducto();
       }
@@ -213,7 +215,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   onSociedadChange(sociedad_id: string) {
     this.loadPago(sociedad_id);
     this.loadTarifasPorAnexo(sociedad_id);
-    if(this.comercialActual.responsable == '1'){
+    if(this.comercialActual.responsable == '1' && sociedad_id != null){
       this.loadComercialesPorSociedad(sociedad_id);
     }
   }
@@ -223,7 +225,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.userService.getComercialesPorSociedad(sociedad_id).subscribe({
       next: (comerciales: any[]) => {
         this.comerciales = comerciales;
-        this.productForm.controls['comercial_id'].setValue(this.comerciales[0].id);
+        if(this.comerciales.length > 0){
+          this.productForm.controls['comercial_id'].setValue(this.comerciales[0].id);
+        }
         this.productForm.get('comercial_id')?.enable();
         console.log('Comerciales', this.comerciales);
       },
@@ -236,7 +240,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   loadSociedades(): void {
     this.societyService.getSociedadesHijasPorTipoProducto(this.letras_identificacion, this.societyService.getCurrentSociety().id).subscribe(
       data => {
-        this.sociedades = data;
+        this.sociedades = Object.values(data);
         console.log("Sociedades hijas", this.sociedades);
         // Actualiza el formControl sociedad_id con el primer valor disponible en sociedades
         if (this.sociedades.length > 0) {
@@ -282,26 +286,28 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   loadPago(id_sociedad : string) : void{
-    this.rateService.getTarifasPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
-      data => {
-        console.log("Tarifas", data);
-        this.productForm.controls['prima_del_seguro'].setValue(data[0].prima_seguro);
-        this.productForm.controls['cuota_de_asociación'].setValue(data[0].cuota_asociacion);
-        this.productForm.controls['precio_total'].setValue(data[0].precio_total);
-        this.rateService.getTipoPagoProductoPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
-          data => {
-            this.tiposPago = data;
-            this.productForm.controls['tipo_de_pago_id'].setValue(data[0].id);
-          },
-          error => {
-            console.error(error);
-          }
-        );
-        this.getPrecioFinal();
-      },
-      error => {
-        console.error(error);
-      });
+    if(id_sociedad != null){
+      this.rateService.getTarifasPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
+        data => {
+          console.log("Tarifas", data);
+          this.productForm.controls['prima_del_seguro'].setValue(data[0].prima_seguro);
+          this.productForm.controls['cuota_de_asociación'].setValue(data[0].cuota_asociacion);
+          this.productForm.controls['precio_total'].setValue(data[0].precio_total);
+          this.rateService.getTipoPagoProductoPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
+            data => {
+              this.tiposPago = data;
+              this.productForm.controls['tipo_de_pago_id'].setValue(data[0].id);
+            },
+            error => {
+              console.error(error);
+            }
+          );
+          this.getPrecioFinal();
+        },
+        error => {
+          console.error(error);
+        });
+    }
   }
 
   // loadSubproductos(padre_id : any){
@@ -543,6 +549,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       id: [''],
       sociedad_id: ['', Validators.required],
       comercial_creador_id: [this.comercialActual.id],
+      comercial_id: [this.comercialActual.id],
       nombre_socio: ['', Validators.required],
       apellido_1: ['', Validators.required],
       apellido_2: ['', Validators.required],
