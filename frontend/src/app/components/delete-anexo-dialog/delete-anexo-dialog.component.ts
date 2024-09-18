@@ -29,6 +29,7 @@ export class DeleteAnexoDialogComponent {
       next: () => {
         this.dialogRef.close(true);
         // Recargar la pagina:
+
         window.location.reload();
       },
       error: (error: any) => {

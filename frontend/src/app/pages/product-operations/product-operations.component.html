@@ -3,7 +3,11 @@
     <section class="listado section-block">
         <header class="space-between-header">
             <h1>Listado de {{ productName }}</h1>
-              <a [routerLink]="['/anulados', productUrl]" routerLinkActive="active" class="button-historial">Ver anulados</a>
+            <div class="space-between header-buttons">
+                <a [routerLink]="['/historial', productUrl]" routerLinkActive="active" class="button-header see-history">Ver historial</a>
+                <button class="button-header clear-filters" (click)="clearFilters()">Limpiar filtros</button>
+                <a [routerLink]="['/anulados', productUrl]" routerLinkActive="active" class="button-header">Ver anulados</a>
+            </div>
         </header>
         <app-table 
         (productSelectedChange)="onProductSelectedChanged($event)" 

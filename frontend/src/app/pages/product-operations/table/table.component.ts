@@ -174,5 +174,9 @@ export class TableComponent implements OnChanges{
     this.gridApi = params.api;
   }
 
+  clearAllFilters() {
+    this.gridApi.setFilterModel(null);
+  }
+
   
 }

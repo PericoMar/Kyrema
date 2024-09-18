@@ -51,7 +51,7 @@ export class AnexosConfiguratorComponent {
   cargandoNuevoAnexo : boolean = false;
   tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }];
 
-  tiposDuracion = [{ nombre: 'Diario - 1día', value: 'diario' }, {nombre: 'Mensual - 30días' , value: 'mensual'}, { nombre: 'Anual - 365días', value: 'anual' }, { nombre: 'Días delimitados', value: 'dias_delimitados' }, { nombre: 'Selector de días', value: 'selector_dias' }, { nombre: 'Fecha exacta', value: 'fecha_exacta' }]; 
+  tiposDuracion = [{nombre: 'Fecha dependiente', value: 'fecha_dependiente'}, { nombre: 'Diario - 1día', value: 'diario' }, {nombre: 'Mensual - 30días' , value: 'mensual'}, { nombre: 'Anual - 365días', value: 'anual' }, { nombre: 'Días delimitados', value: 'dias_delimitados' }, { nombre: 'Selector de días', value: 'selector_dias' }, { nombre: 'Fecha exacta', value: 'fecha_exacta' }]; 
 
   tarifas : any[] = [
     {
@@ -144,9 +144,16 @@ export class AnexosConfiguratorComponent {
         });
 
       } else {
-        this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', obligatorio: true, grupo: 'datos_duracion', opciones: []}];
+        this.camposTiempo = [
+          { id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', obligatorio: true, grupo: 'datos_duracion', opciones: []},
+        ];
 
-        this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '' , grupo: 'datos_producto', obligatorio: false, opciones: []}];
+        this.campos = [
+          { id: '', nombre: 'Fecha de inicio', tipo_dato: 'date', fila: '',columna: '', obligatorio: true, grupo: 'datos_fecha', opciones: []},
+          { id: '', nombre: 'Fecha de fin', tipo_dato: 'date', fila: '',columna: '', obligatorio: true, grupo: 'datos_fecha', opciones: []},
+          { id: '', nombre: 'Fecha de emisión', tipo_dato: 'date', fila: '',columna: '', obligatorio: true, grupo: 'datos_fecha', opciones: []},
+          { id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '' , grupo: 'datos_producto', obligatorio: false, opciones: []},
+        ];
       }
     });
    }
