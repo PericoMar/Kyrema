@@ -35,6 +35,10 @@ export class AnexosService {
     });
   }
 
+  getTipoAnexoById(id_tipo_anexo: string){
+    return this.http.get<any>(`${this.apiUrl}/anexos/${id_tipo_anexo}`);
+  }
+
   getTipoAnexosPorTipoProducto(id_tipo_producto: string){
     return this.http.get<any>(`${this.apiUrl}/anexos/tipo-producto/${id_tipo_producto}`);
   }

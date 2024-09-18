@@ -13,13 +13,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { AnexosService } from '../../services/anexos.service';
 import { RatesService } from '../../services/rates.service';
 import { AppConfig } from '../../../config/app-config';
+import { ActivatedRoute } from '@angular/router';
+import { ProductsService } from '../../services/products.service';
+import { SnackBarService } from '../../services/snackBar/snack-bar.service';
 
 interface CampoAnexo {
+  id: string;
   nombre: string;
-  tipoDato: string;
+  tipo_dato: string;
   fila: string;
   columna: string;
   obligatorio: boolean;
+  grupo: string;
+  opciones: any[];
 }
 
 
@@ -31,30 +37,8 @@ interface CampoAnexo {
   styleUrl: './anexos-configurator.component.css'
 })
 export class AnexosConfiguratorComponent {
-
-
-  constructor(
-    private familyService: FamilyProductService,
-    private dialog: MatDialog,
-    private anexosService: AnexosService,
-    private ratesService : RatesService
-  ) {
-    this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
-      this.tiposProductos = tiposProducto;
-    },
-    (error) => {
-      console.log(error)
-    });
-
-    this.anexosService.getAllTiposAnexos().subscribe((tiposAnexos : any) => {
-      this.tiposAnexos = tiposAnexos;
-    },
-    (error : any) => {
-      console.log(error)
-    });
-   }
-  
-  
+  campos: CampoAnexo[] = [];
+  camposTiempo: CampoAnexo[] = [];
   fileName = '';
   selectedFile! : File;
 
@@ -66,6 +50,9 @@ export class AnexosConfiguratorComponent {
 
   cargandoNuevoAnexo : boolean = false;
   tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }];
+
+  tiposDuracion = [{ nombre: 'Diario - 1día', value: 'diario' }, {nombre: 'Mensual - 30días' , value: 'mensual'}, { nombre: 'Anual - 365días', value: 'anual' }, { nombre: 'Días delimitados', value: 'dias_delimitados' }, { nombre: 'Selector de días', value: 'selector_dias' }, { nombre: 'Fecha exacta', value: 'fecha_exacta' }]; 
+
   tarifas : any[] = [
     {
       id: 1,
@@ -87,56 +74,142 @@ export class AnexosConfiguratorComponent {
     }
   ];
 
-  campos: CampoAnexo[] = [{ nombre: '', tipoDato: 'text', fila: '',columna: '' , obligatorio: false}];
+  id_tipo_anexo_editado! : string;
+  duracion: any;
+
+  constructor(
+    private familyService: FamilyProductService,
+    private dialog: MatDialog,
+    private anexosService: AnexosService,
+    private ratesService : RatesService,
+    private route : ActivatedRoute,
+    private productService: ProductsService,
+    private snackBar : SnackBarService
+  ) {
+    this.familyService.getAllTipos().subscribe((tiposProducto : any) => {
+      this.tiposProductos = tiposProducto;
+    },
+    (error) => {
+      console.log(error)
+    });
+
+    this.anexosService.getAllTiposAnexos().subscribe((tiposAnexos : any) => {
+      this.tiposAnexos = tiposAnexos;
+    },
+    (error : any) => {
+      console.log(error)
+    });
+
+    this.route.paramMap.subscribe(params => {
+      this.id_tipo_anexo_editado = params.get('id') || '';
+      if(this.id_tipo_anexo_editado){
+        this.anexosService.getTipoAnexoById(this.id_tipo_anexo_editado).subscribe((response : any) => {
+          this.nombreAnexo = response.nombre;
+          this.letrasIdentificacion = response.letras_identificacion;
+          this.tipoProductoAsociado = response.id_tipo_producto;
+          this.fileName = response.plantilla_path;
+          this.duracion = response.duracion;
+          
+        });
+
+        this.anexosService.getCamposPorTipoAnexo(this.id_tipo_anexo_editado).subscribe((campos : any) => {
+          campos.forEach((campo : any) => {
+            campo.obligatorio = campo.obligatorio == '1' ? true : false;
+            campo.visible = campo.visible == '1' ? true : false;
+            campo.fila = campo.fila ? campo.fila : '';
+            campo.columna = campo.columna ? campo.columna : '';
+
+            // Se tienen que separar los campos con opciones de los que no tienen para que no cargue el formulario con los campos con opciones vacíos
+            if(campo.grupo === 'datos_producto') {
+              this.campos.push(campo);
+            } else if(campo.grupo === 'datos_duracion') {
+              // Gestionar si es tipo selector de días
+              if(campo.tipo_dato === 'selector_dias') {
+                this.productService.getDuraciones(this.duracion).subscribe((opciones) => {
+                  
+                  // Convertir la key duracion en "nombre":
+                  opciones.forEach((opcion : any) => {
+                    opcion.nombre = opcion.duracion;
+                    delete opcion.duracion;
+                  });
+                  campo.opciones = opciones;
+                  console.log(campo);
+                  this.camposTiempo.push(campo);
+                });
+              } else {
+                this.camposTiempo.push(campo);
+              }
+            }
+          });
+        });
+
+      } else {
+        this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', obligatorio: true, grupo: 'datos_duracion', opciones: []}];
+
+        this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '' , grupo: 'datos_producto', obligatorio: false, opciones: []}];
+      }
+    });
+   }
+
 
   agregarCampo() {
-    this.campos.push({ nombre: '', tipoDato: 'text', fila: '',columna: '', obligatorio: false });
+    this.campos.push({id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', obligatorio: false , grupo: 'datos_producto', opciones: []});
   }
 
   eliminarCampo(index: number) {
     this.campos.splice(index, 1);
   }
 
-  crearTipoAnexo(){
-    this.cargandoNuevoAnexo = true;
-    const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(this.campos);
-
-    const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
-
-    const campoFilaColumnaRepetida = this.filaColumnaYaEnUso(this.campos);
-
-    if(this.campoVariableVacio()) {
-        
-      this.showErrorDialog('Hay un campo variable con el nombre vacío');
-  
-    } else if(this.letrasIdentificacionEnUso()) {
-
-      this.showErrorDialog('Las letras de identificación seleccionadas ya están siendo usadas por otro producto');
-
-    }else if(campoUsoCaracteresEspeciales){
-
-      this.showErrorDialog('No está permitido el uso de caracteres especiales. Campo: '+ campoUsoCaracteresEspeciales);
-
-    } else if(campoFormatoFilasColumnasIncorrecto) {
-
-      this.showErrorDialog('El formato de las filas o columnas no es correcto en el campo: ' + campoFormatoFilasColumnasIncorrecto);
-
-    } else if(this.tarifasVacias()) {
-
-      this.showErrorDialog('Hay tarifas sin rellenar');
-
-    } else if(campoFilaColumnaRepetida){
-
-      this.showErrorDialog('La fila y columna del campo: ' + campoFilaColumnaRepetida + ' ya están siendo usadas');
-
+  onTipoDatoChange(campo: CampoAnexo) {
+    if (campo.tipo_dato === 'select' || campo.tipo_dato === 'selector_dias' || campo.tipo_dato === 'dias_delimitados') {
+      // Inicializar el array de opciones si está indefinido
+      if (campo.opciones.length === 0) {
+        campo.opciones = [{id:'', nombre: '', precio: ''}];
+      }
     } else {
+      // Limpiar las opciones si el tipo de dato no es 'select'
+      campo.opciones = [];
+    }
+  }
+
+
+  agregarOpcion(campo: any) {
+    // Verificar que el array de opciones esté inicializado
+    if (!campo.opciones) {
+      campo.opciones = [];
+    }
+    campo.opciones.push({id:'', nombre: '', precio: ''}); // Añadir una opción vacía
+  }
+
+  eliminarOpcion(campo: any, index: number) {
+    if (campo.opciones) {
+      campo.opciones.splice(index, 1); // Eliminar la opción en la posición `index`
+    }
+  } 
+
+  crearTipoAnexo(){
+
+    const editando : boolean = this.id_tipo_anexo_editado ? true : false;
+
+    if(this.plantillaEnUso()) {
+      this.showErrorDialog('El nombre de la plantilla seleccionada ya está siendo usado por otro producto');
+      return;
+    }
+
+    if(this.verificarCampos(this.campos, editando)) {
+      this.cargandoNuevoAnexo = true;
+
       const nuevoTipoAnexo = {
         nombre: this.nombreAnexo,
         plantilla_path: this.selectedFile,
         letras_identificacion: AppConfig.PREFIJO_LETRAS_IDENTIFICACION_ANEXOS + this.letrasIdentificacion,
         campos: this.campos,
         tipoProductoAsociado: this.tipoProductoAsociado,
+        duracion: this.camposTiempo
       }
+
+
+      console.log(nuevoTipoAnexo);
 
       this.anexosService.createTipoAnexo(nuevoTipoAnexo).subscribe((response: any) => {
         console.log(response);
@@ -156,14 +229,23 @@ export class AnexosConfiguratorComponent {
         this.ratesService.setTarifaPorSociedadAndTipoAnexo(tarifaAnexo).subscribe((response: any) => {
           console.log(response);
           this.cargandoNuevoAnexo = false;
+          this.snackBar.openSnackBar('Anexo creado correctamente', 'success');
+          window.location.reload();
         });
       },
       (error : any) => {
         console.log(error);
       });
-    }
+    } 
   }
 
+
+  calculatePrecioTotal() {
+    const prima = parseFloat(this.tarifas[0].valor.replace(',', '.')) ? parseFloat(this.tarifas[0].valor.replace(',', '.')) : 0;
+    const cuota = parseFloat(this.tarifas[1].valor.replace(',', '.')) ? parseFloat(this.tarifas[1].valor.replace(',', '.')) : 0;
+    this.tarifas[2].valor = (prima + cuota).toString();
+  }
+  
   // VERIFICAR FORMULARIO:
   verificarCampos(camposFormulario: any[], editando : boolean): boolean {
 

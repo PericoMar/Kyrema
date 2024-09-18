@@ -10,10 +10,16 @@
     [pagination]="true"
     [paginationPageSize]="paginationPageSize"
     [paginationPageSizeSelector]="paginationPageSizeSelector"
+
+    (gridReady)="onGridReady($event)"
+    
     [localeText]="localeText"
     [class]="themeClass"
+
     (rowClicked)="onRowClicked($event)"
     (cellDoubleClicked)="onCellDoubleClicked($event)"
     (cellKeyDown)="onCellKeyDown($event)"
-  ></ag-grid-angular>
+  />
+
+  <!-- (paginationChanged)="onPageChange($event)" -->
 </div>

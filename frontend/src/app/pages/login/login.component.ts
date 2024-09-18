@@ -52,6 +52,9 @@ export class LoginComponent {
                   this.router.navigate(['/gestion-productos']);
                 }
                 
+              },
+              error => {
+                this.errorMessage = 'Ocurrió un error. Por favor, inténtalo de nuevo.';
               }
             );
           } else {

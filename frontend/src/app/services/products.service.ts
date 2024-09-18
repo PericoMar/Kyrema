@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { AppConfig } from '../../config/app-config';
 
 @Injectable({
@@ -27,8 +27,11 @@ export class ProductsService {
       map((productos: any[]) => productos.filter(producto => producto.anulado == 1)));
   }
 
+  getProductosByTipoAndComercialNoAnulados(letras_identificacion: string, comercial_id: string | undefined): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/productos/${letras_identificacion}/comercial/${comercial_id}`);
+  }
+
   crearTipoProducto(dataTipoProducto : any): Observable<any> {
-  
     const headers = new HttpHeaders({
       'Content-Type': 'application/json' // Cambiar si es necesario
     });
@@ -61,7 +64,18 @@ export class ProductsService {
       params: params,
       headers: headers,
       responseType: 'blob' // Asegura que la respuesta se trate como un Blob
-    });
+    }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        // Manejar el error aquí
+        let errorMessage = 'Ocurrió un error al intentar descargar la plantilla. Vuelva a intentarlo más tarde.';
+  
+        // Opcional: puedes mostrar un mensaje al usuario aquí o en otro lugar
+        console.error(errorMessage); // Log del error
+  
+        // Retornar un observable con un error
+        return throwError(() => new Error(errorMessage));
+      })
+    );
   }
 
   //Esto inserta una fila en la tabla del producto
@@ -92,4 +106,5 @@ export class ProductsService {
   getDuraciones(nombreTabla: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/duraciones/${nombreTabla}`);
   }
+
 }

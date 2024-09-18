@@ -5,16 +5,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { Commercial } from '../../interfaces/commercial';
-import path from 'path';
 import { SocietyService } from '../../services/society.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
 import { SuccesDialogComponent } from '../../components/succes-dialog/succes-dialog.component';
+import { CommonModule } from '@angular/common';
+import { SnackBarService } from '../../services/snackBar/snack-bar.service';
+import { ButtonSpinnerComponent } from '../../components/button-spinner/button-spinner.component';
+import { AppConfig } from '../../../config/app-config';
 
 @Component({
   selector: 'app-commercial-form',
   standalone: true,
-  imports: [MatIconModule,MatButtonModule, ReactiveFormsModule],
+  imports: [MatIconModule,MatButtonModule, ReactiveFormsModule, CommonModule, ButtonSpinnerComponent],
   templateUrl: './commercial-form.component.html',
   styleUrl: './commercial-form.component.css'
 })
@@ -24,6 +27,7 @@ export class CommercialFormComponent {
   comercial_id!: string;
   comercial! : Commercial;
   sociedad!: any;
+  sociedad_id!: any;
   sociedades!: any;
 
   selectedFile!: File;
@@ -34,9 +38,13 @@ export class CommercialFormComponent {
     "usuario",
     "contraseña",
     "email",
-    "dni",
-    "fecha_nacimiento"
+    "responsable",
+    "fecha_nacimiento",
   ]
+  
+  formularioMandado: boolean = false;
+  id_sociedad_admin: any;
+  cargandoComercial: boolean = false;
 
   
 
@@ -45,9 +53,13 @@ export class CommercialFormComponent {
     private comercialService: UserService,
     private route : ActivatedRoute,
     private societyService: SocietyService,
-    private dialog : MatDialog
+    private dialog : MatDialog,
+    private snackBarService: SnackBarService,
   ) {
+    this.id_sociedad_admin = AppConfig.SOCIEDAD_ADMIN_ID;
+
     this.sociedad = this.societyService.getCurrentSociety();
+    this.sociedad_id = this.sociedad.id;
 
     this.sociedades = this.societyService.getSociedadesHijas();
     console.log("Sociedades: ", this.sociedades)
@@ -70,14 +82,15 @@ export class CommercialFormComponent {
 
   private initializeForm() {
     this.comercialForm = this.formBuilder.group({
-      nombre: [''],
+      nombre: ['', Validators.required],
       id_sociedad: [this.sociedad.id],
-      usuario: [''],
-      email: [''],
-      contraseña: [''],
+      usuario: ['', Validators.required],
+      email: ['', Validators.required],
+      responsable: ['0', Validators.required],
+      contraseña: ['', Validators.required],
       dni: [''],
       sexo: [''],
-      fecha_nacimiento: [''],
+      fecha_nacimiento: ['', Validators.required],
       fecha_alta: [''],
       referido: [''],
       direccion: [''],
@@ -94,8 +107,9 @@ export class CommercialFormComponent {
     });
 
     if(this.comercial){
-      const updatedComercial = this.transformNullToEmptyString(this.comercial);
-      this.comercialForm.patchValue(updatedComercial);
+      this.comercialForm.patchValue(this.comercial);
+    } else {
+      this.comercialForm.get('fecha_alta')?.setValue(new Date().toISOString().split('T')[0]);
     }
   }
 
@@ -123,32 +137,34 @@ export class CommercialFormComponent {
   }
 
   onSubmit() {
+    console.log(this.comercialForm);
+    this.formularioMandado = true;
+    this.cargandoComercial = true;
     const comercial = this.comercialForm.value;
     console.log(comercial);
-    if(this.emptyRequiredInput()){
-
-      this.showErrorDialog('Por favor, rellene todos los campos obligatorios');
-
-    } else if(this.dniNotValid()){
-
-      this.showErrorDialog('El DNI introducido no es válido');
-
-    } else {
+    if(this.comercialForm.valid){
 
       if(this.comercial_id == ''){
         
         this.comercialService.createCommercial(comercial).subscribe(response => {
-          this.showSuccesDialog('Comercial '+ response.nombre + ' creado correctamente.');
+          this.snackBarService.openSnackBar('Comercial '+ response.nombre + ' creado correctamente.', 'Cerrar');
+          this.formularioMandado = false;
+          this.cargandoComercial = false;
         });
 
       } else {
 
         this.comercialService.updateCommercial(this.comercial_id, comercial).subscribe(response => {
-          this.showSuccesDialog('Comercial '+ response.nombre + ' actualizado correctamente.');
+          this.snackBarService.openSnackBar('Comercial '+ response.nombre + ' actualizado correctamente.', 'Cerrar');
+          this.formularioMandado = false;
+          this.cargandoComercial = false;
         });
 
       }
 
+    } else {
+      this.snackBarService.openSnackBar('Por favor, rellena los campos obligatorios', 'Cerrar');
+      this.cargandoComercial = false;
     }
     
   }

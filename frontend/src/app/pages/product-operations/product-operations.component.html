@@ -5,7 +5,14 @@
             <h1>Listado de {{ productName }}</h1>
               <a [routerLink]="['/anulados', productUrl]" routerLinkActive="active" class="button-historial">Ver anulados</a>
         </header>
-        <app-table (productSelectedChange)="onProductSelectedChanged($event)" [columnDefs]="columnDefs" [rowData]="rowData"></app-table>
+        <app-table 
+        (productSelectedChange)="onProductSelectedChanged($event)" 
+        [columnDefs]="columnDefs" 
+        [rowData]="rowData"
+        [paginationPageSize]="paginationPageSize"
+        [loadingRows]="loadingRows"
+        ></app-table>
+        <!-- (pageChanged)="onPageChanged($event)" -->
     </section>
     <section class="datos-producto section-block">
         @if(camposLoaded){
@@ -14,6 +21,7 @@
             [product]="productSelected" 
             [letras_identificacion]="productUrl" 
             [campos]="camposFormulario"
+            [camposSubproductos]="camposSubproductos"
             (formLoadedChange)="handleFormLoadedChange($event)"
             ></app-product-form>
         } @else {

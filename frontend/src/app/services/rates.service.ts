@@ -17,7 +17,7 @@ export class RatesService {
     return this.http.get<any>(`${this.apiUrl}/tarifas/sociedad/${id_sociedad}`);
   }
 
-  getTarifasPorSociedadAndTipoProducto(id_sociedad: string, tipo_producto_id:string): Observable<any> {
+  getTarifasPorSociedadAndTipoProducto(id_sociedad: string, tipo_producto_id:string | null): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/tarifas-producto/sociedad/${id_sociedad}?tipo_producto_id=${tipo_producto_id}`);
   }
 
@@ -41,4 +41,23 @@ export class RatesService {
   getTarifaPorSociedadAndTipoAnexo(id_sociedad: string, tipo_anexo_id:string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/tarifa-anexo/sociedad/${id_sociedad}/tipo-anexo/${tipo_anexo_id}`);
   } 
+
+  // TIPOS DE PAGO
+
+  getAllPaymentTypes(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/tipos-pago/all`);
+  }
+
+  saveTipoPagoProductoSociedades(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tipo_pago_producto_sociedad`, data);
+  }
+
+  getTipoPagoProductoSociedades(sociedad_id: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/tipo_pago_producto_sociedad/sociedad/${sociedad_id}`);
+  }
+
+  getTipoPagoProductoPorSociedadAndTipoProducto(sociedad_id : string, tipo_producto_id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/tipo_pago_producto_sociedad/sociedad/${sociedad_id}/tipo-producto/${tipo_producto_id}`);
+  } 
+
 }

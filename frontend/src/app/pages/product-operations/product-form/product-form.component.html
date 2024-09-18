@@ -7,17 +7,40 @@
             <button  mat-raised-button color="primary" type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
         }
     </header>
-    @if(sociedades.length > 0){
-        <label for="sociedad" class="input-label">Sociedad</label>
-        <select formControlName="sociedad_id" id="sociedad" class="input-field select">
-            @for(sociedad of sociedades ; track sociedad.id){
-                <option [value]="sociedad.id">{{ sociedad.nombre }}</option>
+
+    <fieldset class="input-group">
+        <div class="input-container select">
+            @if(sociedades.length > 0){
+                <label for="sociedad" class="input-label">Sociedad <span class="span-required">*</span></label>
+                <ng-select
+                    [items]="sociedades"
+                    bindLabel="nombre"
+                    bindValue="id"
+                    formControlName="sociedad_id"
+                    [searchable]="true"
+                    class="ng-select-field"
+                    id="sociedad">
+                </ng-select>
             }
-        </select>
-        <!-- <select formControlName="sociedad_id" id="sociedad" class="input-field select" *ngIf="sociedades.length > 0">
-            <option *ngFor="let sociedad of sociedades" [value]="sociedad.id">{{ sociedad.nombre }}</option>
-        </select> -->
-    }
+        </div>
+        
+        @if(comercialActual.responsable == 1){
+            <div class="input-container select">
+                <label for="comercial_id" class="input-label">Emisor </label>
+                <ng-select
+                    [items]="comerciales"
+                    bindLabel="nombre"
+                    bindValue="id"
+                    formControlName="comercial_id"
+                    [searchable]="true"
+                    class="ng-select-field"
+                    placeholder="Seleccione un comercial...">
+                </ng-select>
+            </div>
+        }
+    </fieldset>
+
+
     
     <hr class="divider">
 
@@ -111,38 +134,54 @@
                     </select>
                 } @else {
                     <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_producto', campo.name)" class="span-required">*</span></label>
-                    <input [id]="campo.name" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field" [ngClass]="{'date' : campo.tipo_dato == 'date'}">
+                    <input [id]="campo.name" [placeholder]="campo.label" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field" [ngClass]="{'date' : campo.tipo_dato == 'date'}">
                 }
             }
+        <hr class="divider">
            
-            <hr class="divider">
     }
 
     <!-- Input de fecha fin -->
-    <div class="input-container duracion">
-        @if(tipo_producto.tipo_duracion === 'fecha_exacta'){
-            <label for="duracion" class="input-label">Día de finalización <span class="span-required">*</span></label>
-        } @else {
-            <label for="duracion" class="input-label">Duración <span class="span-required">*</span></label>
-        }
-        <div class="flex-start">
-            @if(tipo_producto.tipo_duracion === 'selector_dias'){
-                <select id="duracion" formControlName="duracion" type="text" class="input-field disabled" (change)="changeDuracion($event)">
-                    @for(duracion of duraciones ; track duracion){
-                        <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
+     <fieldset class="input-group">
+        @if(tipo_producto.subproductos){
+            <div class="input-container subproducto">
+                <label for="subproducto" class="input-label">Producto</label>
+                <select id="subproducto" formControlName="subproducto" class="input-field" (change)="onSubproductoChange($event)">
+                    <option value="null" disabled>Seleccione un producto...</option>
+                    @for(subproducto of tipo_producto.subproductos ; track subproducto.id){
+                        <option [value]="subproducto.id">{{ subproducto.nombre }}</option>
                     }
                 </select>
-                <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>  
-            } @else if (tipo_producto.tipo_duracion === 'fecha_exacta'){
-                <input id="duracion" formControlName="duracion" type="date" class="input-field">
-            } @else {
-                <input id="duracion" formControlName="duracion" type="text" class="input-field disabled">
-                <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>          
-            }
-            
+            </div>
+        }
+        <div class="input-container date">
+            <label for="fecha_de_inicio" class="input-label">Fecha de inicio <span class="span-required">*</span></label>
+            <input id="fecha_de_inicio" formControlName="fecha_de_inicio" type="date" class="input-field">
         </div>
-    </div>
-    
+        <div class="input-container duracion">
+            @if(tipo_producto.tipo_duracion === 'fecha_exacta'){
+                <label for="duracion" class="input-label">Día de finalización <span class="span-required">*</span></label>
+            } @else {
+                <label for="duracion" class="input-label">Duración <span class="span-required">*</span></label>
+            }
+            <div class="flex-start">
+                @if(tipo_producto.tipo_duracion === 'selector_dias'){
+                    <select id="duracion" formControlName="duracion" type="text" class="input-field" (change)="changeDuracion($event)">
+                        @for(duracion of duraciones ; track duracion){
+                            <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
+                        }
+                    </select>
+                    <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>  
+                } @else if (tipo_producto.tipo_duracion === 'fecha_exacta'){
+                    <input id="duracion" formControlName="duracion" type="date" class="input-field">
+                } @else {
+                    <input id="duracion" formControlName="duracion" type="text" class="input-field disabled">
+                    <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>          
+                }
+                
+            </div>
+        </div>
+    </fieldset>
 
     <hr class="divider">
 
@@ -175,7 +214,7 @@
             </div>
             
             <div class="input-container">
-                <label for="tipo_pago_id" class="input-label">Tipo de pago</label>
+                <label for="tipo_pago_id" class="input-label">Tipo de pago <span class="span-required">*</span></label>
                 <select name="tipo_de_pago_id" id="tipo_de_pago_id" formControlName="tipo_de_pago_id" class="input-field">
                     @for(tipoPago of tiposPago ; track tipoPago.id){
                         <option [value]="tipoPago.id">{{ tipoPago.nombre }}</option>
@@ -221,16 +260,29 @@
         <div *ngFor="let anexo of anexos; let i = index" class="anexo-input-group">
             <header class="form-header space-between">
                 <h4 [attr.id]="'anexo-' + i" #anexoElement>{{ anexo.tipo_anexo.nombre }} nº{{ i + 1 }}</h4>
+
+                <button mat-icon-button (click)="toggleAnexo(i)" type="button">
+                    <mat-icon>{{ anexos[i].abierto ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button>
                 <!-- Mat button con un icono de una x -->
                 <button mat-icon-button (click)="removeAnexo(i)" class="remove-anexo-button" type="button">
                     <mat-icon>close</mat-icon>
                 </button>
             </header>
-            <div *ngFor="let campoAnexo of camposAnexo[anexo.tipo_anexo.id]; let j = index">
-                <label [for]="campoAnexo.nombre_codigo" class="input-label">{{ campoAnexo.nombre }}</label>
-                <input [id]="campoAnexo.nombre_codigo" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexos[i].formato[campoAnexo.nombre_codigo]" name="{{campoAnexo.nombre_codigo}}-{{i}}-{{j}}">
+            <div *ngIf="anexos[i].abierto" [@expandCollapse]>
+                <div *ngFor="let campoAnexo of camposAnexo[anexo.tipo_anexo.id]; let j = index" class="input-container">
+                    <label [for]="campoAnexo.nombre_codigo" class="input-label">{{ campoAnexo.nombre }}</label>
+                    <input [id]="campoAnexo.nombre_codigo" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexos[i].formato[campoAnexo.nombre_codigo]" name="{{campoAnexo.nombre_codigo}}-{{i}}-{{j}}">
+                </div>
+                <!-- Input de duración -->
+                <div class="input-container duracion">
+                    <label for="duracion" class="input-label">Duración</label>
+                    <input id="duracion" type="text" class="input-field" [(ngModel)]="anexos[i].tipo_anexo.duracion" name="duracion-{{i}}" [disabled]="anexos[i].tipo_duracion !== 'fecha_exacta'">
+                </div>
+                <hr class="divider">
             </div>
-            <hr class="divider">
+
+            <hr *ngIf="!anexo.abierto" class="divider">
         </div>
         
         

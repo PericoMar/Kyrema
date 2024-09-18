@@ -40,19 +40,30 @@
                 <!-- Nombre (obligatorio) -->
                 <div class="input-container nombre">
                     <label for="nombre" class="input-label">Nombre <span class="span-required">*</span></label>
-                    <input id="nombre" formControlName="nombre" class="input-field" placeholder="Ej: Manuel" required>
+                    <input id="nombre" formControlName="nombre" class="input-field" placeholder="Ej: Manuel" required
+                        [ngClass]="{'input-error': comercialForm.get('nombre')?.invalid && formularioMandado}">
                 </div>
 
                 <!-- dni (opcional) -->
                 <div class="input-container dni">
-                    <label for="dni" class="input-label">DNI <span class="span-required">*</span></label>
+                    <label for="dni" class="input-label">DNI</label>
                     <input id="dni" formControlName="dni" class="input-field" placeholder="Ej: A12345678">
                 </div>
             
                 <!-- Correo Electrónico (obligatorio) -->
                 <div class="input-container email">
                     <label for="email" class="input-label">Correo Electrónico <span class="span-required">*</span></label>
-                    <input id="email" formControlName="email" type="email" class="input-field" placeholder="Ej: ejemplo@dominio.com" required>
+                    <input id="email" formControlName="email" type="email" class="input-field" placeholder="Ej: ejemplo@dominio.com" required
+                        [ngClass]="{'input-error': comercialForm.get('email')?.invalid && formularioMandado}">
+                </div>
+
+                <div class="input-container select" [hidden]="sociedad_id == id_sociedad_admin">
+                    <label for="responsable" class="input-label">Tipo comercial <span class="span-required">*</span></label>
+                    <select formControlName="responsable" id="responsable" class="input-field" name="responsable"
+                    [ngClass]="{'input-error': comercialForm.get('responsable')?.invalid && formularioMandado}">
+                        <option value="0">Comercial</option>
+                        <option value="1">Comercial responsable</option>
+                    </select>
                 </div>
     
             </fieldset>
@@ -63,16 +74,19 @@
             <fieldset class="input-group">
                 <!-- Usuario (obligatorio) -->
                 <div class="input-container usuario">
-                    <label for="usuario" class="input-label">Usuario<span class="span-required">*</span></label>
-                    <input id="usuario" formControlName="usuario" class="input-field" placeholder="Ej: usuario12canama">
+                    <label for="usuario" class="input-label">Usuario<span class="span-required"> *</span></label>
+                    <input id="usuario" formControlName="usuario" class="input-field" placeholder="Ej: usuario12canama"
+                        [ngClass]="{'input-error': comercialForm.get('usuario')?.invalid && formularioMandado}">
                 </div>
-                @if(comercial_id == ''){
-                    <!-- Contraseña (opcional) -->
-                    <div class="input-container contraseña">
-                        <label for="contraseña" class="input-label">Contraseña <span class="span-required">*</span></label>
-                        <input id="contraseña" formControlName="contraseña" class="input-field" placeholder="******">
-                    </div>
-                }
+                <!-- Contraseña (opcional) -->
+                <div class="input-container contraseña" >
+                    <label for="contraseña" class="input-label" [hidden]="comercial_id != ''">
+                        Contraseña<span class="span-required"> *</span>
+                    </label>
+                    <input id="contraseña" formControlName="contraseña" class="input-field" placeholder="******"
+                        [ngClass]="{'input-error': comercialForm.get('contraseña')?.invalid && formularioMandado}"
+                        [hidden]="comercial_id != ''">
+                </div>
             </fieldset>
 
             <hr>
@@ -80,8 +94,9 @@
 
             <fieldset class="input-group">
                 <div class="input-container fecha_nacimiento">
-                    <label for="fecha_nacimiento" class="input-label">Fecha de nacimiento<span class="span-required">*</span></label>
-                    <input id="fecha_nacimiento" formControlName="fecha_nacimiento" class="input-field" type="date">
+                    <label for="fecha_nacimiento" class="input-label">Fecha de nacimiento<span class="span-required"> *</span></label>
+                    <input id="fecha_nacimiento" formControlName="fecha_nacimiento" class="input-field" type="date"
+                    [ngClass]="{'input-error': comercialForm.get('fecha_nacimiento')?.invalid && formularioMandado}">
                 </div>
 
                 <div class="input-container fecha_alta">
@@ -147,15 +162,17 @@
             
 
             <footer class="form-footer">
-                @if(comercial_id){
-                    <button type="submit" class="submit-button">
-                        Guardar cambios
-                    </button>
-                } @else { 
-                    <button type="submit" class="submit-button">
-                        Crear cuenta comercial
-                    </button>
-                }
+                <button type="submit" class="submit-button">
+                    @if(cargandoComercial){
+                        <app-button-spinner></app-button-spinner>
+                    } @else {
+                        @if(comercial_id){
+                            Guardar cambios
+                        } @else { 
+                            Crear cuenta comercial
+                        }
+                    }
+                </button>
             </footer>
         </form>
     </main>

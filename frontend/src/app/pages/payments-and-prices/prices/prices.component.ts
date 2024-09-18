@@ -53,21 +53,22 @@ export class PricesComponent {
       data => {
         this.tiposProducto = data;
         console.log(this.tiposProducto)
+        this.ratesService.getTarifasPorSociedad(this.sociedad_id).subscribe(
+          data => {
+            this.tarifas = data;
+            console.log(this.tarifas)
+            this.tarifasPorTipoProducto = this.combineArrays(this.tiposProducto, this.tarifas);
+            console.log(this.tarifasPorTipoProducto)
+          },
+          error => {
+            console.error('Error cogiendo las tarifas por sociedad', error);
+        });
       },
       error => {
         console.error('Error cogiendo los tipos de producto por sociedad', error);
       }
     );
-    this.ratesService.getTarifasPorSociedad(this.sociedad_id).subscribe(
-      data => {
-        this.tarifas = data;
-        console.log(this.tarifas)
-        this.tarifasPorTipoProducto = this.combineArrays(this.tiposProducto, this.tarifas);
-        console.log(this.tarifasPorTipoProducto)
-      },
-      error => {
-        console.error('Error cogiendo las tarifas por sociedad', error);
-    });
+    
 
   }
 

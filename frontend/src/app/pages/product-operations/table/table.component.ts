@@ -1,8 +1,15 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
-import { ColDef} from 'ag-grid-community'; 
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ClientSideRowModelModule } from "ag-grid-community";
+import {
+  ColDef,
+  ColGroupDef,
+  GridApi,
+  GridOptions,
+  GridReadyEvent,
+  ModuleRegistry,
+  createGrid,
+} from "ag-grid-community";
 
 
 @Component({
@@ -13,7 +20,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
   styleUrl: './table.component.css'
 })
 
-export class TableComponent {
+export class TableComponent implements OnChanges{
   themeClass = "ag-theme-quartz";
   @Output() productSelectedChange: EventEmitter<any> = new EventEmitter<any>();
   public productSelected: any;
@@ -25,7 +32,7 @@ export class TableComponent {
     floatingFilter: true,
   };
   public rowSelection: "single" | "multiple" = "multiple";
-  public paginationPageSize = 10;
+  @Input() paginationPageSize = 10;
   public paginationPageSizeSelector: number[] | boolean = [10, 25, 50];
   public localeText = {
     // for filter panel
@@ -107,6 +114,25 @@ export class TableComponent {
     excelExport: 'Exportar a Excel',
   };
 
+  @Input() loadingRows! : boolean;
+  private gridApi!: GridApi<any>;
+  private gridColumnApi: any;
+
+  // @Output() pageChanged = new EventEmitter<number>();
+
+  // onPageChange(event: any) {
+  //   console.log('Page changed:', event.newPage);
+  //   this.pageChanged.emit();  // Emitir el número de página
+  // }
+
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Verificar si el valor de 'loadingRows' ha cambiado
+    if (changes['loadingRows']) {
+      console.log('loadingRows changed:', this.loadingRows);
+      this.setLoadingRows(this.loadingRows);
+    }
+  }
 
   public onRowClicked(event: any) {
     this.productSelected = event.data; // Actualiza productSelected con los datos de la fila
@@ -137,8 +163,16 @@ export class TableComponent {
     document.body.removeChild(dummyTextArea); // Elimina el elemento de texto del DOM
   }
 
+  setLoadingRows(isLoading: boolean) {
+    if(isLoading && this.gridApi) {
+      this.gridApi.showLoadingOverlay();
+    }
+  }
+
   onGridReady(params: any) {
     params.api.sizeColumnsToFit();
+    this.gridApi = params.api;
   }
+
   
 }

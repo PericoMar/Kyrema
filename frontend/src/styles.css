@@ -1,3 +1,5 @@
+@import "@ng-select/ng-select/themes/default.theme.css";
+
 /* You can add global styles to this file, and also import other style files */
 :root{
     --main-bg-color: #ebeff2;   
@@ -94,6 +96,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     margin-bottom: 10px;
 }
 
+.ng-select-field{
+    width: 100%;
+}
+
 .input-group{
     display: flex;
     justify-content: flex-start;
@@ -151,9 +157,13 @@ input.disabled{
 @media (max-width: 1150px) {
     .center, .space-between, .input-group{
         flex-direction: column;
-        justify-content: baseline;
+        justify-content:flex-start;
         align-items: flex-start;
         gap: 10px;
+    }
+
+    .space-between div{
+        width: 100%;
     }
 
     div.input-container{
@@ -171,4 +181,3 @@ hr{
 }
 
 
-  

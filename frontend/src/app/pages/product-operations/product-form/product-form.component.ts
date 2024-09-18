@@ -16,6 +16,10 @@ import { SpinnerComponent } from '../../../components/spinner/spinner.component'
 import { CamposService } from '../../../services/campos.service';
 import { SnackBarService } from '../../../services/snackBar/snack-bar.service';
 import { catchError, map, Observable, of } from 'rxjs';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { MatInput, MatInputModule } from '@angular/material/input';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -36,34 +40,56 @@ interface Campo {
 interface CampoFormulario{
   name: string,
   label: string,
-  tipo_dato: string,  
+  tipo_dato: string, 
+  obligatorio: boolean,
+  opciones?: any[] 
 }
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, ButtonSpinnerComponent, SpinnerComponent],
+  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, ButtonSpinnerComponent, SpinnerComponent, NgSelectModule],
   templateUrl: './product-form.component.html',
-  styleUrls: ['./product-form.component.css']
+  styleUrls: ['./product-form.component.css'],
+  animations: [
+    trigger('expandCollapse', [
+      state('void', style({
+        height: '0px',
+        opacity: 0,
+        overflow: 'hidden',
+      })),
+      state('*', style({
+        height: '*',
+        opacity: 1,
+      })),
+      transition(':enter', [
+        animate('300ms ease-out')
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in')
+      ])
+    ])
+  ]
 })
 export class ProductFormComponent implements OnInit, OnChanges{
   @Input() product!: any | null;
   isLoadingProduct: boolean = false;
   productForm: FormGroup = this.fb.group({});
+
   @Input() letras_identificacion!: any;
   tipo_producto!: any;
-  sociedades: any;
   @Input() campos! : Campo[];
+
+  sociedades: any;
+  comercialActual: any = this.userService.getCurrentUser();
+  comerciales!: any[];
+
   camposFormularioPorGrupos!: any;
 
   formIsLoaded : boolean = false;
   @Output() formLoadedChange = new EventEmitter<boolean>();
 
-  tiposPago : {id:string, nombre:string}[] = [
-    {id: '1', nombre: 'Tarjeta de crédito'},
-    {id: '2', nombre: 'Transferencia bancaria'},
-    {id: '3', nombre: 'Domiciliación bancaria'}
-  ];
+  tiposPago! : {id:string, nombre:string}[];
 
   precioFinal! : number;
   precioInicialSelects : number = 0;
@@ -75,11 +101,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
   anexos: any[] = [];
   camposAnexo!: any;
 
+  @Input() camposSubproductos!: any[];
+
   loadingAction: boolean = false;
   downloadingAnexo: { [key: string]: boolean } = {};
 
   duraciones: any;
   duracion: any;
+  
 
   constructor(
     private fb: FormBuilder,
@@ -112,6 +141,26 @@ export class ProductFormComponent implements OnInit, OnChanges{
         this.onSociedadChange(value);
       }
     });
+
+    this.userService.getComercialesPorSociedad(this.societyService.getCurrentSociety().id).subscribe({
+      next: (comerciales: any[]) => {
+        this.comerciales = comerciales;
+        console.log('Comercial Actual ', this.comercialActual);
+        if(this.comercialActual.responsable == '1'){
+          console.log('reponsable')
+          this.productForm.addControl('comercial_id', new FormControl(this.comercialActual.id, Validators.required));
+        }
+        console.log('Comerciales', this.comerciales);
+      },
+      error: (error: any) => {
+        console.error('Error loading comerciales', error);
+      }
+    });
+
+    this.productForm.get('subproducto')?.valueChanges.subscribe(selectedValue => {
+      const event = { target: { value: selectedValue } }; // simula el evento
+      this.onSubproductoChange(event as unknown as Event); // llama al método cuando cambie el valor
+    });
     
   }
 
@@ -131,6 +180,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
     if (changes['product'] && !(changes['campos'] || changes['letras_identificacion'])) {
       this.isLoadingProduct = true;
       this.productForm.patchValue(this.product);
+
+      const sociedadId = Number(this.product.sociedad_id);
+      const comercial_id = Number(this.product.comercial_id);
+      this.productForm.controls['sociedad_id'].setValue(sociedadId);
+      this.productForm.controls['comercial_id'].setValue(comercial_id);
       if(this.product.id != null && this.product.id != ''){
         this.loadAnexoPorProducto();
       }
@@ -147,8 +201,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.isLoadingProduct = false;
     }
 
-    if(changes['campos'] || changes['letras_identificacion']){
+    if(changes['campos']){
       this.loadTipoProducto();      
+      this.anexos = [];
       this.createForm(this.campos);
       this.loadSociedades(); 
       if(this.product.id != null && this.product.id != ''){
@@ -160,12 +215,32 @@ export class ProductFormComponent implements OnInit, OnChanges{
   onSociedadChange(sociedad_id: string) {
     this.loadPago(sociedad_id);
     this.loadTarifasPorAnexo(sociedad_id);
+    if(this.comercialActual.responsable == '1' && sociedad_id != null){
+      this.loadComercialesPorSociedad(sociedad_id);
+    }
+  }
+
+  loadComercialesPorSociedad(sociedad_id: string) {
+    this.productForm.get('comercial_id')?.disable();
+    this.userService.getComercialesPorSociedad(sociedad_id).subscribe({
+      next: (comerciales: any[]) => {
+        this.comerciales = comerciales;
+        if(this.comerciales.length > 0){
+          this.productForm.controls['comercial_id'].setValue(this.comerciales[0].id);
+        }
+        this.productForm.get('comercial_id')?.enable();
+        console.log('Comerciales', this.comerciales);
+      },
+      error: (error: any) => {
+        console.error('Error loading comerciales', error);
+      }
+    });
   }
 
   loadSociedades(): void {
-    this.societyService.getSociedadesHijasObservable().subscribe(
+    this.societyService.getSociedadesHijasPorTipoProducto(this.letras_identificacion, this.societyService.getCurrentSociety().id).subscribe(
       data => {
-        this.sociedades = data;
+        this.sociedades = Object.values(data);
         console.log("Sociedades hijas", this.sociedades);
         // Actualiza el formControl sociedad_id con el primer valor disponible en sociedades
         if (this.sociedades.length > 0) {
@@ -182,6 +257,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.familyService.getTipoProductoPorLetras(this.letras_identificacion).subscribe(
       data => {
         this.tipo_producto = data;
+        // Cuando cojo el tipo_producto si tiene subproductos añado el campo subproducto al formulario
+        if(this.tipo_producto && this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
+          console.log('crear subproducto');
+          this.productForm.addControl(
+            'subproducto',
+            new FormControl(null, Validators.required)
+          );
+        }
         this.getDuracion().subscribe({
           next: (duracion: any) => {
             this.duracion = duracion;
@@ -191,6 +274,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
             console.error('Error loading duracion', error);
           }
         });
+        // this.loadSubproductos(this.tipo_producto.id);
         this.loadPago(this.societyService.getCurrentSociety().id);
         // Aquí se cargan todos los datos necesarios para gestionar los anexos:
         this.loadTiposAnexos();
@@ -202,19 +286,40 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   loadPago(id_sociedad : string) : void{
-    this.rateService.getTarifasPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
-      data => {
-        console.log("Tarifas", data);
-        this.productForm.controls['prima_del_seguro'].setValue(data[0].prima_seguro);
-        this.productForm.controls['cuota_de_asociación'].setValue(data[0].cuota_asociacion);
-        this.productForm.controls['precio_total'].setValue(data[0].precio_total);
-        this.productForm.controls['tipo_de_pago_id'].setValue(this.tiposPago[0].id);
-        this.getPrecioFinal();
-      },
-      error => {
-        console.error(error);
-      });
+    if(id_sociedad != null){
+      this.rateService.getTarifasPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
+        data => {
+          console.log("Tarifas", data);
+          this.productForm.controls['prima_del_seguro'].setValue(data[0].prima_seguro);
+          this.productForm.controls['cuota_de_asociación'].setValue(data[0].cuota_asociacion);
+          this.productForm.controls['precio_total'].setValue(data[0].precio_total);
+          this.rateService.getTipoPagoProductoPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
+            data => {
+              this.tiposPago = data;
+              this.productForm.controls['tipo_de_pago_id'].setValue(data[0].id);
+            },
+            error => {
+              console.error(error);
+            }
+          );
+          this.getPrecioFinal();
+        },
+        error => {
+          console.error(error);
+        });
+    }
   }
+
+  // loadSubproductos(padre_id : any){
+  //   this.familyService.getSubproductosByPadreId(padre_id).subscribe({
+  //     next: (subproductos: any[]) => {
+  //       this.subproductos = subproductos;
+  //     },
+  //     error: (error: any) => {
+  //       console.error('Error loading subproductos', error);
+  //     }
+  //   }); 
+  // }
 
   loadTiposAnexos(){
     //  Cargar los tipos de anexos asociados al tipo de producto
@@ -243,7 +348,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
         this.anexosService.getCamposPorTipoAnexo(tipoAnexo.id).subscribe({
           next: (camposAnexo: any[]) => {
             // Asignar los campos al tipo de anexo correspondiente
-            this.camposAnexo[tipoAnexo.id] = camposAnexo;
+            this.camposAnexo[tipoAnexo.id] = camposAnexo.filter((campo: any) => campo.grupo === 'datos_producto');
             resolve(); // Resolver la promesa cuando la carga se complete
           },
           error: (error: any) => {
@@ -269,7 +374,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.rateService.getTarifaPorSociedadAndTipoAnexo(AppConfig.SOCIEDAD_ADMIN_ID, tipoAnexo.id).subscribe({
         next: (tarifas: any[]) => {
           this.tarifasAnexos[tipoAnexo.id] = tarifas;
-          
+          // this.getPrecioFinal();
         },
         error: (error: any) => {
           console.error('Error loading tarifas por anexo', error);
@@ -321,7 +426,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
                     return {
                         ...anexo,
                         formato: nuevoFormato, // Usar la copia independiente del formato
-                        tarifas: tarifa // Añadir la tarifa
+                        tarifas: tarifa, // Añadir la tarifa
+                        abierto: true
                     };
                 });
 
@@ -335,6 +441,41 @@ export class ProductFormComponent implements OnInit, OnChanges{
             }
         });
     }
+  }
+
+  onSubproductoChange(event: Event) {
+    this.eliminateCamposSubproducto();
+
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    if(selectedValue){
+      console.log('Selected value:', selectedValue);
+      // Coger el subproducto de la lista de subproductos this.tipo_producto.subproductos
+      const selectedSubproducto = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id == selectedValue);
+      console.log('Selected subproducto:', selectedSubproducto);
+      // Actualizar el precio total con el precio del subproducto seleccionado
+      this.productForm.controls['prima_del_seguro'].setValue(selectedSubproducto.tarifas.prima_seguro);
+      this.productForm.controls['cuota_de_asociación'].setValue(selectedSubproducto.tarifas.cuota_asociacion);
+      this.productForm.controls['precio_total'].setValue(selectedSubproducto.tarifas.precio_total);
+
+      selectedSubproducto.campos.forEach((campo: any) => {
+        this.añadirCampoAlFormulario(campo);
+      });
+
+      this.letras_identificacion = selectedSubproducto.letras_identificacion;
+
+      if(selectedSubproducto.tipo_duracion !== 'heredada'){
+        this.getDuracion(selectedSubproducto).subscribe({
+          next: (duracion: any) => {
+            this.duracion = duracion;
+            this.productForm.controls['duracion'].setValue(this.duracion);
+          },
+          error: (error: any) => {
+            console.error('Error loading duracion', error);
+          }
+        });
+      } 
+    }
+    this.getPrecioFinal();
   }
 
   changeOnSelect(event: Event, campo: any): void {
@@ -366,7 +507,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
         id: '',
         formato: nuevoFormato, // Usar la copia independiente
         tipo_anexo: tipo_anexo,
-        tarifas: this.tarifasAnexos[tipo_anexo.id] // Asumiendo que esto no necesita ser clonado
+        tarifas: this.tarifasAnexos[tipo_anexo.id], // Asumiendo que esto no necesita ser clonado
+        abierto: true
     });
 
     console.log('Anexos', this.anexos);
@@ -387,11 +529,27 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.getPrecioFinal();
   }
 
+  agrupar(arr: any[], tamano: number): any[][] {
+    const grupos = [];
+    for (let i = 0; i < arr.length; i += tamano) {
+      grupos.push(arr.slice(i, i + tamano));
+    }
+    return grupos;
+  }
+
+  toggleAnexo(index: number) {
+    this.anexos[index].abierto = !this.anexos[index].abierto;
+  }
+  
+
   createForm(campos: Campo[]) {
-    
+    const today = new Date().toISOString().split('T')[0];
+
     this.productForm = this.fb.group({
       id: [''],
       sociedad_id: ['', Validators.required],
+      comercial_creador_id: [this.comercialActual.id],
+      comercial_id: [this.comercialActual.id],
       nombre_socio: ['', Validators.required],
       apellido_1: ['', Validators.required],
       apellido_2: ['', Validators.required],
@@ -404,60 +562,23 @@ export class ProductFormComponent implements OnInit, OnChanges{
       provincia: ['', Validators.required],
       codigo_postal: ['', Validators.required],
       fecha_de_nacimiento: ['', Validators.required],
+      // subproducto: [null, Validators.required],
+      fecha_de_inicio: [today , Validators.required],
+      duracion: [{value: '', disabled: true}, Validators.required],
       prima_del_seguro: [{value: '', disabled: true}, Validators.required],
       cuota_de_asociación: [{value: '', disabled: true}, Validators.required],
       precio_total: [{value: '', disabled: true}, Validators.required],
       tipo_de_pago_id: ['', Validators.required],
-      duracion: [{value: '', disabled: true}, Validators.required],
     });
     
     this.camposFormularioPorGrupos = {};
     campos.forEach((campo : Campo) => {
 
-      // Este if lo que hace es que si no existe el grupo en el array asociativo lo crea:
-      if (this.camposFormularioPorGrupos[campo.grupo] == null) {
-        this.camposFormularioPorGrupos[campo.grupo] = [];
-      }
-      let name; 
-      if(campo.nombre_codigo != null){
-        name = campo.nombre_codigo;
-      } else {
-        name = campo.nombre.replace(/ /g, '_').toLowerCase();
-      }
-      const label = campo.nombre;
-      const tipo_dato = campo.tipo_dato;
-      const obligatorio = campo.obligatorio;
-
-      if(campo.tipo_dato == 'select'){
-
-        this.camposService.getOpcionesPorCampo(campo.id).subscribe({
-          next: (opciones: any) => {
-            this.productForm.addControl(
-              name,
-              obligatorio ? new FormControl('', Validators.required) : new FormControl('')
-            );
-            this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio, opciones});
-            this.productForm.controls[name].setValue('');
-          },
-          error: (error: any) => {
-            console.error('Error loading opciones', error);
-          }
-        });
-
-
-      } else {
-        // Saltar el procesamiento si el grupo es 'datos_asegurado'
-        if (campo.grupo !== 'datos_asegurado' && campo.grupo !== 'datos_duracion') {
-          this.productForm.addControl(
-            name,
-            obligatorio ? new FormControl('', Validators.required) : new FormControl('')
-          );
-        }
-        
-        this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio});
-      }
+      this.añadirCampoAlFormulario(campo);
       
     });
+
+
 
 
     console.log('Campos formulario por grupos', this.camposFormularioPorGrupos);
@@ -471,6 +592,13 @@ export class ProductFormComponent implements OnInit, OnChanges{
     console.log(this.productForm.value);
     this.anexos = [];
     this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
+    this.productForm.patchValue({tipo_de_pago_id: this.tiposPago[0].id});
+    this.productForm.patchValue({fecha_de_inicio: new Date().toISOString().split('T')[0]});
+    this.loadPago(this.sociedades[0].id);
+    // Si el productForm tiene subproducto, ponerlo a null
+    if(this.productForm.get('subproducto')){
+      this.productForm.get('subproducto')?.setValue(null);
+    }
     this.getDuracion().subscribe({
       next: (duracion: any) => {
         this.duracion = duracion;
@@ -507,12 +635,12 @@ export class ProductFormComponent implements OnInit, OnChanges{
     const nuevoProducto = this.productForm.value;
 
     //Agregar fecha de inicio y fecha de fin al objeto nuevoProducto
-    const fecha_inicio = new Date();
+    const fecha_emision = new Date();
     let fecha_fin = new Date();
     if(this.tipo_producto.tipo_duracion === 'fecha_exacta'){
       fecha_fin = new Date(this.duracion);
       //Cambiar el valor de duracion a la diferencia de días entre la fecha de inicio y la fecha de fin
-      const diffTime = Math.abs(fecha_fin.getTime() - fecha_inicio.getTime());
+      const diffTime = Math.abs(fecha_fin.getTime() - fecha_emision.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       // Asignar la diferencia en el nuevoProducto
       nuevoProducto.duracion = diffDays;
@@ -530,8 +658,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
       return `${year}-${month}-${day}`;
     };
 
-    nuevoProducto.fecha_de_inicio = formatFecha(fecha_inicio);
+
+    nuevoProducto.fecha_de_emisión = formatFecha(fecha_emision);
     nuevoProducto.fecha_de_fin = formatFecha(fecha_fin);
+
+    if(this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
+      nuevoProducto.subproducto = this.productForm.get('subproducto')?.value;
+      nuevoProducto.subproducto_codigo = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id === nuevoProducto.subproducto_id)?.letras_identificacion.replace(AppConfig.PREFIJO_LETRAS_IDENTIFICACION, '') || '';
+    }
     
     
     // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
@@ -539,10 +673,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
     nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
 
     // Agregar el id del comercial al objeto nuevoProducto
-    const comercial_id = this.userService.getCurrentUser().id;
-    nuevoProducto.comercial_id = comercial_id;
-
-    nuevoProducto.comercial = this.userService.getCurrentUser().nombre;
+    if(nuevoProducto.comercial_id != this.comercialActual.id){
+      nuevoProducto.comercial_creador_id = this.comercialActual.id;
+    }
+    nuevoProducto.comercial = this.comercialActual.nombre;
 
     const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
     nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
@@ -616,6 +750,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
     
   }
 
+  /************************************/
+  /************************************/
+  /************************************/
+  /************************************/
+
   getDefaultValue(tipoDato: string): any {
     switch (tipoDato) {
       case 'text':
@@ -654,11 +793,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.precioFinal += this.anexos.reduce((acc: number, anexo: any) => {
       return acc + (parseFloat(anexo.tarifas.precio_total) || 0);
     }, 0);
+
+    return this.precioFinal;
   }
 
-  getDuracion(): Observable<any> {
-    if (this.tipo_producto.tipo_duracion === 'selector_dias') {
-      return this.productsService.getDuraciones(this.tipo_producto.duracion).pipe(
+  getDuracion(subproducto : any = null): Observable<any> {
+    const productoCalculoDuracion = subproducto ? subproducto : this.tipo_producto;
+    if (productoCalculoDuracion.tipo_duracion === 'selector_dias') {
+      return this.productsService.getDuraciones(productoCalculoDuracion.duracion).pipe(
         map((duraciones: any) => {
           this.duraciones = duraciones;
           this.duracion = this.duraciones[0].duracion;
@@ -670,14 +812,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
           return of(null); // Retorna un valor por defecto o maneja el error
         })
       );
-    } else if(this.tipo_producto.tipo_duracion === 'fecha_exacta') {
+    } else if(productoCalculoDuracion.tipo_duracion === 'fecha_exacta') {
 
       this.productForm.get('duracion')?.enable();
-      return of(this.tipo_producto.duracion);
+      return of(productoCalculoDuracion.duracion);
 
     } else {
 
-      return of(this.tipo_producto.duracion);
+      return of(productoCalculoDuracion.duracion);
     }
   }
 
@@ -752,5 +894,79 @@ export class ProductFormComponent implements OnInit, OnChanges{
       }
     });
   }
+
+  eliminateCamposSubproducto() {
+    
+    this.camposSubproductos.forEach(campo => {
+
+        if (this.productForm.get(campo.nombre_codigo)) {
+            // Elimina el campo del formulario
+            this.productForm.removeControl(campo.nombre_codigo);
+
+            // Filtra el campo del array 'camposFormularioPorGrupos' basado en su grupo
+            if (this.camposFormularioPorGrupos['datos_producto']) {
+                
+
+                this.camposFormularioPorGrupos['datos_producto'] = this.camposFormularioPorGrupos['datos_producto'].filter(
+                    (campoFormulario: any) => {
+                      console.log(campo.name);
+                      console.log(campoFormulario);
+                      return campoFormulario.name !== campo.nombre_codigo;
+                    }
+                );
+            }
+        }
+    });
+
+  }
+
+
+  añadirCampoAlFormulario(campo: Campo) {
+    // Este if lo que hace es que si no existe el grupo en el array asociativo lo crea:
+    if (this.camposFormularioPorGrupos[campo.grupo] == null) {
+      this.camposFormularioPorGrupos[campo.grupo] = [];
+    }
+    let name; 
+    if(campo.nombre_codigo != null){
+      name = campo.nombre_codigo;
+    } else {
+      name = campo.nombre.replace(/ /g, '_').toLowerCase();
+    }
+    const label = campo.nombre;
+    const tipo_dato = campo.tipo_dato;
+    const obligatorio = campo.obligatorio;
+
+    if(campo.tipo_dato == 'select'){
+
+      this.camposService.getOpcionesPorCampo(campo.id).subscribe({
+        next: (opciones: any) => {
+          this.productForm.addControl(
+            name,
+            obligatorio ? new FormControl('', Validators.required) : new FormControl('')
+          );
+          this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio, opciones});
+          this.productForm.controls[name].setValue('');
+        },
+        error: (error: any) => {
+          console.error('Error loading opciones', error);
+        }
+      });
+
+
+    } else {
+      // Saltar el procesamiento si el grupo es 'datos_asegurado'
+      if (campo.grupo !== 'datos_asegurado' && campo.grupo !== 'datos_duracion' && campo.grupo !== 'datos_fecha') {
+        this.productForm.addControl(
+          name,
+          obligatorio ? new FormControl('', Validators.required) : new FormControl('')
+        );
+      }
+      
+      this.camposFormularioPorGrupos[campo.grupo].push({name, label , tipo_dato, obligatorio});
+    }
+
+  }
+
+  
 
 }

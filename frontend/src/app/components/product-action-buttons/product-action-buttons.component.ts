@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductsService } from '../../services/products.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
+import { SnackBarService } from '../../services/snackBar/snack-bar.service';
 
 @Component({
   selector: 'app-product-action-buttons',
@@ -19,7 +20,8 @@ export class ProductActionButtonsComponent {
   constructor (
     private productsService: ProductsService,
     private route: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBarService: SnackBarService
   ) {
 
   }
@@ -69,8 +71,8 @@ export class ProductActionButtonsComponent {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
         },
-        error: (error: any) => {
-            console.error('Error downloading the file', error);
+        error: (error: Error) => {
+            this.snackBarService.openSnackBar(error.message, 'Cerrar', 6000);
         },
         complete: () => {
             // Eliminar la clase 'active' cuando la descarga se complete (éxito o error)

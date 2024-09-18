@@ -74,6 +74,10 @@
     width: 10%;
 }
 
+.subproducto{
+    width: 20%;
+}
+
 .inputs-pago{
     width: 100%;
     align-items: end;
@@ -89,6 +93,7 @@ input.disabled{
 
 .date{
     width: 10%;
+    min-width: 135px;
 }
 
 .divider{
@@ -102,6 +107,11 @@ input.disabled{
 
 
 .input-error {
+    border-color: rgb(252, 130, 130);
+    background-color: rgb(252, 243, 243);
+}
+
+::ng-deep .input-error .ng-select-container {
     border-color: rgb(252, 130, 130);
     background-color: rgb(252, 243, 243);
 }

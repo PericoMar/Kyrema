@@ -13,6 +13,8 @@ import { ProductActionButtonsComponent } from '../../components/product-action-b
 import { ProductNotificationService } from '../../services/product-notification.service';
 import { CommonModule } from '@angular/common';
 import { SnackBarService } from '../../services/snackBar/snack-bar.service';
+import { UserService } from '../../services/user.service';
+import { Commercial } from '../../interfaces/commercial';
 
 @Component({
   selector: 'app-product-operations',
@@ -28,12 +30,19 @@ export class ProductOperationsComponent {
   rowData! : any[] | null;
   productSelected! : any;
   isProductSelected : boolean = false;
-  familyProduct! : any;
+  tipo_producto! : any;
   sociedadesBusqueda! : any[];
   idsSociedades! : any[];
   camposFormulario: any;
   camposLoaded: boolean = false;
   formLoaded: boolean = false;
+
+  currentPage: number = 1;
+  paginationPageSize: number = 10;
+  loadingRows!: boolean;
+
+  camposSubproductos: any[] = [];
+  comercial!: Commercial;
 
   
 
@@ -46,6 +55,7 @@ export class ProductOperationsComponent {
     private router : Router,
     private productNotificationService: ProductNotificationService,
     private snackBarService: SnackBarService,
+    private userService: UserService
   ) {
     
   }
@@ -53,15 +63,24 @@ export class ProductOperationsComponent {
   ngOnInit(): void {
     // Suscríbete a los parámetros de la ruta para obtener el nombre del producto
     this.route.paramMap.subscribe(params => {
+      this.comercial = this.userService.getCurrentUser();
+      console.log("Comercial", this.comercial);
+      this.loadingRows = true;
       this.productUrl = params.get('product')!;
-      this.loadProductData(this.productUrl);
       this.societyService.getSociedadesHijasObservable().subscribe({
-        next: (data) => {
-          this.sociedadesBusqueda = data;
-          this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
-          console.log("ids", this.idsSociedades);
+        next: (data : any) => {
+          try {
+            this.sociedadesBusqueda = data;
+            this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
+            this.loadProductData(this.productUrl);
+            console.log("ids", this.idsSociedades);
+          } catch (error) {
+            console.log(error);
+            // Recargar la pagina
+            this.snackBarService.openSnackBar("Error al cargar las sociedades, prueba a recargar la página");
+          }
         },
-        error: (error) => {
+        error: (error : any) => {
           console.log(error);
         }
       });
@@ -69,12 +88,18 @@ export class ProductOperationsComponent {
 
     this.productNotificationService.productNotification$.subscribe(
       () => {
-        if(this.familyProduct){
-          this.loadRowData();
+        if(this.tipo_producto){
+          this.comercial.responsable == 1 ? this.loadRowData() : this.loadComercialRowData();
         }
       }
     );
   }
+
+  // onPageChanged(page: number) {
+  //   this.currentPage = page;
+  //   console.log('Page changed:', page);
+  //   // this.loadRowData();
+  // }
 
   public onProductSelectedChanged(product: any) {
     if(!this.formLoaded){
@@ -95,6 +120,7 @@ export class ProductOperationsComponent {
         }
       }
       this.snackBarService.openSnackBar("Producto seleccionado");
+      this.limpiarEstilosErrores();
     }
   }
 
@@ -103,10 +129,13 @@ export class ProductOperationsComponent {
     // Aquí puedes implementar la lógica para cargar los datos del producto
     this.familyService.getTipoProductoPorLetras(productUrl).subscribe(
       (data : any) => {
-        this.familyProduct = data;
-        this.productName = this.familyProduct.nombre;
-        console.log("Data",this.familyProduct);
-        this.camposService.getCamposVisiblesPorTipoProducto(this.familyProduct.id).subscribe(
+        this.tipo_producto = data;
+        this.productName = this.tipo_producto.nombre;
+        if(data.subproductos && data.subproductos.length > 0){
+          this.getAllCamposSubproductos(data.subproductos);
+        }
+        console.log("Data",this.tipo_producto);
+        this.camposService.getCamposVisiblesPorTipoProducto(this.tipo_producto.id).subscribe(
           data => {
             this.columnDefs = data.map((campo : any) => {
               return { headerName: campo.nombre, field: campo.nombre_codigo ? campo.nombre_codigo : campo.nombre.toLowerCase().replace(/ /g, "_") };
@@ -128,10 +157,11 @@ export class ProductOperationsComponent {
           }
         )
 
-        this.loadRowData();
+        this.comercial.responsable == 1 ? this.loadRowData() : this.loadComercialRowData();
+        
 
         //Recoger los campos del formulario
-        this.camposService.getCamposPorTipoProducto(this.familyProduct.id).subscribe(
+        this.camposService.getCamposPorTipoProducto(this.tipo_producto.id).subscribe(
           (camposFormulario:any) => {
 
             const resultObject : any = {
@@ -145,7 +175,7 @@ export class ProductOperationsComponent {
 
               // Asignar valor según el tipo de dato
               let value;
-              switch (item.tipo_dato) {
+              switch (item.tipo_producto) {
                   case "texto":
                   case "numero":
                       value = "";
@@ -183,14 +213,29 @@ export class ProductOperationsComponent {
 
   loadRowData() {
     //Recoger todos los valores de la tabla
-    this.productsService.getProductosByTipoAndSociedadesNoAnulados(this.familyProduct.letras_identificacion, this.idsSociedades).subscribe(
+    this.productsService.getProductosByTipoAndSociedadesNoAnulados(this.tipo_producto.letras_identificacion, this.idsSociedades).subscribe(
       data => {
         this.rowData = data;
+        this.loadingRows = false;
       },
       error => {
         console.log(error); 
       }
-    )
+    );
+
+  }
+
+  loadComercialRowData() {
+    //Recoger todos los valores de la tabla
+    this.productsService.getProductosByTipoAndComercialNoAnulados(this.tipo_producto.letras_identificacion, this.comercial.id).subscribe(
+      data => {
+        this.rowData = data;
+        this.loadingRows = false;
+      },
+      error => {
+        console.log(error); 
+      }
+    );
   }
 
   getCellRenderer(route: string) {
@@ -208,6 +253,25 @@ export class ProductOperationsComponent {
     console.log('Form is loaded:', isLoaded);
     this.formLoaded = isLoaded;
     // Aquí puedes manejar lo que sucede cuando el formulario está cargado
+  }
+
+  getAllCamposSubproductos(subproductos : any){
+    subproductos.forEach((subproducto : any) => {
+      subproducto.campos.forEach((campo : any) => {
+        if(campo.grupo === "datos_producto"){
+          this.camposSubproductos.push(campo);
+        }
+      });
+    });
+    console.log("Campos subproductos", this.camposSubproductos);
+  }
+
+  limpiarEstilosErrores() {
+    // Quitar la clase de error de todos los campos
+    const campos = document.querySelectorAll('input');
+    campos.forEach((campo: HTMLInputElement) => {
+      campo.classList.remove('input-error');
+    });
   }
 
 }
