@@ -12,7 +12,9 @@ export class SocietyService {
   private readonly SOCIETY_KEY = "currentSociety";
   private readonly SOCIEDADES_HIJAS_KEY = 'sociedades';
   private apiUrl = AppConfig.API_URL;
-  private sociedad!: string;
+  private sociedad!: any;
+  private sociedadesHijas!: any[];
+  private sociedadActual!: Society;
 
   constructor(private http: HttpClient,private route: ActivatedRoute, private router: Router) {
     this.route.paramMap.subscribe(params => {
@@ -41,17 +43,26 @@ export class SocietyService {
   }
 
   guardarSociedadesEnLocalStorage(sociedades: any[]): void {
-    localStorage.setItem(this.SOCIEDADES_HIJAS_KEY, JSON.stringify(sociedades));
+    if(typeof window !== 'undefined' && localStorage){
+      localStorage.setItem(this.SOCIEDADES_HIJAS_KEY, JSON.stringify(sociedades));
+    } else {
+      this.sociedadesHijas = sociedades;
+    }
+      
   }
 
   getSociedadesHijas(){
     const sociedades = localStorage.getItem(this.SOCIEDADES_HIJAS_KEY);
-    return sociedades ? JSON.parse(sociedades) : null;
+    return sociedades ? JSON.parse(sociedades) : this.sociedadesHijas;
   }
 
   getSociedadesHijasObservable() : Observable<any>{
     const sociedades = localStorage.getItem(this.SOCIEDADES_HIJAS_KEY);
-    return of(sociedades ? JSON.parse(sociedades) : null);
+    if (typeof window !== 'undefined' && localStorage && sociedades) {
+      return of(JSON.parse(sociedades));
+    } else {
+      return of(this.sociedadesHijas);
+    }
   }
 
   getSociedadesHijasPorTipoProducto(letras_identificacion : string, sociedad_id :string): Observable<any> {
@@ -60,11 +71,12 @@ export class SocietyService {
 
   setSociedadLocalStorage(sociedad : any){
     localStorage.setItem(this.SOCIETY_KEY, JSON.stringify(sociedad));
+    this.sociedadActual = sociedad;
   }
 
   getCurrentSociety() {
     const sociedad = localStorage.getItem(this.SOCIETY_KEY);
-    return sociedad ? JSON.parse(sociedad) : null;
+    return sociedad ? JSON.parse(sociedad) : this.sociedadActual;
   }
 
   connectSocietyWithTipoProducto(sociedad_id: string, tipo_producto_id: string): Observable<any> {

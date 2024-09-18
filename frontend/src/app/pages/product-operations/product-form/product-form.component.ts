@@ -86,7 +86,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   camposFormularioPorGrupos!: any;
 
-  formIsLoaded : boolean = false;
+  formIsLoaded : boolean = true;
   @Output() formLoadedChange = new EventEmitter<boolean>();
 
   tiposPago! : {id:string, nombre:string}[];
@@ -102,12 +102,16 @@ export class ProductFormComponent implements OnInit, OnChanges{
   camposAnexo!: any;
 
   @Input() camposSubproductos!: any[];
+  selectedSubproducto: any;
 
   loadingAction: boolean = false;
   downloadingAnexo: { [key: string]: boolean } = {};
 
   duraciones: any;
   duracion: any;
+  minDate!: string;
+  fecha_fin!: Date;
+  
   
 
   constructor(
@@ -128,9 +132,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
   @ViewChildren('anexoElement') anexoElements!: QueryList<ElementRef>;
 
   ngOnInit() {
-    
-
-    
     // this.loadTipoProducto();
     // Cargar las sociedades
     // this.loadSociedades();
@@ -185,7 +186,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
       const comercial_id = Number(this.product.comercial_id);
       this.productForm.controls['sociedad_id'].setValue(sociedadId);
       this.productForm.controls['comercial_id'].setValue(comercial_id);
+
       if(this.product.id != null && this.product.id != ''){
+        if(this.societyService.getCurrentSociety().id != AppConfig.SOCIEDAD_ADMIN_ID) this.productForm.disable();
         this.loadAnexoPorProducto();
       }
       this.getDuracion().subscribe({
@@ -202,8 +205,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
     }
 
     if(changes['campos']){
+      console.log('Cambios en campos')
+      this.productForm.disable();
       this.loadTipoProducto();      
       this.anexos = [];
+      this.selectedSubproducto = null;
       this.createForm(this.campos);
       this.loadSociedades(); 
       if(this.product.id != null && this.product.id != ''){
@@ -348,7 +354,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
         this.anexosService.getCamposPorTipoAnexo(tipoAnexo.id).subscribe({
           next: (camposAnexo: any[]) => {
             // Asignar los campos al tipo de anexo correspondiente
-            this.camposAnexo[tipoAnexo.id] = camposAnexo.filter((campo: any) => campo.grupo === 'datos_producto');
+            this.camposAnexo[tipoAnexo.id] = camposAnexo.filter((campo: any) => campo.grupo !== 'datos_duracion');
+            console.log('Campos anexo', this.camposAnexo);
             resolve(); // Resolver la promesa cuando la carga se complete
           },
           error: (error: any) => {
@@ -398,7 +405,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
       if (this.camposAnexo[tipoAnexo.id]) {
         this.camposAnexo[tipoAnexo.id].forEach((campoAnexo: any) => {
           // Definir el valor por defecto basado en el tipo de dato
-          let valorDefault: any = this.getDefaultValue(campoAnexo.tipo_dato);
+          const today = new Date().toISOString().split('T')[0];
+          let valorDefault: any = campoAnexo.nombre_codigo === 'fecha_de_inicio' ? today : this.getDefaultValue(campoAnexo.tipo_dato);
           // Añadir al formato de anexos con nombre_codigo como clave y valorDefault como valor
           this.formatosAnexos[tipoAnexo.id][campoAnexo.nombre_codigo] = valorDefault;
         });
@@ -408,6 +416,13 @@ export class ProductFormComponent implements OnInit, OnChanges{
     // Log para ver los resultados
     console.log('Formatos anexos: ', this.formatosAnexos);
     this.formIsLoaded = true;
+    this.productForm.enable();
+    this.productForm.controls['prima_del_seguro'].disable();
+    this.productForm.controls['cuota_de_asociación'].disable();
+    this.productForm.controls['precio_total'].disable();    
+    if(this.tipo_producto.tipo_duracion !== 'fecha_exacta' || this.tipo_producto.tipo_duracion !== 'selector_dias'){
+      this.productForm.controls['duracion'].disable();
+    }
     this.formLoadedChange.emit(this.formIsLoaded);
   }
 
@@ -427,7 +442,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
                         ...anexo,
                         formato: nuevoFormato, // Usar la copia independiente del formato
                         tarifas: tarifa, // Añadir la tarifa
-                        abierto: true
+                        abierto: false
                     };
                 });
 
@@ -451,6 +466,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       console.log('Selected value:', selectedValue);
       // Coger el subproducto de la lista de subproductos this.tipo_producto.subproductos
       const selectedSubproducto = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id == selectedValue);
+      this.selectedSubproducto = selectedSubproducto;
       console.log('Selected subproducto:', selectedSubproducto);
       // Actualizar el precio total con el precio del subproducto seleccionado
       this.productForm.controls['prima_del_seguro'].setValue(selectedSubproducto.tarifas.prima_seguro);
@@ -500,27 +516,31 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
 
   addAnexo(tipo_anexo: any) {
-    // Clonar el objeto formato para evitar referencias compartidas
-    const nuevoFormato = { ...this.formatosAnexos[tipo_anexo.id] };
+    if(this.precioFinal && this.productForm.get('precio_total')?.value){
+      // Clonar el objeto formato para evitar referencias compartidas
+      const nuevoFormato = { ...this.formatosAnexos[tipo_anexo.id] };
 
-    this.anexos.push({
-        id: '',
-        formato: nuevoFormato, // Usar la copia independiente
-        tipo_anexo: tipo_anexo,
-        tarifas: this.tarifasAnexos[tipo_anexo.id], // Asumiendo que esto no necesita ser clonado
-        abierto: true
-    });
+      this.anexos.push({
+          id: '',
+          formato: nuevoFormato, // Usar la copia independiente
+          tipo_anexo: tipo_anexo,
+          tarifas: this.tarifasAnexos[tipo_anexo.id], // Asumiendo que esto no necesita ser clonado
+          abierto: true
+      });
 
-    console.log('Anexos', this.anexos);
-    
-    setTimeout(() => {
-        const lastAnexoElement = this.anexoElements.last;
-        if (lastAnexoElement) {
-            lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, 0);
-    
-    this.getPrecioFinal();
+      console.log('Anexos', this.anexos);
+      
+      setTimeout(() => {
+          const lastAnexoElement = this.anexoElements.last;
+          if (lastAnexoElement) {
+              lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
+          }
+      }, 0);
+      
+      this.getPrecioFinal();
+    } else {
+      this.snackBarService.openSnackBar('Por favor, espere a que se carguen los precios.');
+    }
 }
 
 
@@ -544,6 +564,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   createForm(campos: Campo[]) {
     const today = new Date().toISOString().split('T')[0];
+    this.minDate = today;
 
     this.productForm = this.fb.group({
       id: [''],
@@ -622,6 +643,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
 
   onSubmit() {
+    this.limpiarEstilosErrores();
     this.productForm.get('prima_del_seguro')?.enable();
     this.productForm.get('cuota_de_asociación')?.enable();
     this.productForm.get('precio_total')?.enable();
@@ -636,16 +658,16 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
     //Agregar fecha de inicio y fecha de fin al objeto nuevoProducto
     const fecha_emision = new Date();
-    let fecha_fin = new Date();
-    if(this.tipo_producto.tipo_duracion === 'fecha_exacta'){
-      fecha_fin = new Date(this.duracion);
+    this.fecha_fin = new Date();
+    if((this.selectedSubproducto && this.selectedSubproducto.tipo_duracion === 'fecha_exacta') || (!this.selectedSubproducto && this.tipo_producto.tipo_duracion === 'fecha_exacta')){
+      this.fecha_fin = new Date(this.duracion);
       //Cambiar el valor de duracion a la diferencia de días entre la fecha de inicio y la fecha de fin
-      const diffTime = Math.abs(fecha_fin.getTime() - fecha_emision.getTime());
+      const diffTime = Math.abs(this.fecha_fin.getTime() - fecha_emision.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       // Asignar la diferencia en el nuevoProducto
       nuevoProducto.duracion = diffDays;
     } else {
-      fecha_fin.setDate(fecha_fin.getDate() + parseInt(this.duracion));
+      this.fecha_fin.setDate(this.fecha_fin.getDate() + parseInt(this.duracion));
     }
 
     const formatFecha = (fecha: Date) => {
@@ -660,7 +682,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
 
     nuevoProducto.fecha_de_emisión = formatFecha(fecha_emision);
-    nuevoProducto.fecha_de_fin = formatFecha(fecha_fin);
+    nuevoProducto.fecha_de_fin = formatFecha(this.fecha_fin);
 
     if(this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
       nuevoProducto.subproducto = this.productForm.get('subproducto')?.value;
@@ -688,12 +710,12 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
     const arrayUnicoTodosCampos = Object.values(this.camposFormularioPorGrupos).reduce((acc : any, array) => acc.concat(array), []);
 
+    // Comprobar campos vacios:
     const camposVacios = this.verificarCamposObligatorios(arrayUnicoTodosCampos, nuevoProducto);
     if(camposVacios.length > 0){
       console.log(nuevoProducto.duracion);
       this.snackBarService.openSnackBar('Hay campos obligatorios sin rellenar.');
       console.log('Campos vacios', camposVacios);
-      this.limpiarEstilosErrores();
       this.aplicarEstilosErrores(camposVacios.map((campo: any) => campo.name));
       this.productForm.get('prima_del_seguro')?.disable();
       this.productForm.get('cuota_de_asociación')?.disable();
@@ -706,7 +728,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
       return;
     }
 
-    //Si no tiene id se está creando un nuevo producto
+    // CREAR O EDITAR PRODUCTO
+    // Si no tiene id se está creando un nuevo producto
     if(this.productForm.value.id == null || this.productForm.value.id == ''){
       delete nuevoProducto.id;
       this.productsService.crearProducto(this.letras_identificacion, nuevoProducto).subscribe(
@@ -716,15 +739,19 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('cuota_de_asociación')?.disable();
           this.productForm.get('precio_total')?.disable();
           this.productForm.get('duracion')?.disable();
+          if(this.anexos.length > 0){
+            this.conectarAnexosConProductos(this.anexos, data.id); 
+          } else {
+            this.snackBarService.openSnackBar('Producto creado con exito');
+            this.loadingAction = false;
+          }
           this.productNotificationService.notifyChangesOnProducts();
-          this.conectarAnexosConProductos(this.anexos, data.id);
-          this.snackBarService.openSnackBar('Producto creado con exito')
-          this.loadingAction = false;
+          
         },
         error => {
           console.log(error);
         }
-      )
+      );
     } else {
       console.log(nuevoProducto);
       //Si tiene id se está editando un producto
@@ -735,8 +762,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('cuota_de_asociación')?.disable();
           this.productForm.get('precio_total')?.disable();
           this.productForm.get('duracion')?.disable();
+          this.conectarAnexosConProductos(this.anexos, data.id, false);
           this.productNotificationService.notifyChangesOnProducts();
-          this.conectarAnexosConProductos(this.anexos, data.id);
           this.loadingAction = false; 
         },
         error => {
@@ -773,10 +800,17 @@ export class ProductFormComponent implements OnInit, OnChanges{
     return Object.keys(obj).length;
   }
 
-  conectarAnexosConProductos(anexos: any, id_producto: any){
+  conectarAnexosConProductos(anexos: any, id_producto: any , creando: boolean = true) {
+    anexos.forEach((anexo: any) => {
+      if(anexo.tipo_anexo.tipo_duracion == 'fecha_dependiente'){
+        anexo.formato.fecha_de_fin = this.fecha_fin;
+      }
+    });
     this.anexosService.conectarAnexosConProductos(anexos, id_producto).subscribe({
       next: (data: any) => {
         console.log(data);
+        creando ? this.snackBarService.openSnackBar('Producto creado con exito') : this.snackBarService.openSnackBar('Producto editado con exito');
+        this.loadingAction = false;
       },
       error: (error: any) => {
         console.error('Error connecting anexos with products', error);
@@ -798,6 +832,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   getDuracion(subproducto : any = null): Observable<any> {
+    this.productForm.get('duracion')?.disable();
     const productoCalculoDuracion = subproducto ? subproducto : this.tipo_producto;
     if (productoCalculoDuracion.tipo_duracion === 'selector_dias') {
       return this.productsService.getDuraciones(productoCalculoDuracion.duracion).pipe(

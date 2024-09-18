@@ -78,14 +78,14 @@ export class LayoutMainComponent {
           (error) => {
             console.error('Error fetching societies:', error);
             this.router.navigate(['/login']);
+          },
+          () => {
+            this.pageLoading = false;
           }
         )
       },
       error => {
         console.error('Error al obtener la sociedad:', error);
-      },
-      () => {
-        this.pageLoading = false;
       }
     );
 

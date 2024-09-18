@@ -10,7 +10,7 @@
 
     <fieldset class="input-group">
         <div class="input-container select">
-            @if(sociedades.length > 0){
+            @if(sociedades && sociedades.length > 0){
                 <label for="sociedad" class="input-label">Sociedad <span class="span-required">*</span></label>
                 <ng-select
                     [items]="sociedades"
@@ -159,20 +159,20 @@
             <input id="fecha_de_inicio" formControlName="fecha_de_inicio" type="date" class="input-field">
         </div>
         <div class="input-container duracion">
-            @if(tipo_producto.tipo_duracion === 'fecha_exacta'){
+            @if(tipo_producto.tipo_duracion === 'fecha_exacta' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'fecha_exacta')){
                 <label for="duracion" class="input-label">Día de finalización <span class="span-required">*</span></label>
             } @else {
                 <label for="duracion" class="input-label">Duración <span class="span-required">*</span></label>
             }
             <div class="flex-start">
-                @if(tipo_producto.tipo_duracion === 'selector_dias'){
+                @if(tipo_producto.tipo_duracion === 'selector_dias' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'selector_dias')){  
                     <select id="duracion" formControlName="duracion" type="text" class="input-field" (change)="changeDuracion($event)">
                         @for(duracion of duraciones ; track duracion){
                             <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
                         }
                     </select>
                     <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>  
-                } @else if (tipo_producto.tipo_duracion === 'fecha_exacta'){
+                } @else if (tipo_producto.tipo_duracion === 'fecha_exacta' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'fecha_exacta')){
                     <input id="duracion" formControlName="duracion" type="date" class="input-field">
                 } @else {
                     <input id="duracion" formControlName="duracion" type="text" class="input-field disabled">
@@ -243,78 +243,96 @@
 </form>
 
 
-@if(tiposAnexos.length > 0){
-    @if(formatosAnexos && objectLength(formatosAnexos) == tiposAnexos.length){
-        <h2>Anexos</h2>
-        <form class="content-block anexos-form">
-        <div class="flex-start">
-        @for(tipoAnexo of tiposAnexos ; track tipoAnexo.id){
-            <!-- Mat -button color verde con un mas y el nombre del anexo -->
-            <button mat-raised-button color="primary" (click)="addAnexo(tipoAnexo)" class="add-anexo-button" type="button">
-                + {{ tipoAnexo.nombre }}
-            </button>
-        }
-        </div>
-        
+    @if(tiposAnexos.length > 0){
+        @if(formatosAnexos && objectLength(formatosAnexos) == tiposAnexos.length){
+            @for(tipoAnexo of tiposAnexos ; track tipoAnexo.id){
+                <h2>{{ tipoAnexo.nombre }}</h2>
+                <form class="content-block anexos-form">
+                    <div class="space-between add-anexos-buttons">
+                        <!-- Mat -button color verde con un mas y el nombre del anexo -->
+                        <button mat-raised-button color="primary" (click)="addAnexo(tipoAnexo)" class="add-anexo-button" type="button">
+                            + {{ tipoAnexo.nombre }}
+                        </button>
+                        @if(anexos.length > 0 && (productForm.value.id != null && productForm.value.id != '')){
+                            <button mat-raised-button color="primary" (click)="downloadAnexo(tipoAnexo)" 
+                                    class="download-anexo-button" 
+                                    [class.loading]="downloadingAnexo[tipoAnexo.id]" 
+                                    type="button">
+                                <span class="button-content">
+                                    <mat-icon class="download-icon">cloud_download</mat-icon>
+                                    <div class="spinner" *ngIf="downloadingAnexo[tipoAnexo.id]"></div>
+                                    {{ tipoAnexo.nombre }}
+                                </span>
+                            </button>
+                        }
+                    </div>
+                        <div *ngFor="let anexo of anexos; let i = index" class="anexo-input-group">
+                            @if(anexo.tipo_anexo.id == tipoAnexo.id){
+                                <header class="form-header space-between">
+                                    <h4 [attr.id]="'anexo-' + i" #anexoElement>{{ anexo.tipo_anexo.nombre }}</h4>
+                    
+                                    <button mat-icon-button (click)="toggleAnexo(i)" type="button">
+                                        <mat-icon>{{ anexos[i].abierto ? 'expand_less' : 'expand_more' }}</mat-icon>
+                                    </button>
+                                    <!-- Mat button con un icono de una x -->
+                                    <button mat-icon-button (click)="removeAnexo(i)" class="remove-anexo-button" type="button">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </header>
+                                <div *ngIf="anexos[i].abierto" [@expandCollapse]>
+                                    <div *ngFor="let campoAnexo of camposAnexo[anexo.tipo_anexo.id]; let j = index" class="input-container">
+                                        @if(campoAnexo.grupo === 'datos_producto'){
+                                            <label [for]="campoAnexo.nombre_codigo + i + j" class="input-label">{{ campoAnexo.nombre }}</label>
+                                            <input [id]="campoAnexo.nombre_codigo + i + j" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexos[i].formato[campoAnexo.nombre_codigo]" name="{{campoAnexo.nombre_codigo}}-{{i}}-{{j}}">
+                                        }
+                                    </div>
+                                    <!-- Input de duración -->
+                                    <fieldset class="input-group">
+                                        <div class="input-container fecha_de_inicio date">
+                                            <label for="fecha_de_inicio_anexo" class="input-label">Fecha de inicio </label>
+                                            <input id="fecha_de_inicio_anexo" type="date" class="input-field" [(ngModel)]="anexos[i].formato['fecha_de_inicio']" name="fecha_de_inicio-{{i}}" [min]="minDate">
+                                        </div>
+                                        @if(anexos[i].tipo_anexo.tipo_duracion != 'fecha_dependiente')  {
+                                            @if(anexos[i].tipo_anexo.tipo_duracion == 'selector_dias'){
+                                                <div class="input-container duracion">
+                                                    <label for="duracion" class="input-label">Duración</label>
+                                                    <select id="duracion" class="input-field" [(ngModel)]="anexos[i].tipo_anexo.duracion" name="duracion-{{i}}">
+                                                        @for(duracion of duraciones ; track duracion){
+                                                            <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            } @else {
+                                                <div class="input-container duracion">
+                                                    <label for="duracion" class="input-label">Duración</label>
+                                                    <input id="duracion" type="text" class="input-field" [(ngModel)]="anexos[i].tipo_anexo.duracion" name="duracion-{{i}}" [disabled]="anexos[i].tipo_duracion !== 'fecha_exacta'">
+                                                </div>
+                                            }
+                                        }
+                                        @if(anexos[i].formato['fecha_de_fin'] != null){
+                                            <div class="input-container fecha_de_fin date">
+                                                <label for="fecha_de_fin_anexo" class="input-label">Fecha de fin </label>
+                                                <input id="fecha_de_fin_anexo" type="date" class="input-field" [(ngModel)]="anexos[i].formato['fecha_de_fin']" name="fecha_de_fin-{{i}}" disabled>
+                                            </div>
+                                        }
+                                    </fieldset>
+                                    <hr class="divider">
+                                </div>
+                        
+                            <hr *ngIf="!anexo.abierto" class="divider">
+                            }
+                        </div>
+                </form>        
+            }
 
-        <div *ngFor="let anexo of anexos; let i = index" class="anexo-input-group">
-            <header class="form-header space-between">
-                <h4 [attr.id]="'anexo-' + i" #anexoElement>{{ anexo.tipo_anexo.nombre }} nº{{ i + 1 }}</h4>
-
-                <button mat-icon-button (click)="toggleAnexo(i)" type="button">
-                    <mat-icon>{{ anexos[i].abierto ? 'expand_less' : 'expand_more' }}</mat-icon>
-                  </button>
-                <!-- Mat button con un icono de una x -->
-                <button mat-icon-button (click)="removeAnexo(i)" class="remove-anexo-button" type="button">
-                    <mat-icon>close</mat-icon>
-                </button>
-            </header>
-            <div *ngIf="anexos[i].abierto" [@expandCollapse]>
-                <div *ngFor="let campoAnexo of camposAnexo[anexo.tipo_anexo.id]; let j = index" class="input-container">
-                    <label [for]="campoAnexo.nombre_codigo" class="input-label">{{ campoAnexo.nombre }}</label>
-                    <input [id]="campoAnexo.nombre_codigo" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexos[i].formato[campoAnexo.nombre_codigo]" name="{{campoAnexo.nombre_codigo}}-{{i}}-{{j}}">
-                </div>
-                <!-- Input de duración -->
-                <div class="input-container duracion">
-                    <label for="duracion" class="input-label">Duración</label>
-                    <input id="duracion" type="text" class="input-field" [(ngModel)]="anexos[i].tipo_anexo.duracion" name="duracion-{{i}}" [disabled]="anexos[i].tipo_duracion !== 'fecha_exacta'">
-                </div>
-                <hr class="divider">
+        } @else {
+            <div>
+                <p>Cargando anexos...
+                </p>
             </div>
-
-            <hr *ngIf="!anexo.abierto" class="divider">
-        </div>
-        
-        
-        </form>        
-    } @else {
-        <div>
-            <p>Cargando anexos...
-            </p>
-        </div>
+        }
     }
 
-    @if(anexos.length > 0 && (productForm.value.id != null && productForm.value.id != '')){
-        <h2>Certificados Anexos</h2>
-        <section class="content-block download-anexos">
-            <div class="flex-start">
-                @for(tipoAnexo of tiposAnexos ; track tipoAnexo.id){
-                    <button mat-raised-button color="primary" (click)="downloadAnexo(tipoAnexo)" 
-                            class="download-anexo-button" 
-                            [class.loading]="downloadingAnexo[tipoAnexo.id]" 
-                            type="button">
-                        <span class="button-content">
-                            <mat-icon class="download-icon">cloud_download</mat-icon>
-                            <div class="spinner" *ngIf="downloadingAnexo[tipoAnexo.id]"></div>
-                            {{ tipoAnexo.nombre }}
-                        </span>
-                    </button>
-                }
-            </div>
-            <hr class="divider">
-        </section>
-        }
-    }  
 } @else {
     <div class="center loading-form">
         <app-spinner></app-spinner>
