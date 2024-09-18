@@ -47,7 +47,9 @@ export class LoginComponent {
               data => {
                 //Navega a la primera pagina dentro de operaciones:
                 if(data.length > 0 && data[data.length-1].children.length > 0){
+                  setTimeout(() => {
                   this.router.navigate([`${data[data.length-1].children[0].link}`]);  
+                  }, 1000);
                 } else {
                   this.router.navigate(['/gestion-productos']);
                 }

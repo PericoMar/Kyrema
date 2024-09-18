@@ -77,8 +77,14 @@
                       <td class="col-tipo-dato">
                         <div class="center div-select">
                           <select [(ngModel)]="campoTiempo.tipo_dato" name="tipo_datoTiempo{{$index}}" (change)="onTipoDatoChange(campoTiempo)">
-                            @for(tipo of tiposDuracion ; track $index) {
-                              <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                            @if(campoTiempo.nombre == 'Duración del seguro') {
+                                @for(tipo of tiposDuracion ; track $index) {
+                                  <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                                }
+                            }@else {
+                              @for(tipo of tiposDato ; track $index) {
+                                <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                              }
                             }
                           </select>
                         </div>
@@ -154,12 +160,12 @@
                   <tr>
                     <td class="col-nombre">
                       <div class="center">
-                        <input type="text" placeholder="Nombre" [(ngModel)]="campo.nombre" name="nombre{{$index}}" [disabled]="campo.id != ''">
+                        <input type="text" placeholder="Nombre" [(ngModel)]="campo.nombre" name="nombre{{$index}}" [disabled]="campo.id != ''" [disabled]="campo.grupo === 'datos_fecha'">
                       </div>
                     </td>
                     <td class="col-tipo-dato">
                       <div class="center div-select">
-                        <select [(ngModel)]="campo.tipo_dato" name="tipo_dato{{$index}}">
+                        <select [(ngModel)]="campo.tipo_dato" name="tipo_dato{{$index}}" [disabled]="campo.grupo === 'datos_fecha'">
                           @for(tipo of tiposDato ; track $index) {
                             <option value="{{tipo.value}}">{{tipo.nombre}}</option>
                           }

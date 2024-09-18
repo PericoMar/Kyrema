@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { TableComponent } from './table/table.component';
 import { ProductFormComponent } from './product-form/product-form.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -44,7 +44,7 @@ export class ProductOperationsComponent {
   camposSubproductos: any[] = [];
   comercial!: Commercial;
 
-  
+  @ViewChild(TableComponent) tableComponent!: TableComponent;
 
   constructor(
     private route: ActivatedRoute,
@@ -70,12 +70,12 @@ export class ProductOperationsComponent {
       this.societyService.getSociedadesHijasObservable().subscribe({
         next: (data : any) => {
           try {
-            this.sociedadesBusqueda = data;
+            this.sociedadesBusqueda = data; 
             this.idsSociedades = this.sociedadesBusqueda.map(sociedad => sociedad.id);
             this.loadProductData(this.productUrl);
             console.log("ids", this.idsSociedades);
           } catch (error) {
-            console.log(error);
+            console.error(error);
             // Recargar la pagina
             this.snackBarService.openSnackBar("Error al cargar las sociedades, prueba a recargar la página");
           }
@@ -272,6 +272,10 @@ export class ProductOperationsComponent {
     campos.forEach((campo: HTMLInputElement) => {
       campo.classList.remove('input-error');
     });
+  }
+
+  clearFilters() {
+    this.tableComponent.clearAllFilters();
   }
 
 }

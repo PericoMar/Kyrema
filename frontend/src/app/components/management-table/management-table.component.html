@@ -18,20 +18,20 @@
               <ng-container matColumnDef="actions">
                   <th mat-header-cell *matHeaderCellDef> Acciones </th>
                   <td mat-cell *matCellDef="let data; let i = index">
-                        <button 
+                        <button type="button"
                             mat-button color="primary"        
                             [routerLink]="[configUrl, data.id]"
                             style="margin-right: 8px;">
                             Editar
                         </button>
                         @if(dataType == 'producto' && data.padre_id == null) {
-                            <button 
+                            <button type="button"
                                 mat-button color="secondary" 
                                 [routerLink]="['/subproductos', data.id]">
                                 Subproductos
                             </button>
                         }
-                        <button 
+                        <button type="button"
                             mat-button color="warn" 
                             (click)="openDeleteDialog(data)">
                             Borrar

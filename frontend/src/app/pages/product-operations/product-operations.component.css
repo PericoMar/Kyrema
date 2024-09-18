@@ -11,7 +11,11 @@ h2{
     font-weight: 500;
 }
 
-.button-historial{
+.header-buttons{
+  gap: 5px;
+}
+
+.button-header{
     background-color: #5b4cff;
     color: white;
     border: none;
@@ -20,6 +24,17 @@ h2{
     cursor: pointer;
     text-decoration: none;
     margin-bottom: 16px;
+    min-width: 115px;
+    min-height: 36px;
+    box-sizing: border-box;
+}
+
+.button-header.clear-filters{
+  background-color: #167ccb;
+}
+
+.button-header.see-history{
+  background-color: #21afda;
 }
 
 ::ng-deep .custom-snackbar {

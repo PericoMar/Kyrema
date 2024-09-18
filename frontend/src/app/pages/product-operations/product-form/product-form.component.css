@@ -12,7 +12,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    padding: 40px ;
+    padding: 20px 40px 10px;
     margin-bottom: 40px;
 }
 
@@ -71,7 +71,8 @@
 }
 
 .duracion{
-    width: 10%;
+    width: 12%;
+    min-width: 152px;
 }
 
 .subproducto{
@@ -141,6 +142,11 @@ hr {
 }
 
 .anexo-input-group{
+    width: 100%;
+}
+
+.add-anexos-buttons{
+    margin-bottom: 10px;
     width: 100%;
 }
 
