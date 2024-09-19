@@ -1,0 +1,19 @@
+<main class="product-page">
+    <section class="section-block">
+        <h1>Contratar {{ productName }}</h1>
+        @if(camposLoaded){
+            <app-client-product-form
+            [sociedad]="sociedad"
+            [letras_identificacion]="productUrl"
+            [tipo_producto]="tipo_producto"
+            [campos]="camposFormulario"
+            [camposSubproductos]="camposSubproductos"
+            (formLoadedChange)="handleFormLoadedChange($event)"
+            ></app-client-product-form>
+        } @else {
+            <div>
+                <p>Cargando...</p>
+            </div>
+        }
+    </section>
+</main>

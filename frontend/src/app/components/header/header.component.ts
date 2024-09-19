@@ -5,6 +5,7 @@ import { SocietyService } from '../../services/society.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { LogoutDialogComponent } from '../logout-dialog/logout-dialog.component';
+import { ActivatedRoute,  Router } from '@angular/router';
 
 interface User {
   id: string,
@@ -45,15 +46,18 @@ export class HeaderComponent implements OnInit{
   @Input() society! : Society;
   @Input() navigation! : MenuItem[];
   logoUrl! : string | null;
+  comercial_id!: string;
 
   constructor(
     private userService : UserService,
     private dialog: MatDialog,
-  ){}
+  ){
+    
+  }
 
   ngOnInit(): void {
-    this.user = this.userService.getCurrentUser();
-    this.logoUrl = this.society.logo ? this.society.logo : '../../../assets/Logo_CANAMA__003.png';
+      this.logoUrl = this.society.logo ? this.society.logo : '../../../assets/Logo_CANAMA__003.png';
+      this.user = this.userService.getCurrentUser();
   }
 
   logout(){

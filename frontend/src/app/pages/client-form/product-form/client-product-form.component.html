@@ -1,0 +1,298 @@
+@if(formIsLoaded){
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form content-block" id="product-form">
+    @if(productForm){
+
+    <header class="form-header">
+        <h3 class="form-section-title">Datos del asegurado</h3>
+    </header>
+    <main class="form-main">
+        <div class="input-container dni">
+            <label for="dni" class="input-label">DNI o CIF <span *ngIf="isFieldRequired('datos_asegurado', 'dni')" class="span-required">*</span></label>
+            <input id="dni" formControlName="dni" class="input-field" placeholder="Ej: 12345678X">
+        </div>
+        
+        <fieldset class="input-group">
+            <div class="input-container">
+                <label for="nombre_socio" class="input-label">Nombre <span *ngIf="isFieldRequired('datos_asegurado', 'nombre_socio')" class="span-required">*</span></label>
+                <input id="nombre_socio" formControlName="nombre_socio" class="input-field" placeholder="Ej: Juan">
+            </div>
+            <div class="input-container">
+                <label for="apellido_1" class="input-label">Apellido 1 <span *ngIf="isFieldRequired('datos_asegurado', 'apellido_1')" class="span-required">*</span></label>
+                <input id="apellido_1" formControlName="apellido_1" class="input-field" placeholder="Ej: Pérez">
+            </div>
+            <div class="input-container">
+                <label for="apellido_2" class="input-label">Apellido 2 <span *ngIf="isFieldRequired('datos_asegurado', 'apellido_2')" class="span-required">*</span></label>
+                <input id="apellido_2" formControlName="apellido_2" class="input-field" placeholder="Ej: Gómez">
+            </div>
+        </fieldset>
+        
+        <fieldset class="input-group">
+            <div class="input-container email">
+                <label for="email" class="input-label">Email <span *ngIf="isFieldRequired('datos_asegurado', 'email')" class="span-required">*</span></label>
+                <input id="email" formControlName="email" class="input-field" placeholder="Ej: ejemplo@dominio.com">
+            </div>
+        
+            <div class="input-container telefono">
+                <label for="telefono" class="input-label">Teléfono <span *ngIf="isFieldRequired('datos_asegurado', 'telefono')" class="span-required">*</span></label>
+                <input id="telefono" formControlName="telefono" class="input-field" placeholder="Ej: 123456789">
+            </div>
+        
+            <div class="input-container fecha_de_nacimiento">
+                <label for="fecha_de_nacimiento" class="input-label">Fecha de nacimiento <span *ngIf="isFieldRequired('datos_asegurado', 'fecha_de_nacimiento')" class="span-required">*</span></label>
+                <input id="fecha_de_nacimiento" formControlName="fecha_de_nacimiento" type="date" class="input-field">
+            </div>
+        
+            <div class="input-container sexo">
+                <label for="sexo" class="input-label">Sexo <span *ngIf="isFieldRequired('datos_asegurado', 'sexo')" class="span-required">*</span></label>
+                <input id="sexo" formControlName="sexo" class="input-field" placeholder="M/F">
+            </div>
+        </fieldset>
+        
+
+        <fieldset class="input-group">
+
+            <div class="input-container direccion">
+                <label for="direccion" class="input-label">Dirección <span *ngIf="isFieldRequired('datos_asegurado', 'dirección')" class="span-required">*</span></label>
+                <input id="direccion" formControlName="dirección" class="input-field" placeholder="Ej: Calle Mayor, 10">
+            </div>
+
+            <div class="input-container poblacion">
+                <label for="poblacion" class="input-label">Población <span *ngIf="isFieldRequired('datos_asegurado', 'población')" class="span-required">*</span></label>
+                <input id="poblacion" formControlName="población" class="input-field" placeholder="Ej: Madrid">
+            </div>
+
+            <div class="input-container provincia">
+                <label for="provincia" class="input-label">Provincia <span *ngIf="isFieldRequired('datos_asegurado', 'provincia')" class="span-required">*</span></label>
+                <input id="provincia" formControlName="provincia" class="input-field" placeholder="Ej: Madrid">
+            </div>
+
+            <div class="input-container codigo_postal">
+                <label for="codigo_postal" class="input-label">Código Postal <span *ngIf="isFieldRequired('datos_asegurado', 'codigo_postal')" class="span-required">*</span></label>
+                <input id="codigo_postal" formControlName="codigo_postal" type="number" class="input-field" placeholder="Ej: 28001">
+            </div>
+
+        </fieldset>
+        
+    </main>
+    <hr class="divider">
+
+    @if(camposFormularioPorGrupos['datos_producto'] && camposFormularioPorGrupos['datos_producto'].length > 0){
+        <header class="form-header">
+            <h3 class="form-section-title">Datos del producto</h3>
+        </header>
+            <input id="id" formControlName="id" hidden>
+            @for(campo of camposFormularioPorGrupos['datos_producto']; track campo.name){
+                @if(campo.tipo_dato == 'select'){
+                    <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_producto', campo.name)" class="span-required">*</span></label>
+                    <select [id]="campo.name" [formControlName]="campo.name" class="input-field" (change)="changeOnSelect($event, campo)">
+                        <option value="">Seleccione una opcion...</option>
+                        @for(opcion of campo.opciones ; track opcion.id){
+                            <option [value]="opcion.nombre">{{ opcion.nombre }}</option>
+                        }
+                    </select>
+                } @else {
+                    <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_producto', campo.name)" class="span-required">*</span></label>
+                    <input [id]="campo.name" [placeholder]="campo.label" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field" [ngClass]="{'date' : campo.tipo_dato == 'date'}">
+                }
+            }
+        <hr class="divider">
+           
+    }
+
+    <!-- Input de fecha fin -->
+     <fieldset class="input-group">
+        @if(tipo_producto.subproductos){
+            <div class="input-container subproducto">
+                <label for="subproducto" class="input-label">Producto</label>
+                <select id="subproducto" formControlName="subproducto" class="input-field" (change)="onSubproductoChange($event)">
+                    <option value="null" disabled>Seleccione un producto...</option>
+                    @for(subproducto of tipo_producto.subproductos ; track subproducto.id){
+                        <option [value]="subproducto.id">{{ subproducto.nombre }}</option>
+                    }
+                </select>
+            </div>
+        }
+        <div class="input-container date">
+            <label for="fecha_de_inicio" class="input-label">Fecha de inicio <span class="span-required">*</span></label>
+            <input id="fecha_de_inicio" formControlName="fecha_de_inicio" type="date" class="input-field">
+        </div>
+        <div class="input-container duracion">
+            @if(tipo_producto.tipo_duracion === 'fecha_exacta' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'fecha_exacta')){
+                <label for="duracion" class="input-label">Día de finalización <span class="span-required">*</span></label>
+            } @else {
+                <label for="duracion" class="input-label">Duración <span class="span-required">*</span></label>
+            }
+            <div class="flex-start">
+                @if(tipo_producto.tipo_duracion === 'selector_dias' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'selector_dias')){  
+                    <select id="duracion" formControlName="duracion" type="text" class="input-field" (change)="changeDuracion($event)">
+                        @for(duracion of duraciones ; track duracion){
+                            <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
+                        }
+                    </select>
+                    <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>  
+                } @else if (tipo_producto.tipo_duracion === 'fecha_exacta' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'fecha_exacta')){
+                    <input id="duracion" formControlName="duracion" type="date" class="input-field">
+                } @else {
+                    <input id="duracion" formControlName="duracion" type="text" class="input-field disabled">
+                    <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>          
+                }
+                
+            </div>
+        </div>
+    </fieldset>
+
+    <hr class="divider">
+
+        <header class="form-header">
+            <h3 class="form-section-title">Datos del pago</h3>
+        </header>
+        <fieldset class="input-group  inputs-pago">
+            <div class="input-container prima_del_seguro">
+                <label for="prima_del_seguro" class="input-label">Prima seguro</label>
+                <div class="input-suffix-container">
+                <input id="prima_del_seguro" formControlName="prima_del_seguro" type="text" class="input-field disabled">
+                <span class="input-suffix">€</span>
+                </div>
+            </div>
+            
+            <div class="input-container cuota_de_asociacion">
+                <label for="cuota_de_asociacion" class="input-label">Cuota asociación</label>
+                <div class="input-suffix-container">
+                <input id="cuota_de_asociacion" formControlName="cuota_de_asociación" type="text" class="input-field disabled">
+                <span class="input-suffix">€</span>
+                </div>
+            </div>
+            
+            <div class="input-container precio_total">
+                <label for="precio_total" class="input-label">Precio total</label>
+                <div class="input-suffix-container">
+                <input id="precio_total" formControlName="precio_total" type="text" class="input-field disabled">
+                <span class="input-suffix">€</span>
+                </div>
+            </div>
+            
+            <div class="input-container">
+                <label for="tipo_pago_id" class="input-label">Tipo de pago <span class="span-required">*</span></label>
+                <select name="tipo_de_pago_id" id="tipo_de_pago_id" formControlName="tipo_de_pago_id" class="input-field">
+                    @for(tipoPago of tiposPago ; track tipoPago.id){
+                        <option [value]="tipoPago.id">{{ tipoPago.nombre }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="final-price">
+                <h2>Precio: {{ precioFinal | number:'1.2-2'}} €</h2>
+            </div>
+        </fieldset>
+
+        <button mat-raised-button type="submit" class="mat-button-success submit-button">
+    @if(loadingAction){
+        <app-button-spinner></app-button-spinner>
+    }@else {
+        Contratar
+    }
+    </button>
+    } @else {
+        <div>
+            <p>Cargando...
+            </p>
+        </div>
+    }
+</form>
+
+
+    @if(tiposAnexos.length > 0){
+        @if(formatosAnexos && objectLength(formatosAnexos) == tiposAnexos.length){
+            @for(tipoAnexo of tiposAnexos ; track tipoAnexo.id){
+                <h2>{{ tipoAnexo.nombre }}</h2>
+                <form class="content-block anexos-form">
+                    <div class="space-between add-anexos-buttons">
+                        <!-- Mat -button color verde con un mas y el nombre del anexo -->
+                        <button mat-raised-button color="primary" (click)="addAnexo(tipoAnexo)" class="add-anexo-button" type="button">
+                            + {{ tipoAnexo.nombre }}
+                        </button>
+                        @if(anexos.length > 0 && (productForm.value.id != null && productForm.value.id != '')){
+                            <button mat-raised-button color="primary" (click)="downloadAnexo(tipoAnexo)" 
+                                    class="download-anexo-button" 
+                                    [class.loading]="downloadingAnexo[tipoAnexo.id]" 
+                                    type="button">
+                                <span class="button-content">
+                                    <mat-icon class="download-icon">cloud_download</mat-icon>
+                                    <div class="spinner" *ngIf="downloadingAnexo[tipoAnexo.id]"></div>
+                                    {{ tipoAnexo.nombre }}
+                                </span>
+                            </button>
+                        }
+                    </div>
+                        <div *ngFor="let anexo of anexos; let i = index" class="anexo-input-group">
+                            @if(anexo.tipo_anexo.id == tipoAnexo.id){
+                                <header class="form-header space-between">
+                                    <h4 [attr.id]="'anexo-' + i" #anexoElement>{{ anexo.tipo_anexo.nombre }}</h4>
+                    
+                                    <button mat-icon-button (click)="toggleAnexo(i)" type="button">
+                                        <mat-icon>{{ anexos[i].abierto ? 'expand_less' : 'expand_more' }}</mat-icon>
+                                    </button>
+                                    <!-- Mat button con un icono de una x -->
+                                    <button mat-icon-button (click)="removeAnexo(i)" class="remove-anexo-button" type="button">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </header>
+                                <div *ngIf="anexos[i].abierto" [@expandCollapse]>
+                                    <div *ngFor="let campoAnexo of camposAnexo[anexo.tipo_anexo.id]; let j = index" class="input-container">
+                                        @if(campoAnexo.grupo === 'datos_producto'){
+                                            <label [for]="campoAnexo.nombre_codigo + i + j" class="input-label">{{ campoAnexo.nombre }}</label>
+                                            <input [id]="campoAnexo.nombre_codigo + i + j" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexos[i].formato[campoAnexo.nombre_codigo]" name="{{campoAnexo.nombre_codigo}}-{{i}}-{{j}}">
+                                        }
+                                    </div>
+                                    <!-- Input de duración -->
+                                    <fieldset class="input-group">
+                                        <div class="input-container fecha_de_inicio date">
+                                            <label for="fecha_de_inicio_anexo" class="input-label">Fecha de inicio </label>
+                                            <input id="fecha_de_inicio_anexo" type="date" class="input-field" [(ngModel)]="anexos[i].formato['fecha_de_inicio']" name="fecha_de_inicio-{{i}}" [min]="minDate">
+                                        </div>
+                                        @if(anexos[i].tipo_anexo.tipo_duracion != 'fecha_dependiente')  {
+                                            @if(anexos[i].tipo_anexo.tipo_duracion == 'selector_dias'){
+                                                <div class="input-container duracion">
+                                                    <label for="duracion" class="input-label">Duración</label>
+                                                    <select id="duracion" class="input-field" [(ngModel)]="anexos[i].tipo_anexo.duracion" name="duracion-{{i}}">
+                                                        @for(duracion of duraciones ; track duracion){
+                                                            <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            } @else {
+                                                <div class="input-container duracion">
+                                                    <label for="duracion" class="input-label">Duración</label>
+                                                    <input id="duracion" type="text" class="input-field" [(ngModel)]="anexos[i].tipo_anexo.duracion" name="duracion-{{i}}" [disabled]="anexos[i].tipo_duracion !== 'fecha_exacta'">
+                                                </div>
+                                            }
+                                        }
+                                        @if(anexos[i].formato['fecha_de_fin'] != null){
+                                            <div class="input-container fecha_de_fin date">
+                                                <label for="fecha_de_fin_anexo" class="input-label">Fecha de fin </label>
+                                                <input id="fecha_de_fin_anexo" type="date" class="input-field" [(ngModel)]="anexos[i].formato['fecha_de_fin']" name="fecha_de_fin-{{i}}" disabled>
+                                            </div>
+                                        }
+                                    </fieldset>
+                                    <hr class="divider">
+                                </div>
+                        
+                            <hr *ngIf="!anexo.abierto" class="divider">
+                            }
+                        </div>
+                </form>        
+            }
+
+        } @else {
+            <div>
+                <p>Cargando anexos...
+                </p>
+            </div>
+        }
+    }
+
+} @else {
+    <div class="center loading-form">
+        <app-spinner></app-spinner>
+    </div>
+}

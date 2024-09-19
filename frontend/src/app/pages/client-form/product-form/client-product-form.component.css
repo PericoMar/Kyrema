@@ -1,0 +1,245 @@
+.product-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 40px ;
+    margin-bottom: 40px;
+}
+
+.anexos-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 20px 40px 10px;
+    margin-bottom: 40px;
+}
+
+.form-header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-section-title{
+    font-weight: 500;
+}
+
+.form-main{
+    width: 100%;
+}
+
+
+
+
+/* Clases especificas */
+.dni{
+    width: 20%;
+}
+
+.email{
+    width: 25%;
+}
+
+.telefono{
+    width: 30%;
+}
+
+.fecha_de_nacimiento {
+    width: 10%;
+    min-width: 150px;
+}
+
+.sexo{
+    width: 1%;
+    min-width: 55px;
+}
+
+.poblacion{
+    width: 10%;
+}
+
+.provincia{
+    width: 10%;
+}
+
+.codigo_postal{
+    min-width: 110px;
+    width: 10%;
+}
+
+.duracion{
+    width: 12%;
+    min-width: 152px;
+}
+
+.subproducto{
+    width: 20%;
+}
+
+.inputs-pago{
+    width: 100%;
+    align-items: end;
+}
+
+input.disabled{
+    cursor: not-allowed;
+}
+
+.select{
+    width: 30%;
+}
+
+.date{
+    width: 10%;
+    min-width: 135px;
+}
+
+.divider{
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.suffix{
+    margin-bottom: 5px;
+}
+
+
+.input-error {
+    border-color: rgb(252, 130, 130);
+    background-color: rgb(252, 243, 243);
+}
+
+::ng-deep .input-error .ng-select-container {
+    border-color: rgb(252, 130, 130);
+    background-color: rgb(252, 243, 243);
+}
+
+
+.clean-inputs {
+    background-color: #4c78af;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0px 0px 16px 0px
+}
+
+hr {
+    width: 100%;
+}
+
+.final-price{
+    text-align: end;
+    width: 50%;
+}
+
+.final-price h2{
+    margin-bottom:10px;
+}
+
+.anexo-input-group{
+    width: 100%;
+}
+
+.add-anexos-buttons{
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.add-anexo-button{
+    margin-bottom: 10px;    
+}
+
+.mat-button-success{
+    background-color: #4CAF50; /* Verde */
+    color: white;
+
+    &:hover {
+        background-color: #45A049; /* Verde más oscuro */
+    }
+}
+
+.download-anexos{
+    padding:40px;
+}
+
+.download-anexo-button{
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+  
+.download-icon {
+    transition: transform 0.3s ease;
+}
+  
+.spinner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+  
+/* Estilo y animación cuando está cargando */
+.download-anexo-button.loading .download-icon {
+    /* Que no aparezca pero que ocupe espacio */
+    opacity: 0;
+}
+
+/* Añadir media query para que cuando la pantalla sea menos de 1150px quitar el display flex  */
+@media (max-width: 1150px) {
+    .center, .space-between, .input-group{
+        flex-direction: column;
+        justify-content: baseline;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .input-container.input-group{
+        width: 100% !important;
+    }
+
+    .date{
+        width: 100%;
+    }
+  }
+
+  ::ng-deep .custom-snackbar {
+    --mdc-snackbar-container-color: white;  
+    --mdc-snackbar-supporting-text-color: black;
+    --mat-snack-bar-button-color: rgb(211, 9, 9);
+  }
+
+  .mat-mdc-button.mat-mdc-snack-bar-action {
+    color: black !important;
+  }
+  
+  .custom-snackbar [matSnackBarLabel] {
+    font-size: 16px; /* Ajusta el tamaño de la fuente */
+  }
+  
+  .custom-snackbar [matSnackBarActions] button {
+    color: #b40912; /* Cambia el color del botón de acción */
+  }
+  

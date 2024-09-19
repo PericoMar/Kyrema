@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SocietyService } from '../../services/society.service';
 import { NavService } from '../../services/nav.service';
@@ -44,6 +44,7 @@ interface MenuItem {
 export class LayoutMainComponent {
   user! : User;
   society! : Society;
+  comercial_id!: string;
   logoUrl! : string | null;
   navigation!: MenuItem[];
   pageLoading: boolean = true;
@@ -52,42 +53,69 @@ export class LayoutMainComponent {
     private userService : UserService,
     private societyService : SocietyService,
     private navService : NavService,
-    private router : Router
+    private router : Router,
+    private route : ActivatedRoute
   ){}
 
   ngOnInit(): void {
-    this.user = this.userService.getCurrentUser();
-    this.navService.getNavegation(this.user.id_sociedad).subscribe(
-      data => {
-        this.navigation = data;
-        console.log(this.navigation)
-      },
-      (error) => {
-        console.error('Error fetching navigation:', error);
-      }
-    );
-    this.societyService.getSocietyById(this.user.id_sociedad).subscribe(
-      data => {
-        this.society = data;
-        this.societyService.setSociedadLocalStorage(this.society);
-        
-        this.societyService.getSociedadAndHijas(this.society.id).subscribe(
-          (sociedad : Society[]) => {
-            this.societyService.guardarSociedadesEnLocalStorage(sociedad);
+    if(this.router.url.includes('/contratar')){
+      this.route.paramMap.subscribe(params => {
+        console.log('params:', params);
+        this.comercial_id = params.get('comercial_id')!;
+        console.log('comercial_id:', this.comercial_id); 
+        this.societyService.getSociedadPorComercial(this.comercial_id).subscribe({
+          next: (sociedad : any) => {
+            try {
+
+              this.society = sociedad;
+              console.log('Sociedad:', this.society);
+              this.logoUrl = this.society.logo ? this.society.logo : '../../../assets/Logo_CANAMA__003.png';
+
+            } catch (error) {
+              console.error(error);
+            }
           },
-          (error) => {
-            console.error('Error fetching societies:', error);
-            this.router.navigate(['/login']);
-          },
-          () => {
-            this.pageLoading = false;
+          error: (error : any) => {
+            console.log(error);
           }
-        )
-      },
-      error => {
-        console.error('Error al obtener la sociedad:', error);
+        });
+      });
+    } else {
+
+      this.user = this.userService.getCurrentUser();
+      this.navService.getNavegation(this.user.id_sociedad).subscribe(
+        data => {
+          this.navigation = data;
+          console.log(this.navigation)
+        },
+        (error) => {
+          console.error('Error fetching navigation:', error);
+        }
+      );
+      this.societyService.getSocietyById(this.user.id_sociedad).subscribe(
+        data => {
+          this.society = data;
+          this.societyService.setSociedadLocalStorage(this.society);
+          
+          this.societyService.getSociedadAndHijas(this.society.id).subscribe(
+            (sociedad : Society[]) => {
+              this.societyService.guardarSociedadesEnLocalStorage(sociedad);
+            },
+            (error) => {
+              console.error('Error fetching societies:', error);
+              this.router.navigate(['/login']);
+            },
+            () => {
+              this.pageLoading = false;
+            }
+          )
+        },
+        error => {
+          console.error('Error al obtener la sociedad:', error);
+        }
+      );
+
       }
-    );
 
 
   }

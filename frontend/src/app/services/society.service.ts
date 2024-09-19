@@ -28,13 +28,7 @@ export class SocietyService {
   }
 
   getSocietyById(id_sociedad: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/sociedad/${id_sociedad}`).pipe(
-      tap(response => {
-        if (response.logo) {
-          response.logo = `data:image/png;base64,${response.logo}`;
-        }
-      })
-    );
+    return this.http.get<any>(`${this.apiUrl}/sociedad/${id_sociedad}`);
   }
 
 
@@ -83,10 +77,22 @@ export class SocietyService {
     return this.http.post<any>(`${this.apiUrl}/tipo-producto-sociedad`, {id_sociedad: sociedad_id, id_tipo_producto: tipo_producto_id});
   }  
 
-  createSociety(sociedad: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/sociedad`, sociedad);
+  createSociety(sociedad: any, logo: File): Observable<any> {
+    const formData: FormData = new FormData();
+  
+    // Agregar los datos de la sociedad
+    for (const key in sociedad) {
+      formData.append(key, sociedad[key]);
+    }
+  
+    // Agregar el archivo de logo
+    if (logo) {
+      formData.append('logo', logo);
+    }
+  
+    return this.http.post<any>(`${this.apiUrl}/sociedad`, formData);
   }
-
+  
   updateSociety(id: any, sociedad: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/sociedad/${id}`, sociedad);
   }
@@ -109,5 +115,9 @@ export class SocietyService {
 
   connectPaymentTypesFromSocietyToAnother(sociedad_padre_id: string, sociedad_hija_id: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/sociedad/${sociedad_padre_id}/hija/${sociedad_hija_id}/tipos-pago`, {});
+  }
+
+  getSociedadPorComercial(comercial_id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/sociedad/comercial/${comercial_id}`);
   }
 }
