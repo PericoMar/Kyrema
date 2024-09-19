@@ -10,7 +10,7 @@
 
     <fieldset class="input-group">
         <div class="input-container select">
-            @if(sociedades.length > 0){
+            @if(sociedades && sociedades.length > 0){
                 <label for="sociedad" class="input-label">Sociedad <span class="span-required">*</span></label>
                 <ng-select
                     [items]="sociedades"
