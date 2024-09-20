@@ -106,6 +106,18 @@ input.disabled{
     margin-bottom: 5px;
 }
 
+/* PAGOS / STRIPE PAYMENT */
+
+#card-element {
+    width: 100%; /* Ajusta el ancho según sea necesario */
+    height: 40px; /* Ajusta la altura */
+    font-size: 20px; /* Ajusta el tamaño de la fuente */
+    border: 1px solid #ccc; /* Agrega un borde si lo deseas */
+    padding: 10px; /* Agrega un padding para mayor espacio */
+    border-radius: 4px; /* Bordes redondeados */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra para un efecto elevado */
+}
+
 
 .input-error {
     border-color: rgb(252, 130, 130);
@@ -134,6 +146,7 @@ hr {
 
 .final-price{
     text-align: end;
+    align-self: flex-end;
     width: 50%;
 }
 
@@ -155,11 +168,11 @@ hr {
 }
 
 .mat-button-success{
-    background-color: #4CAF50; /* Verde */
-    color: white;
+    background-color: #4CAF50 !important; /* Verde */
+    color: white !important;
 
-    &:hover {
-        background-color: #45A049; /* Verde más oscuro */
+    &:hover {   
+        background-color: #45A049 !important; /* Verde más oscuro */
     }
 }
 

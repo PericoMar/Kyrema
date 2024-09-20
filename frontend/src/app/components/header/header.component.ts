@@ -6,6 +6,9 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { LogoutDialogComponent } from '../logout-dialog/logout-dialog.component';
 import { ActivatedRoute,  Router } from '@angular/router';
+import { Society } from '../../interfaces/society';
+import { AppConfig } from '../../../config/app-config';
+import { CommonModule } from '@angular/common';
 
 interface User {
   id: string,
@@ -13,19 +16,6 @@ interface User {
   usuario: string,
   nivel: string,
   id_sociedad: string
-}
-
-interface Society {
-  nombre : string,
-  codigo_postal : string,
-  poblacion :string,
-  tipo_sociedad: string,
-  nivel_sociedad: string,
-  logo: string,
-  sociedad_padre_id: string,
-  created_at: string,
-  updated_at: string;
-  codigo_sociedad : string
 }
 
 interface MenuItem {
@@ -37,14 +27,14 @@ interface MenuItem {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NavBarComponent, MatIcon, LogoutDialogComponent],
+  imports: [NavBarComponent, MatIcon, LogoutDialogComponent, CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit{
-  user! : User;
+  @Input() user! : User;
   @Input() society! : Society;
-  @Input() navigation! : MenuItem[];
+  @Input() navigation! : MenuItem[] | null;
   logoUrl! : string | null;
   comercial_id!: string;
 
@@ -56,8 +46,8 @@ export class HeaderComponent implements OnInit{
   }
 
   ngOnInit(): void {
-      this.logoUrl = this.society.logo ? this.society.logo : '../../../assets/Logo_CANAMA__003.png';
-      this.user = this.userService.getCurrentUser();
+      this.logoUrl = this.society.logo ? AppConfig.STORAGE_URL + this.society.logo : '../../../assets/Logo_CANAMA__003.png';
+      // this.user = this.userService.getCurrentUser();
   }
 
   logout(){

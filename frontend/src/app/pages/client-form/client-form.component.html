@@ -1,6 +1,7 @@
+<app-header [society]="sociedad" [navigation]="null"></app-header>
 <main class="product-page">
     <section class="section-block">
-        <h1>Contratar {{ productName }}</h1>
+        <h1 class="form-title"> CONTRATAR {{ productName | uppercase }}</h1>
         @if(camposLoaded){
             <app-client-product-form
             [sociedad]="sociedad"

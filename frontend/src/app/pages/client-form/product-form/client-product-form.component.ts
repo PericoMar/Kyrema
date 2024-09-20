@@ -21,6 +21,7 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Society } from '../../../interfaces/society';
+import { PaymentService } from '../../../services/payment.service';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -112,6 +113,7 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
   duracion: any;
   minDate!: string;
   fecha_fin!: Date;
+  loading!: boolean;
   
   
 
@@ -126,17 +128,18 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
     private productNotificationService: ProductNotificationService,
     private anexosService: AnexosService,
     private snackBarService: SnackBarService,
+    private paymentService: PaymentService,
   ) { 
     
   }
 
   @ViewChildren('anexoElement') anexoElements!: QueryList<ElementRef>;
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.createForm(this.campos);
     this.loadTipoProducto();
     // Cargar las sociedades
     // this.loadSociedades();
-    this.createForm(this.campos);
 
 
     // Si selecciono un producto con un subproducto debo cambiar el formulario.
@@ -145,6 +148,13 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
       this.onSubproductoChange(event as unknown as Event); // llama al método cuando cambie el valor
     });
     
+
+    await this.paymentService.initStripe();
+    const elements = this.paymentService.elements;
+    if (elements) {
+      this.paymentService.card = elements.create('card');
+      this.paymentService.card.mount('#card-element');
+    }
   }
 
   ngAfterViewInit() {
@@ -476,10 +486,42 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
       }, 0);
       
       this.getPrecioFinal();
+
+      this.snackBarService.openSnackBar('Anexo añadido correctamente. Precio actualizado.');
     } else {
       this.snackBarService.openSnackBar('Por favor, espere a que se carguen los precios.');
     }
-}
+  }
+
+  async pay() {
+    this.loading = true;
+    const billingDetails = {
+      name: 'Nombre del cliente',
+      email: 'email@ejemplo.com',
+    };
+    const cardElement = this.paymentService.card;
+    console.log("Metodo de pago", cardElement);
+    // Crea el método de pago
+    const paymentMethodResponse = await this.paymentService.createPaymentMethod(cardElement, billingDetails);
+    console.log("Payment method response", paymentMethodResponse);
+    if (paymentMethodResponse && paymentMethodResponse.paymentMethod) {
+      const paymentMethodId = paymentMethodResponse.paymentMethod.id; // Usa el ID aquí
+      const amount = 1000; // Monto en centavos
+
+      this.paymentService.pay(paymentMethodId, amount).subscribe({
+        next: (response) => {
+          // Manejar la respuesta
+          console.log('Payment successful:', response);
+        },
+        error: (error) => {
+          // Manejar errores
+          console.error('Payment error:', error);
+        }
+      });
+    }
+    this.loading = false;
+  }
+
 
 
   removeAnexo(index: number){

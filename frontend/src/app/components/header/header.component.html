@@ -1,10 +1,10 @@
 
-<header class="main-header">
+<header [ngClass]="{'header-collapsed': !navigation}" class="main-header">
     <header class="top-header">
         <img [src]="logoUrl" alt="Logo" class="logo">
         <aside class="space-between welcome-aside">
             <span>
-                @if(user.nombre){
+                @if(user && user.nombre){
                     Bienvenido, {{ user.nombre }}. 
                 } @else {
                     Bienvenido.
@@ -18,7 +18,7 @@
               </button>
         </aside>
     </header>
-    <app-nav-bar [navigation]="navigation"></app-nav-bar>
+    <app-nav-bar [navigation]="navigation" [hidden]="!navigation"></app-nav-bar>
 </header>
 
 

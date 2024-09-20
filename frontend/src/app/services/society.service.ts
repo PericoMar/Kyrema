@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable,of, tap } from 'rxjs';
+import { BehaviorSubject, Observable,of, tap } from 'rxjs';
 import { Society } from '../interfaces/society';
 import { AppConfig } from '../../config/app-config';
 
@@ -15,6 +15,13 @@ export class SocietyService {
   private sociedad!: any;
   private sociedadesHijas!: any[];
   private sociedadActual!: Society;
+  private sociedadSource = new BehaviorSubject<any>(null);
+  sociedad$ = this.sociedadSource.asObservable();
+
+  // Método para actualizar la sociedad
+  actualizarSociedad(sociedad: any) {
+    this.sociedadSource.next(sociedad);
+  }
 
   constructor(private http: HttpClient,private route: ActivatedRoute, private router: Router) {
     this.route.paramMap.subscribe(params => {
@@ -32,7 +39,7 @@ export class SocietyService {
   }
 
 
-  getSociedadAndHijas(id_sociedad: string): Observable<any> {
+  getSociedadAndHijas(id_sociedad: string | undefined): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/sociedad/hijas/${id_sociedad}`);
   }
 

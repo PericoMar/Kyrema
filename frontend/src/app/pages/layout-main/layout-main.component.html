@@ -1,6 +1,6 @@
 @if(pageLoading){
     <app-loading></app-loading>
 }@else {
-    <app-header [society]="society" [navigation]="navigation"></app-header>
+    <app-header [society]="society" [navigation]="navigation" [user]="user"></app-header>
     <router-outlet></router-outlet>
 }

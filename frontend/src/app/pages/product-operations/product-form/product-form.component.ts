@@ -538,6 +538,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       }, 0);
       
       this.getPrecioFinal();
+      this.snackBarService.openSnackBar('Anexo añadido correctamente. Precio actualizado.');
     } else {
       this.snackBarService.openSnackBar('Por favor, espere a que se carguen los precios.');
     }

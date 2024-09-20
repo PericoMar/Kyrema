@@ -72,8 +72,8 @@ export const routes: Routes = [
         { path: 'subproductos/:product', component: SubproductManagerComponent, },
         { path: 'configurador-subproductos/:padre_id' , component: ProductConfiguratorComponent},
         { path: 'configurador-subproductos/:padre_id/:id' , component: ProductConfiguratorComponent},
-        { path: 'contratar/:product/:comercial_id', component: ClientFormComponent, },
     ]
     },
+    { path: 'contratar/:product/:comercial_id', component: ClientFormComponent, },
     { path: '**', redirectTo: 'login' },
 ];

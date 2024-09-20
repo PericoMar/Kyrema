@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ClientProductFormComponent } from './product-form/client-product-form.component';
 import { ActivatedRoute } from '@angular/router';
 import { SocietyService } from '../../services/society.service';
@@ -8,11 +8,13 @@ import { ProductsService } from '../../services/products.service';
 import { FamilyProductService } from '../../services/family-product.service';
 import { ActionButtonsComponent } from '../society-manager/society-table/action-buttons/action-buttons.component';
 import { CamposService } from '../../services/campos.service';
+import { HeaderComponent } from '../../components/header/header.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-client-form',
   standalone: true,
-  imports: [ClientProductFormComponent],
+  imports: [ClientProductFormComponent, HeaderComponent, CommonModule],
   templateUrl: './client-form.component.html',
   styleUrl: './client-form.component.css'
 })
@@ -33,6 +35,8 @@ export class ClientFormComponent implements OnInit{
   camposSubproductos: any;
   formLoaded!: boolean;
 
+  @Output() sociedadEmitida = new EventEmitter<any>();
+
   constructor(
     private route: ActivatedRoute,
     private societyService: SocietyService,
@@ -50,6 +54,8 @@ export class ClientFormComponent implements OnInit{
         next: (sociedad : any) => {
           try {
             this.sociedad = sociedad;
+            console.log("Sociedad mandada", this.sociedad);
+            this.societyService.actualizarSociedad(sociedad);
             this.loadProductData(this.productUrl);
           } catch (error) {
             console.error(error);

@@ -5,6 +5,7 @@ import { UserService } from '../../services/user.service';
 import { SocietyService } from '../../services/society.service';
 import { NavService } from '../../services/nav.service';
 import { LoadingComponent } from '../loading/loading.component';
+import { Society } from '../../interfaces/society';
 
 interface User {
   id: string,
@@ -12,20 +13,6 @@ interface User {
   usuario: string,
   nivel: string,
   id_sociedad: string
-}
-
-interface Society {
-  id: string,
-  nombre : string,
-  codigo_postal : string,
-  poblacion :string,
-  tipo_sociedad: string,
-  nivel_sociedad: string,
-  logo: string,
-  sociedad_padre_id: string,
-  created_at: string,
-  updated_at: string;
-  codigo_sociedad : string
 }
 
 interface MenuItem {
@@ -58,29 +45,6 @@ export class LayoutMainComponent {
   ){}
 
   ngOnInit(): void {
-    if(this.router.url.includes('/contratar')){
-      this.route.paramMap.subscribe(params => {
-        console.log('params:', params);
-        this.comercial_id = params.get('comercial_id')!;
-        console.log('comercial_id:', this.comercial_id); 
-        this.societyService.getSociedadPorComercial(this.comercial_id).subscribe({
-          next: (sociedad : any) => {
-            try {
-
-              this.society = sociedad;
-              console.log('Sociedad:', this.society);
-              this.logoUrl = this.society.logo ? this.society.logo : '../../../assets/Logo_CANAMA__003.png';
-
-            } catch (error) {
-              console.error(error);
-            }
-          },
-          error: (error : any) => {
-            console.log(error);
-          }
-        });
-      });
-    } else {
 
       this.user = this.userService.getCurrentUser();
       this.navService.getNavegation(this.user.id_sociedad).subscribe(
@@ -114,9 +78,11 @@ export class LayoutMainComponent {
           console.error('Error al obtener la sociedad:', error);
         }
       );
+    
+  }
 
-      }
-
-
+  recibirSociedad(sociedad: any) {
+    console.log('Sociedad recibida del hijo:', sociedad);
+    this.society = sociedad;
   }
 }
