@@ -9,30 +9,36 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PaymentService {
-  stripe: Stripe | null = null;
-  elements!: StripeElements;
-  card!: StripeCardElement;
 
   constructor(private http: HttpClient) {}
 
-  async initStripe() {
-    this.stripe = await loadStripe(AppConfig.STRIPE_PUBLIC_KEY);
-    this.elements = this.stripe?.elements()!;
+  initiatePayment(paymentData: { orderId: string; amount: number }): Observable<any> {
+    return this.http.post(`${AppConfig.API_URL}/payment/create`, paymentData);
   }
+  // stripe: Stripe | null = null;
+  // elements!: StripeElements;
+  // card!: StripeCardElement;
 
-  async createPaymentMethod(cardElement: StripeCardElement, billingDetails: any) {
-    return this.stripe?.createPaymentMethod({
-      type: 'card',
-      card: cardElement,
-      billing_details: billingDetails,
-    });
-  }
+  // constructor(private http: HttpClient) {}
+
+  // async initStripe() {
+  //   this.stripe = await loadStripe(AppConfig.STRIPE_PUBLIC_KEY);
+  //   this.elements = this.stripe?.elements()!;
+  // }
+
+  // async createPaymentMethod(cardElement: StripeCardElement, billingDetails: any) {
+  //   return this.stripe?.createPaymentMethod({
+  //     type: 'card',
+  //     card: cardElement,
+  //     billing_details: billingDetails,
+  //   });
+  // }
 
 
-  pay(paymentMethodId: string, amount: number): Observable<any> {
-    return this.http.post(`${AppConfig.API_URL}/payment`, {
-      paymentMethodId,
-      amount
-    });
-  }
+  // pay(paymentMethodId: string, amount: number): Observable<any> {
+  //   return this.http.post(`${AppConfig.API_URL}/payment`, {
+  //     paymentMethodId,
+  //     amount
+  //   });
+  // }
 }

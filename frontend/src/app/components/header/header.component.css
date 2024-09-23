@@ -8,6 +8,7 @@ header.main-header{
 header.header-collapsed {
   height: calc(144px - 64px); /* Si no hay nav-bar se resta la altura de este */
   transition: width 0.3s ease;
+  box-shadow: 0 1px 3px rgba(128, 128, 128, 0.5);
 }
 
 header.top-header{

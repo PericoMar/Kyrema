@@ -22,6 +22,7 @@ import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Society } from '../../../interfaces/society';
 import { PaymentService } from '../../../services/payment.service';
+import { Router } from '@angular/router';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -129,6 +130,7 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
     private anexosService: AnexosService,
     private snackBarService: SnackBarService,
     private paymentService: PaymentService,
+    private router: Router,
   ) { 
     
   }
@@ -149,12 +151,12 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
     });
     
 
-    await this.paymentService.initStripe();
-    const elements = this.paymentService.elements;
-    if (elements) {
-      this.paymentService.card = elements.create('card');
-      this.paymentService.card.mount('#card-element');
-    }
+    // await this.paymentService.initStripe();
+    // const elements = this.paymentService.elements;
+    // if (elements) {
+    //   this.paymentService.card = elements.create('card');
+    //   this.paymentService.card.mount('#card-element');
+    // }
   }
 
   ngAfterViewInit() {
@@ -493,34 +495,84 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
     }
   }
 
-  async pay() {
-    this.loading = true;
-    const billingDetails = {
-      name: 'Nombre del cliente',
-      email: 'email@ejemplo.com',
-    };
-    const cardElement = this.paymentService.card;
-    console.log("Metodo de pago", cardElement);
-    // Crea el método de pago
-    const paymentMethodResponse = await this.paymentService.createPaymentMethod(cardElement, billingDetails);
-    console.log("Payment method response", paymentMethodResponse);
-    if (paymentMethodResponse && paymentMethodResponse.paymentMethod) {
-      const paymentMethodId = paymentMethodResponse.paymentMethod.id; // Usa el ID aquí
-      const amount = 1000; // Monto en centavos
+  // async pay() {
+  //   this.loading = true;
+  //   const billingDetails = {
+  //     name: 'Nombre del cliente',
+  //     email: 'email@ejemplo.com',
+  //   };
+  //   const cardElement = this.paymentService.card;
+  //   console.log("Metodo de pago", cardElement);
+  //   // Crea el método de pago
+  //   const paymentMethodResponse = await this.paymentService.createPaymentMethod(cardElement, billingDetails);
+  //   console.log("Payment method response", paymentMethodResponse);
+  //   if (paymentMethodResponse && paymentMethodResponse.paymentMethod) {
+  //     const paymentMethodId = paymentMethodResponse.paymentMethod.id; // Usa el ID aquí
+  //     const amount = 1000; // Monto en centavos
 
-      this.paymentService.pay(paymentMethodId, amount).subscribe({
-        next: (response) => {
-          // Manejar la respuesta
-          console.log('Payment successful:', response);
-        },
-        error: (error) => {
-          // Manejar errores
-          console.error('Payment error:', error);
-        }
-      });
-    }
-    this.loading = false;
+  //     this.paymentService.pay(paymentMethodId, amount).subscribe({
+  //       next: (response) => {
+  //         // Manejar la respuesta
+  //         console.log('Payment successful:', response);
+  //       },
+  //       error: (error) => {
+  //         // Manejar errores
+  //         console.error('Payment error:', error);
+  //       }
+  //     });
+  //   }
+  //   this.loading = false;
+  // }
+
+  sendPaymentRequest() {
+    const paymentData = {
+      orderId: '123456',
+      amount: 1000,
+    };
+    console.log('Payment data:', paymentData);
+    this.paymentService.initiatePayment(paymentData).subscribe(response => {
+      console.log("respuesta correcta")
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = response.redsysUrl;
+  
+      // Añadir los campos de los parámetros
+      for (const [key, value] of Object.entries(response.params)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value as string;
+        form.appendChild(input);
+      }
+  
+      // Campo para la firma
+      const signatureInput = document.createElement('input');
+      signatureInput.type = 'hidden';
+      signatureInput.name = 'Ds_Signature';
+      signatureInput.value = response.signature;
+      form.appendChild(signatureInput);
+  
+      // Añadir el formulario al documento y enviar
+      document.body.appendChild(form);
+      console.log(response)
+      setTimeout(() => {
+      form.submit();
+      },30000);
+      // window.addEventListener('message', (event) => {
+      //   if (event.origin === 'http://localhost:4200') {
+      //       if (event.data === 'paymentSuccess') {
+      //           this.router.navigate(['/success']);
+      //       } else if (event.data === 'paymentFailed') {
+      //           this.router.navigate(['/failed']);
+      //       }
+      //   }
+      // });
+    },
+    error => {
+      console.error('Error sending payment request:', error);
+    });
   }
+  
 
 
 

@@ -35,7 +35,7 @@ export class HeaderComponent implements OnInit{
   @Input() user! : User;
   @Input() society! : Society;
   @Input() navigation! : MenuItem[] | null;
-  logoUrl! : string | null;
+  logoUrl : string | null = '';
   comercial_id!: string;
 
   constructor(

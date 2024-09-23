@@ -198,10 +198,17 @@
     }
 </form>
 
-    <form (ngSubmit)="pay()" class="content-block">
+    <form (ngSubmit)="sendPaymentRequest()">
+        <input type="text" name="order_id" placeholder="ID de pedido"  />
+        <input type="text" name="amount" placeholder="Cantidad"  />
+        <button type="submit">Pagar</button>
+    </form>
+  
+
+    <!-- <form (ngSubmit)="pay()" class="content-block">
         <div id="card-element"></div>
         <button type="submit" [disabled]="loading">Pagar</button>
-    </form>
+    </form> -->
 
     @if(tiposAnexos.length > 0){
         @if(formatosAnexos && objectLength(formatosAnexos) == tiposAnexos.length){
