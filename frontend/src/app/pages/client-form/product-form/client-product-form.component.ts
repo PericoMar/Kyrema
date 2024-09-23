@@ -20,6 +20,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { Society } from '../../../interfaces/society';
+import { PaymentService } from '../../../services/payment.service';
+import { Router } from '@angular/router';
 
 interface Campo {
   aparece_formulario: boolean, 
@@ -46,11 +49,11 @@ interface CampoFormulario{
 }
 
 @Component({
-  selector: 'app-product-form',
+  selector: 'app-client-product-form',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, MatButtonModule, FormsModule, MatIconModule, ButtonSpinnerComponent, SpinnerComponent, NgSelectModule],
-  templateUrl: './product-form.component.html',
-  styleUrls: ['./product-form.component.css'],
+  templateUrl: './client-product-form.component.html',
+  styleUrls: ['./client-product-form.component.css'],
   animations: [
     trigger('expandCollapse', [
       state('void', style({
@@ -71,16 +74,16 @@ interface CampoFormulario{
     ])
   ]
 })
-export class ProductFormComponent implements OnInit, OnChanges{
+export class ClientProductFormComponent implements OnInit, OnChanges{
   @Input() product!: any | null;
   isLoadingProduct: boolean = false;
   productForm: FormGroup = this.fb.group({});
 
   @Input() letras_identificacion!: any;
-  tipo_producto!: any;
+  @Input() tipo_producto!: any;
   @Input() campos! : Campo[];
 
-  sociedades: any;
+  @Input() sociedad!: Society;
   comercialActual: any = this.userService.getCurrentUser();
   comerciales!: any[];
 
@@ -111,6 +114,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   duracion: any;
   minDate!: string;
   fecha_fin!: Date;
+  loading!: boolean;
   
   
 
@@ -125,139 +129,85 @@ export class ProductFormComponent implements OnInit, OnChanges{
     private productNotificationService: ProductNotificationService,
     private anexosService: AnexosService,
     private snackBarService: SnackBarService,
+    private paymentService: PaymentService,
+    private router: Router,
   ) { 
     
   }
 
   @ViewChildren('anexoElement') anexoElements!: QueryList<ElementRef>;
 
-  ngOnInit() {
-    // this.loadTipoProducto();
+  async ngOnInit() {
+    this.createForm(this.campos);
+    this.loadTipoProducto();
     // Cargar las sociedades
     // this.loadSociedades();
-    // this.createForm(this.campos);
 
-    this.productForm.get('sociedad_id')!.valueChanges.subscribe(value => {
-      if(!this.isLoadingProduct){
-        this.onSociedadChange(value);
-      }
-    });
 
-    this.userService.getComercialesPorSociedad(this.societyService.getCurrentSociety().id).subscribe({
-      next: (comerciales: any[]) => {
-        this.comerciales = comerciales;
-        console.log('Comercial Actual ', this.comercialActual);
-        if(this.comercialActual.responsable == '1'){
-          console.log('reponsable')
-          this.productForm.addControl('comercial_id', new FormControl(this.comercialActual.id, Validators.required));
-        }
-        console.log('Comerciales', this.comerciales);
-      },
-      error: (error: any) => {
-        console.error('Error loading comerciales', error);
-      }
-    });
-
+    // Si selecciono un producto con un subproducto debo cambiar el formulario.
     this.productForm.get('subproducto')?.valueChanges.subscribe(selectedValue => {
       const event = { target: { value: selectedValue } }; // simula el evento
       this.onSubproductoChange(event as unknown as Event); // llama al método cuando cambie el valor
     });
     
+
+    // await this.paymentService.initStripe();
+    // const elements = this.paymentService.elements;
+    // if (elements) {
+    //   this.paymentService.card = elements.create('card');
+    //   this.paymentService.card.mount('#card-element');
+    // }
   }
 
   ngAfterViewInit() {
     this.anexoElements.changes.subscribe(() => {
-      // Si no está editando uno existente.
-      if(this.product.id == '' || this.product.id == null){ 
-        const lastAnexoElement = this.anexoElements.last;
-        if (lastAnexoElement) {
-          lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
-        }
+      const lastAnexoElement = this.anexoElements.last;
+      if (lastAnexoElement) {
+        lastAnexoElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
       }
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['product'] && !(changes['campos'] || changes['letras_identificacion'])) {
-      this.isLoadingProduct = true;
-      this.productForm.patchValue(this.product);
+    // if (changes['product'] && !(changes['campos'] || changes['letras_identificacion'])) {
+    //   this.isLoadingProduct = true;
+    //   this.productForm.patchValue(this.product);
 
-      const sociedadId = Number(this.product.sociedad_id);
-      const comercial_id = Number(this.product.comercial_id);
-      this.productForm.controls['sociedad_id'].setValue(sociedadId);
-      this.productForm.controls['comercial_id'].setValue(comercial_id);
+    //   const sociedadId = Number(this.product.sociedad_id);
+    //   const comercial_id = Number(this.product.comercial_id);
+    //   this.productForm.controls['sociedad_id'].setValue(sociedadId);
+    //   this.productForm.controls['comercial_id'].setValue(comercial_id);
 
-      if(this.product.id != null && this.product.id != ''){
-        if(this.societyService.getCurrentSociety().id != AppConfig.SOCIEDAD_ADMIN_ID) this.productForm.disable();
-        this.loadAnexoPorProducto();
-      }
-      this.getDuracion().subscribe({
-        next: (duracion: any) => {
-          this.duracion = duracion;
-          this.productForm.controls['duracion'].setValue(this.duracion);
-        },
-        error: (error: any) => {
-          console.error('Error loading duracion', error);
-        }
-      });
-      this.getPrecioFinal();
-      this.isLoadingProduct = false;
-    }
+    //   if(this.product.id != null && this.product.id != ''){
+    //     if(this.societyService.getCurrentSociety().id != AppConfig.SOCIEDAD_ADMIN_ID) this.productForm.disable();
+    //     this.loadAnexoPorProducto();
+    //   }
+    //   this.getDuracion().subscribe({
+    //     next: (duracion: any) => {
+    //       this.duracion = duracion;
+    //       this.productForm.controls['duracion'].setValue(this.duracion);
+    //     },
+    //     error: (error: any) => {
+    //       console.error('Error loading duracion', error);
+    //     }
+    //   });
+    //   this.getPrecioFinal();
+    //   this.isLoadingProduct = false;
+    // }
 
-    if(changes['campos']){
-      console.log('Cambios en campos')
-      this.productForm.disable();
-      this.loadTipoProducto();      
-      this.anexos = [];
-      this.selectedSubproducto = null;
-      this.createForm(this.campos);
-      this.loadSociedades(); 
-      if(this.product.id != null && this.product.id != ''){
-        this.loadAnexoPorProducto();
-      }
-    }
+    // if(changes['campos']){
+    //   console.log('Cambios en campos')
+    //   this.productForm.disable();
+    //   this.loadTipoProducto();      
+    //   this.anexos = [];
+    //   this.selectedSubproducto = null;
+    //   this.createForm(this.campos);
+    //   if(this.product.id != null && this.product.id != ''){
+    //     this.loadAnexoPorProducto();
+    //   }
+    // }
   }
 
-  onSociedadChange(sociedad_id: string) {
-    this.loadPago(sociedad_id);
-    this.loadTarifasPorAnexo(sociedad_id);
-    if(this.comercialActual.responsable == '1' && sociedad_id != null){
-      this.loadComercialesPorSociedad(sociedad_id);
-    }
-  }
-
-  loadComercialesPorSociedad(sociedad_id: string) {
-    this.productForm.get('comercial_id')?.disable();
-    this.userService.getComercialesPorSociedad(sociedad_id).subscribe({
-      next: (comerciales: any[]) => {
-        this.comerciales = comerciales;
-        if(this.comerciales.length > 0){
-          this.productForm.controls['comercial_id'].setValue(this.comerciales[0].id);
-        }
-        this.productForm.get('comercial_id')?.enable();
-        console.log('Comerciales', this.comerciales);
-      },
-      error: (error: any) => {
-        console.error('Error loading comerciales', error);
-      }
-    });
-  }
-
-  loadSociedades(): void {
-    this.societyService.getSociedadesHijasPorTipoProducto(this.letras_identificacion, this.societyService.getCurrentSociety().id).subscribe(
-      data => {
-        this.sociedades = Object.values(data);
-        console.log("Sociedades hijas", this.sociedades);
-        // Actualiza el formControl sociedad_id con el primer valor disponible en sociedades
-        if (this.sociedades.length > 0) {
-          this.productForm.controls['sociedad_id'].setValue(this.sociedades[0].id);
-        }
-      },
-      error => {
-        console.error(error);
-      }
-    );
-  }
 
   loadTipoProducto(){
     this.familyService.getTipoProductoPorLetras(this.letras_identificacion).subscribe(
@@ -291,7 +241,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     );
   }
 
-  loadPago(id_sociedad : string) : void{
+  loadPago(id_sociedad : string | undefined) : void{
     if(id_sociedad != null){
       this.rateService.getTarifasPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
         data => {
@@ -335,7 +285,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
         console.log('tiposAnexos: ', this.tiposAnexos);
         // Cargamos los campos de todos los tipos de anexos
         this.loadCamposAnexo();
-        this.loadTarifasPorAnexo(this.sociedades[0].id);
+        this.loadTarifasPorAnexo(this.sociedad.id);
         
       },
       error: (error: any) => {
@@ -538,11 +488,92 @@ export class ProductFormComponent implements OnInit, OnChanges{
       }, 0);
       
       this.getPrecioFinal();
+
       this.snackBarService.openSnackBar('Anexo añadido correctamente. Precio actualizado.');
     } else {
       this.snackBarService.openSnackBar('Por favor, espere a que se carguen los precios.');
     }
-}
+  }
+
+  // async pay() {
+  //   this.loading = true;
+  //   const billingDetails = {
+  //     name: 'Nombre del cliente',
+  //     email: 'email@ejemplo.com',
+  //   };
+  //   const cardElement = this.paymentService.card;
+  //   console.log("Metodo de pago", cardElement);
+  //   // Crea el método de pago
+  //   const paymentMethodResponse = await this.paymentService.createPaymentMethod(cardElement, billingDetails);
+  //   console.log("Payment method response", paymentMethodResponse);
+  //   if (paymentMethodResponse && paymentMethodResponse.paymentMethod) {
+  //     const paymentMethodId = paymentMethodResponse.paymentMethod.id; // Usa el ID aquí
+  //     const amount = 1000; // Monto en centavos
+
+  //     this.paymentService.pay(paymentMethodId, amount).subscribe({
+  //       next: (response) => {
+  //         // Manejar la respuesta
+  //         console.log('Payment successful:', response);
+  //       },
+  //       error: (error) => {
+  //         // Manejar errores
+  //         console.error('Payment error:', error);
+  //       }
+  //     });
+  //   }
+  //   this.loading = false;
+  // }
+
+  sendPaymentRequest() {
+    const paymentData = {
+      orderId: '123456',
+      amount: 1000,
+    };
+    console.log('Payment data:', paymentData);
+    this.paymentService.initiatePayment(paymentData).subscribe(response => {
+      console.log("respuesta correcta")
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = response.redsysUrl;
+  
+      // Añadir los campos de los parámetros
+      for (const [key, value] of Object.entries(response.params)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value as string;
+        form.appendChild(input);
+      }
+  
+      // Campo para la firma
+      const signatureInput = document.createElement('input');
+      signatureInput.type = 'hidden';
+      signatureInput.name = 'Ds_Signature';
+      signatureInput.value = response.signature;
+      form.appendChild(signatureInput);
+  
+      // Añadir el formulario al documento y enviar
+      document.body.appendChild(form);
+      console.log(response)
+      setTimeout(() => {
+      form.submit();
+      },30000);
+      // window.addEventListener('message', (event) => {
+      //   if (event.origin === 'http://localhost:4200') {
+      //       if (event.data === 'paymentSuccess') {
+      //           this.router.navigate(['/success']);
+      //       } else if (event.data === 'paymentFailed') {
+      //           this.router.navigate(['/failed']);
+      //       }
+      //   }
+      // });
+    },
+    error => {
+      console.error('Error sending payment request:', error);
+    });
+  }
+  
+
 
 
   removeAnexo(index: number){
@@ -569,7 +600,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
     this.productForm = this.fb.group({
       id: [''],
-      sociedad_id: ['', Validators.required],
+      sociedad_id: [this.sociedad.id, Validators.required],
       comercial_creador_id: [this.comercialActual.id],
       comercial_id: [this.comercialActual.id],
       nombre_socio: ['', Validators.required],
@@ -605,31 +636,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
     console.log('Campos formulario por grupos', this.camposFormularioPorGrupos);
 
-  }
-
-
-
-  eliminateProductSelected() {  
-    this.productForm.reset();
-    console.log(this.productForm.value);
-    this.anexos = [];
-    this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
-    this.productForm.patchValue({tipo_de_pago_id: this.tiposPago[0].id});
-    this.productForm.patchValue({fecha_de_inicio: new Date().toISOString().split('T')[0]});
-    this.loadPago(this.sociedades[0].id);
-    // Si el productForm tiene subproducto, ponerlo a null
-    if(this.productForm.get('subproducto')){
-      this.productForm.get('subproducto')?.setValue(null);
-    }
-    this.getDuracion().subscribe({
-      next: (duracion: any) => {
-        this.duracion = duracion;
-        this.productForm.controls['duracion'].setValue(this.duracion);
-      },
-      error: (error: any) => {
-        console.error('Error loading duracion', error);
-      }
-    });
   }
 
   isFieldRequired(grupo: string, field: string): boolean {
@@ -691,9 +697,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     }
     
     
-    // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
-    const sociedadSeleccionada = this.sociedades.find((sociedad :any)=> sociedad.id === nuevoProducto.sociedad_id);
-    nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
+    nuevoProducto.sociedad = this.sociedad.nombre;
 
     // Agregar el id del comercial al objeto nuevoProducto
     if(nuevoProducto.comercial_id != this.comercialActual.id){

@@ -113,8 +113,9 @@ export class SocietyFormComponent {
     if (this.societyForm.valid) {
       this.cargandoSociedad = true;
       const nuevaSociedad: Society = this.societyForm.value;
+      nuevaSociedad.logo = this.fileName;
       if(this.sociedad_id == ''){
-        this.societyService.createSociety(nuevaSociedad).subscribe(response => {
+        this.societyService.createSociety(nuevaSociedad, this.selectedFile).subscribe(response => {
           console.log('Sociedad creada:', response);
 
           this.societyService.getSociedadAndHijas(this.sociedad_padre_id).subscribe(response => {

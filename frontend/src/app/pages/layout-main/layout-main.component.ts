@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SocietyService } from '../../services/society.service';
 import { NavService } from '../../services/nav.service';
 import { LoadingComponent } from '../loading/loading.component';
+import { Society } from '../../interfaces/society';
 
 interface User {
   id: string,
@@ -12,20 +13,6 @@ interface User {
   usuario: string,
   nivel: string,
   id_sociedad: string
-}
-
-interface Society {
-  id: string,
-  nombre : string,
-  codigo_postal : string,
-  poblacion :string,
-  tipo_sociedad: string,
-  nivel_sociedad: string,
-  logo: string,
-  sociedad_padre_id: string,
-  created_at: string,
-  updated_at: string;
-  codigo_sociedad : string
 }
 
 interface MenuItem {
@@ -44,6 +31,7 @@ interface MenuItem {
 export class LayoutMainComponent {
   user! : User;
   society! : Society;
+  comercial_id!: string;
   logoUrl! : string | null;
   navigation!: MenuItem[];
   pageLoading: boolean = true;
@@ -52,43 +40,49 @@ export class LayoutMainComponent {
     private userService : UserService,
     private societyService : SocietyService,
     private navService : NavService,
-    private router : Router
+    private router : Router,
+    private route : ActivatedRoute
   ){}
 
   ngOnInit(): void {
-    this.user = this.userService.getCurrentUser();
-    this.navService.getNavegation(this.user.id_sociedad).subscribe(
-      data => {
-        this.navigation = data;
-        console.log(this.navigation)
-      },
-      (error) => {
-        console.error('Error fetching navigation:', error);
-      }
-    );
-    this.societyService.getSocietyById(this.user.id_sociedad).subscribe(
-      data => {
-        this.society = data;
-        this.societyService.setSociedadLocalStorage(this.society);
-        
-        this.societyService.getSociedadAndHijas(this.society.id).subscribe(
-          (sociedad : Society[]) => {
-            this.societyService.guardarSociedadesEnLocalStorage(sociedad);
-          },
-          (error) => {
-            console.error('Error fetching societies:', error);
-            this.router.navigate(['/login']);
-          },
-          () => {
-            this.pageLoading = false;
-          }
-        )
-      },
-      error => {
-        console.error('Error al obtener la sociedad:', error);
-      }
-    );
 
+      this.user = this.userService.getCurrentUser();
+      this.navService.getNavegation(this.user.id_sociedad).subscribe(
+        data => {
+          this.navigation = data;
+          console.log(this.navigation)
+        },
+        (error) => {
+          console.error('Error fetching navigation:', error);
+        }
+      );
+      this.societyService.getSocietyById(this.user.id_sociedad).subscribe(
+        data => {
+          this.society = data;
+          this.societyService.setSociedadLocalStorage(this.society);
+          
+          this.societyService.getSociedadAndHijas(this.society.id).subscribe(
+            (sociedad : Society[]) => {
+              this.societyService.guardarSociedadesEnLocalStorage(sociedad);
+            },
+            (error) => {
+              console.error('Error fetching societies:', error);
+              this.router.navigate(['/login']);
+            },
+            () => {
+              this.pageLoading = false;
+            }
+          )
+        },
+        error => {
+          console.error('Error al obtener la sociedad:', error);
+        }
+      );
+    
+  }
 
+  recibirSociedad(sociedad: any) {
+    console.log('Sociedad recibida del hijo:', sociedad);
+    this.society = sociedad;
   }
 }

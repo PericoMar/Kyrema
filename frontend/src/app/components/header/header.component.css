@@ -2,8 +2,13 @@ header.main-header{
     display:flex;
     flex-direction: column;
     height: 144px;
-    box-shadow: 0 1px 2px -2px gray;
     box-sizing: border-box;
+}
+
+header.header-collapsed {
+  height: calc(144px - 64px); /* Si no hay nav-bar se resta la altura de este */
+  transition: width 0.3s ease;
+  box-shadow: 0 1px 3px rgba(128, 128, 128, 0.5);
 }
 
 header.top-header{
@@ -19,9 +24,12 @@ header.top-header{
     color: white;
 }
 
-.logo{
-    padding-left: 8px;
-    width: 120px;   
+.logo {
+  padding-left: 8px;
+  max-width: 100%;
+  max-height: 60px; /* El máximo alto del logo será igual a la altura del header */
+  height: auto;
+  object-fit: contain; /* Asegura que el logo se ajuste dentro de su contenedor manteniendo su proporción */
 }
 
 .welcome-aside{

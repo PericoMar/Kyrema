@@ -1,0 +1,20 @@
+<app-header [society]="sociedad" [navigation]="null"></app-header>
+<main class="product-page">
+    <section class="section-block">
+        <h1 class="form-title"> CONTRATAR {{ productName | uppercase }}</h1>
+        @if(camposLoaded){
+            <app-client-product-form
+            [sociedad]="sociedad"
+            [letras_identificacion]="productUrl"
+            [tipo_producto]="tipo_producto"
+            [campos]="camposFormulario"
+            [camposSubproductos]="camposSubproductos"
+            (formLoadedChange)="handleFormLoadedChange($event)"
+            ></app-client-product-form>
+        } @else {
+            <div>
+                <p>Cargando...</p>
+            </div>
+        }
+    </section>
+</main>
