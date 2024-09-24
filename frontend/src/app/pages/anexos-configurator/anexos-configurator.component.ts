@@ -56,18 +56,30 @@ export class AnexosConfiguratorComponent {
   tarifas : any[] = [
     {
       id: 1,
-      nombre : "Prima del seguro",
-      codigo: "prima_del_seguro",
+      nombre : "Precio base",
+      codigo: "precio_base",
       valor: ""
     },
     {
       id: 2,
-      nombre : "Cuota de asociación",
-      codigo: "cuota_de_asociacion",
+      nombre : "Extra 1",
+      codigo: "extra_1",
       valor: ""
     },
     {
       id: 3,
+      nombre : "Extra 2",
+      codigo: "extra_2",
+      valor: ""
+    },
+    {
+      id: 4,
+      nombre : "Extra 3",
+      codigo: "extra_3",
+      valor: ""
+    },
+    {
+      id: 5,
       nombre : "Precio Total",
       codigo: "precio_total",
       valor: ""

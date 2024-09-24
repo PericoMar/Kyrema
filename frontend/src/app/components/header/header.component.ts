@@ -46,6 +46,7 @@ export class HeaderComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    console.log('User:', this.society);
       this.logoUrl = this.society.logo ? AppConfig.STORAGE_URL + this.society.logo : '../../../assets/Logo_CANAMA__003.png';
       // this.user = this.userService.getCurrentUser();
   }

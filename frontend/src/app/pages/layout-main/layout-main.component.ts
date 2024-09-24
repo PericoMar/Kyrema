@@ -81,8 +81,4 @@ export class LayoutMainComponent {
     
   }
 
-  recibirSociedad(sociedad: any) {
-    console.log('Sociedad recibida del hijo:', sociedad);
-    this.society = sociedad;
-  }
 }

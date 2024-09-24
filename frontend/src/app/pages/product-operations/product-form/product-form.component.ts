@@ -296,8 +296,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.rateService.getTarifasPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
         data => {
           console.log("Tarifas", data);
-          this.productForm.controls['prima_del_seguro'].setValue(data[0].prima_seguro);
-          this.productForm.controls['cuota_de_asociación'].setValue(data[0].cuota_asociacion);
+          this.productForm.controls['precio_base'].setValue(data[0].precio_base);
+          this.productForm.controls['extra_1'].setValue(data[0].extra_1);
+          this.productForm.controls['extra_2'].setValue(data[0].extra_2);
+          this.productForm.controls['extra_3'].setValue(data[0].extra_3);
           this.productForm.controls['precio_total'].setValue(data[0].precio_total);
           this.rateService.getTipoPagoProductoPorSociedadAndTipoProducto(id_sociedad, this.tipo_producto.id).subscribe(
             data => {
@@ -417,13 +419,27 @@ export class ProductFormComponent implements OnInit, OnChanges{
     console.log('Formatos anexos: ', this.formatosAnexos);
     this.formIsLoaded = true;
     this.productForm.enable();
-    this.productForm.controls['prima_del_seguro'].disable();
-    this.productForm.controls['cuota_de_asociación'].disable();
-    this.productForm.controls['precio_total'].disable();    
+    this.disablePrecios();
     if(this.tipo_producto.tipo_duracion !== 'fecha_exacta' || this.tipo_producto.tipo_duracion !== 'selector_dias'){
       this.productForm.controls['duracion'].disable();
     }
     this.formLoadedChange.emit(this.formIsLoaded);
+  }
+
+  disablePrecios(){
+    this.productForm.controls['precio_base'].disable();
+    this.productForm.controls['extra_1'].disable();
+    this.productForm.controls['extra_2'].disable();
+    this.productForm.controls['extra_3'].disable();
+    this.productForm.controls['precio_total'].disable();
+  }
+
+  enablePrecios(){
+    this.productForm.controls['precio_base'].enable();
+    this.productForm.controls['extra_1'].enable();
+    this.productForm.controls['extra_2'].enable();
+    this.productForm.controls['extra_3'].enable();
+    this.productForm.controls['precio_total'].enable();
   }
 
   loadAnexoPorProducto() {
@@ -469,9 +485,11 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.selectedSubproducto = selectedSubproducto;
       console.log('Selected subproducto:', selectedSubproducto);
       // Actualizar el precio total con el precio del subproducto seleccionado
-      this.productForm.controls['prima_del_seguro'].setValue(selectedSubproducto.tarifas.prima_seguro);
-      this.productForm.controls['cuota_de_asociación'].setValue(selectedSubproducto.tarifas.cuota_asociacion);
-      this.productForm.controls['precio_total'].setValue(selectedSubproducto.tarifas.precio_total);
+      this.productForm.controls['precio_base'].setValue(selectedSubproducto.precio_base);
+      this.productForm.controls['extra_1'].setValue(selectedSubproducto.extra_1);
+      this.productForm.controls['extra_2'].setValue(selectedSubproducto.extra_2);
+      this.productForm.controls['extra_3'].setValue(selectedSubproducto.extra_3);
+      this.productForm.controls['precio_total'].setValue(selectedSubproducto.precio_total);
 
       selectedSubproducto.campos.forEach((campo: any) => {
         this.añadirCampoAlFormulario(campo);
@@ -587,8 +605,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
       // subproducto: [null, Validators.required],
       fecha_de_inicio: [today , Validators.required],
       duracion: [{value: '', disabled: true}, Validators.required],
-      prima_del_seguro: [{value: '', disabled: true}, Validators.required],
-      cuota_de_asociación: [{value: '', disabled: true}, Validators.required],
+      precio_base: [{value: '', disabled: true}, Validators.required],
+      extra_1: [{value: '', disabled: true}, Validators.required],
+      extra_2: [{value: '', disabled: true}, Validators.required],
+      extra_3: [{value: '', disabled: true}, Validators.required],
       precio_total: [{value: '', disabled: true}, Validators.required],
       tipo_de_pago_id: ['', Validators.required],
     });
@@ -645,9 +665,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   onSubmit() {
     this.limpiarEstilosErrores();
-    this.productForm.get('prima_del_seguro')?.enable();
-    this.productForm.get('cuota_de_asociación')?.enable();
-    this.productForm.get('precio_total')?.enable();
+    this.enablePrecios();
     this.productForm.get('duracion')?.enable();
     console.log(this.productForm.value);
     console.log('Anexos', this.anexos);
@@ -718,9 +736,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.snackBarService.openSnackBar('Hay campos obligatorios sin rellenar.');
       console.log('Campos vacios', camposVacios);
       this.aplicarEstilosErrores(camposVacios.map((campo: any) => campo.name));
-      this.productForm.get('prima_del_seguro')?.disable();
-      this.productForm.get('cuota_de_asociación')?.disable();
-      this.productForm.get('precio_total')?.disable();
+      this.disablePrecios();
       if(this.tipo_producto.tipo_duracion != 'selector_dias' && this.tipo_producto.tipo_duracion != 'fecha_exacta'){
         console.log("Entro en desactivar duracion");
         this.productForm.get('duracion')?.disable();
@@ -736,9 +752,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.productsService.crearProducto(this.letras_identificacion, nuevoProducto).subscribe(
         data => {
           console.log(data);
-          this.productForm.get('prima_del_seguro')?.disable();
-          this.productForm.get('cuota_de_asociación')?.disable();
-          this.productForm.get('precio_total')?.disable();
+          this.disablePrecios();
           this.productForm.get('duracion')?.disable();
           if(this.anexos.length > 0){
             this.conectarAnexosConProductos(this.anexos, data.id); 
@@ -759,9 +773,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.productsService.editarProducto(this.letras_identificacion, nuevoProducto).subscribe(
         data => {
           console.log(data);
-          this.productForm.get('prima_del_seguro')?.disable();
-          this.productForm.get('cuota_de_asociación')?.disable();
-          this.productForm.get('precio_total')?.disable();
+          this.disablePrecios();
           this.productForm.get('duracion')?.disable();
           this.conectarAnexosConProductos(this.anexos, data.id, false);
           this.productNotificationService.notifyChangesOnProducts();

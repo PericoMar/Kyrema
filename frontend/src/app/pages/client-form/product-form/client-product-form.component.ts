@@ -537,7 +537,7 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
       form.action = response.redsysUrl;
   
       // Añadir los campos de los parámetros
-      for (const [key, value] of Object.entries(response.params)) {
+      for (const [key, value] of Object.entries(response.params)) { 
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = key;
@@ -555,18 +555,7 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
       // Añadir el formulario al documento y enviar
       document.body.appendChild(form);
       console.log(response)
-      setTimeout(() => {
       form.submit();
-      },30000);
-      // window.addEventListener('message', (event) => {
-      //   if (event.origin === 'http://localhost:4200') {
-      //       if (event.data === 'paymentSuccess') {
-      //           this.router.navigate(['/success']);
-      //       } else if (event.data === 'paymentFailed') {
-      //           this.router.navigate(['/failed']);
-      //       }
-      //   }
-      // });
     },
     error => {
       console.error('Error sending payment request:', error);

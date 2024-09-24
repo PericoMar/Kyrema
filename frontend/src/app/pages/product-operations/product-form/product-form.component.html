@@ -143,7 +143,7 @@
 
     <!-- Input de fecha fin -->
      <fieldset class="input-group">
-        @if(tipo_producto.subproductos){
+        @if(tipo_producto && tipo_producto?.subproductos){
             <div class="input-container subproducto">
                 <label for="subproducto" class="input-label">Producto</label>
                 <select id="subproducto" formControlName="subproducto" class="input-field" (change)="onSubproductoChange($event)">
@@ -159,20 +159,20 @@
             <input id="fecha_de_inicio" formControlName="fecha_de_inicio" type="date" class="input-field">
         </div>
         <div class="input-container duracion">
-            @if(tipo_producto.tipo_duracion === 'fecha_exacta' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'fecha_exacta')){
+            @if(tipo_producto?.tipo_duracion === 'fecha_exacta' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'fecha_exacta')){
                 <label for="duracion" class="input-label">Día de finalización <span class="span-required">*</span></label>
             } @else {
                 <label for="duracion" class="input-label">Duración <span class="span-required">*</span></label>
             }
             <div class="flex-start">
-                @if(tipo_producto.tipo_duracion === 'selector_dias' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'selector_dias')){  
+                @if(tipo_producto?.tipo_duracion === 'selector_dias' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'selector_dias')){  
                     <select id="duracion" formControlName="duracion" type="text" class="input-field" (change)="changeDuracion($event)">
                         @for(duracion of duraciones ; track duracion){
                             <option [value]="duracion.duracion">{{ duracion.duracion }}</option>
                         }
                     </select>
                     <span class="suffix">{{ duracion > 1 ? 'días' : 'día' }}</span>  
-                } @else if (tipo_producto.tipo_duracion === 'fecha_exacta' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'fecha_exacta')){
+                } @else if (tipo_producto?.tipo_duracion === 'fecha_exacta' || (selectedSubproducto && selectedSubproducto.tipo_duracion === 'fecha_exacta')){
                     <input id="duracion" formControlName="duracion" type="date" class="input-field">
                 } @else {
                     <input id="duracion" formControlName="duracion" type="text" class="input-field disabled">
@@ -189,18 +189,34 @@
             <h3 class="form-section-title">Datos del pago</h3>
         </header>
         <fieldset class="input-group  inputs-pago">
-            <div class="input-container prima_del_seguro">
-                <label for="prima_del_seguro" class="input-label">Prima seguro</label>
+            <div class="input-container precio_base">
+                <label for="precio_base" class="input-label">Precio Base</label>
                 <div class="input-suffix-container">
-                <input id="prima_del_seguro" formControlName="prima_del_seguro" type="text" class="input-field disabled">
+                <input id="precio_base" formControlName="precio_base" type="text" class="input-field disabled">
                 <span class="input-suffix">€</span>
                 </div>
             </div>
             
-            <div class="input-container cuota_de_asociacion">
-                <label for="cuota_de_asociacion" class="input-label">Cuota asociación</label>
+            <div class="input-container extra_1">
+                <label for="extra_1" class="input-label">Extra 1</label>
                 <div class="input-suffix-container">
-                <input id="cuota_de_asociacion" formControlName="cuota_de_asociación" type="text" class="input-field disabled">
+                <input id="extra_1" formControlName="extra_1" type="text" class="input-field disabled">
+                <span class="input-suffix">€</span>
+                </div>
+            </div>
+
+            <div class="input-container extra_2">
+                <label for="extra_2" class="input-label">Extra 2</label>
+                <div class="input-suffix-container">
+                <input id="extra_2" formControlName="extra_2" type="text" class="input-field disabled">
+                <span class="input-suffix">€</span>
+                </div>
+            </div>
+
+            <div class="input-container extra_3">
+                <label for="extra_3" class="input-label">Extra 1</label>
+                <div class="input-suffix-container">
+                <input id="extra_3" formControlName="extra_3" type="text" class="input-field disabled">
                 <span class="input-suffix">€</span>
                 </div>
             </div>

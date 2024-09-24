@@ -379,10 +379,10 @@
             @if(!areTarifasHeredadas){
             <fieldset class="input-group">
               @for(tarifa of tarifas ; track tarifa.id){
-                <div class="input-container prima_del_seguro">
+                <div class="input-container">
                   <label [for]="tarifa.codigo" class="input-label">{{tarifa.nombre}}</label>
                   <div class="input-suffix-container">
-                    <input (input)="calculatePrecioTotal()" [disabled]="tarifa.nombre == 'precio_total'" [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
+                    <input (input)="calculatePrecioTotal()" [disabled]="tarifa.codigo == 'precio_total'" [id]="tarifa.codigo" [(ngModel)]="tarifa.valor" type="text" class="input-field" name="tarifa{{tarifa.id}}">
                     <span class="input-suffix">€</span>
                   </div>
                 </div>

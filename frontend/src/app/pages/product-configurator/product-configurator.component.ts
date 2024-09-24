@@ -71,18 +71,30 @@ export class ProductConfiguratorComponent {
   tarifas : any[] = [
     {
       id: 1,
-      nombre : "Prima del seguro",
-      codigo: "prima_del_seguro",
+      nombre : "Precio base",
+      codigo: "precio_base",
       valor: ""
     },
     {
       id: 2,
-      nombre : "Cuota de asociación",
-      codigo: "cuota_de_asociacion",
+      nombre : "Extra 1",
+      codigo: "extra_1",
       valor: ""
     },
     {
       id: 3,
+      nombre : "Extra 2",
+      codigo: "extra_2",
+      valor: ""
+    },
+    {
+      id: 4,
+      nombre : "Extra 3",
+      codigo: "extra_3",
+      valor: ""
+    },
+    {
+      id: 5,
       nombre : "Precio Total",
       codigo: "precio_total",
       valor: ""
@@ -214,8 +226,10 @@ export class ProductConfiguratorComponent {
             { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
             { id: '', nombre: 'Comercial', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
             { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Prima del seguro', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Cuota de asociación', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+            { id: '', nombre: 'Precio base', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+            { id: '', nombre: 'Extra 1', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+            { id: '', nombre: 'Extra 2', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+            { id: '', nombre: 'Extra 3', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
             { id: '', nombre: 'Precio Total', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
             { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
             { id: '', nombre: 'Numero anexos', tipo_dato: 'number', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_generales', opciones: []},
@@ -432,9 +446,11 @@ export class ProductConfiguratorComponent {
           const tarifaNuevoProducto: Tarifa = {
             tipo_producto_id: id_tipo_producto,
             id_sociedad: AppConfig.SOCIEDAD_ADMIN_ID,
-            prima_seguro: this.areTarifasHeredadas ? this.tarifasHeredadas[0].prima_seguro : this.tarifas[0].valor.replace(',', '.'),
-            cuota_asociacion: this.areTarifasHeredadas ? this.tarifasHeredadas[0].cuota_asociacion : this.tarifas[1].valor.replace(',', '.'),
-            precio_total: this.areTarifasHeredadas ? this.tarifasHeredadas[0].precio_total : this.tarifas[2].valor.replace(',', '.')
+            precio_base: this.areTarifasHeredadas ? this.tarifasHeredadas[0].precio_base : this.tarifas[0].valor.replace(',', '.'),
+            extra_1: this.areTarifasHeredadas ? this.tarifasHeredadas[0].extra_1: this.tarifas[1].valor.replace(',', '.'),
+            extra_2: this.areTarifasHeredadas ? this.tarifasHeredadas[0].extra_2: this.tarifas[2].valor.replace(',', '.'),
+            extra_3: this.areTarifasHeredadas ? this.tarifasHeredadas[0].extra_3: this.tarifas[3].valor.replace(',', '.'),
+            precio_total: this.areTarifasHeredadas ? this.tarifasHeredadas[0].precio_total : this.tarifas[4].valor.replace(',', '.')
           };
           this.ratesService.setTarifasPorSociedadAndTipoProducto(tarifaNuevoProducto).subscribe((res:any) => {
             console.log(res);
@@ -457,9 +473,11 @@ export class ProductConfiguratorComponent {
   }
 
   calculatePrecioTotal() {
-    const prima = parseFloat(this.tarifas[0].valor.replace(',', '.')) ? parseFloat(this.tarifas[0].valor.replace(',', '.')) : 0;
-    const cuota = parseFloat(this.tarifas[1].valor.replace(',', '.')) ? parseFloat(this.tarifas[1].valor.replace(',', '.')) : 0;
-    this.tarifas[2].valor = (prima + cuota).toString();
+    const precio_base = parseFloat(this.tarifas[0].valor.replace(',', '.')) ? parseFloat(this.tarifas[0].valor.replace(',', '.')) : 0;
+    const extra_1 = parseFloat(this.tarifas[1].valor.replace(',', '.')) ? parseFloat(this.tarifas[1].valor.replace(',', '.')) : 0;
+    const extra_2 = parseFloat(this.tarifas[2].valor.replace(',', '.')) ? parseFloat(this.tarifas[2].valor.replace(',', '.')) : 0;
+    const extra_3 = parseFloat(this.tarifas[3].valor.replace(',', '.')) ? parseFloat(this.tarifas[3].valor.replace(',', '.')) : 0;
+    this.tarifas[4].valor = (precio_base + extra_1 + extra_2 + extra_3).toString();
   }
 
   changeOnHeredadas(event : any) {
