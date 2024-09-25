@@ -36,13 +36,22 @@ header.top-header{
     width: 200px;
 }
 
+.user-name {
+  margin-right: auto; /* Empuja el botón de logout al final */
+  max-width: 200px; /* Limita el ancho del nombre */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .logout-button {
-    background: transparent; /* Fondo del botón transparente */
-    border: 2px solid transparent; /* Borde transparente para que no afecte el tamaño del botón */
-    border-radius: 50%; /* Hace que el botón tenga forma de círculo */
-    padding: 6px; /* Ajusta el tamaño del área de clic */
-    transition: background-color 0.3s ease; /* Transición suave para el cambio de borde */
-  }
+  margin-left: 3px;
+  background: transparent; /* Fondo del botón transparente */
+  border: 2px solid transparent; /* Borde transparente para que no afecte el tamaño del botón */
+  border-radius: 50%; /* Hace que el botón tenga forma de círculo */
+  padding: 6px; /* Ajusta el tamaño del área de clic */
+  transition: background-color 0.3s ease; /* Transición suave para el cambio de borde */
+}
   
   .logout-button:hover {
     background-color: rgba(0, 0, 0, 0.2); /* Cambia el color del borde al hacer hover (con opacidad) */
