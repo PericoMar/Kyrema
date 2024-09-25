@@ -197,29 +197,35 @@
                 </div>
             </div>
             
-            <div class="input-container extra_1">
-                <label for="extra_1" class="input-label">Extra 1</label>
-                <div class="input-suffix-container">
-                <input id="extra_1" formControlName="extra_1" type="text" class="input-field disabled">
-                <span class="input-suffix">€</span>
+            @if(productForm.get('extra_1')?.value != 0){
+                <div class="input-container extra_1">
+                    <label for="extra_1" class="input-label">Extra 1</label>
+                    <div class="input-suffix-container">
+                    <input id="extra_1" formControlName="extra_1" type="text" class="input-field disabled">
+                    <span class="input-suffix">€</span>
+                    </div>
                 </div>
-            </div>
+            }
 
-            <div class="input-container extra_2">
-                <label for="extra_2" class="input-label">Extra 2</label>
-                <div class="input-suffix-container">
-                <input id="extra_2" formControlName="extra_2" type="text" class="input-field disabled">
-                <span class="input-suffix">€</span>
+            @if(productForm.get('extra_2')?.value != 0){
+                <div class="input-container extra_2">
+                    <label for="extra_2" class="input-label">Extra 2</label>
+                    <div class="input-suffix-container">
+                    <input id="extra_2" formControlName="extra_2" type="text" class="input-field disabled">
+                    <span class="input-suffix">€</span>
+                    </div>
                 </div>
-            </div>
+            }
 
-            <div class="input-container extra_3">
-                <label for="extra_3" class="input-label">Extra 1</label>
-                <div class="input-suffix-container">
-                <input id="extra_3" formControlName="extra_3" type="text" class="input-field disabled">
-                <span class="input-suffix">€</span>
+            @if(productForm.get('extra_3')?.value != 0){
+                <div class="input-container extra_3">
+                    <label for="extra_3" class="input-label">Extra 3</label>
+                    <div class="input-suffix-container">
+                    <input id="extra_3" formControlName="extra_3" type="text" class="input-field disabled">
+                    <span class="input-suffix">€</span>
+                    </div>
                 </div>
-            </div>
+            }
             
             <div class="input-container precio_total">
                 <label for="precio_total" class="input-label">Precio total</label>
