@@ -9,6 +9,7 @@ import { ActivatedRoute,  Router } from '@angular/router';
 import { Society } from '../../interfaces/society';
 import { AppConfig } from '../../../config/app-config';
 import { CommonModule } from '@angular/common';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
 
 interface User {
   id: string,
@@ -27,15 +28,16 @@ interface MenuItem {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NavBarComponent, MatIcon, LogoutDialogComponent, CommonModule],
+  imports: [NavBarComponent, MatIcon, LogoutDialogComponent, CommonModule, MatMenuModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit{
   @Input() user! : User;
   @Input() society! : Society;
+  @Input() logoSocietySecondLevel! : string;
   @Input() navigation! : MenuItem[] | null;
-  logoUrl : string | null = '';
+  profileLogoUrl : string | null = '';
   comercial_id!: string;
 
   constructor(
@@ -47,8 +49,8 @@ export class HeaderComponent implements OnInit{
 
   ngOnInit(): void {
     console.log('User:', this.society);
-      this.logoUrl = this.society.logo ? AppConfig.STORAGE_URL + this.society.logo : '../../../assets/Logo_CANAMA__003.png';
-      // this.user = this.userService.getCurrentUser();
+    this.profileLogoUrl = this.society.logo ? AppConfig.STORAGE_URL + this.society.logo : "https://kyrema.es/dist/panel-gestion/images/users/avatar-1.jpg";
+    // this.user = this.userService.getCurrentUser();
   }
 
   logout(){

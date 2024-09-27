@@ -110,8 +110,10 @@ export class ProductConfiguratorComponent {
 
   letrasDisabled : boolean = false;
   padre_id!: string | null;
+  tipo_producto_asociado!: string | null;
   areTarifasHeredadas: boolean = false;
   tarifasHeredadas!: Tarifa[];
+  camposAnexo!: Campo[];
 
   constructor(
     private productService : ProductsService,
@@ -144,6 +146,7 @@ export class ProductConfiguratorComponent {
     this.route.paramMap.subscribe(params => {
       this.id_tipo_producto_editado = params.get('id');
       this.padre_id = params.get('padre_id');
+      this.tipo_producto_asociado = params.get('tipo_producto_asociado');
       console.log(this.padre_id);
       if(this.padre_id) {
         // Añadir el primero del array de tipos duracion
@@ -226,11 +229,11 @@ export class ProductConfiguratorComponent {
             { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
             { id: '', nombre: 'Comercial', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
             { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Precio base', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Extra 1', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Extra 2', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Extra 3', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Precio Total', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+            { id: '', nombre: 'Precio base', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+            { id: '', nombre: 'Extra 1', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+            { id: '', nombre: 'Extra 2', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+            { id: '', nombre: 'Extra 3', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+            { id: '', nombre: 'Precio Total', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
             { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
             { id: '', nombre: 'Numero anexos', tipo_dato: 'number', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_generales', opciones: []},
           ]
@@ -251,7 +254,24 @@ export class ProductConfiguratorComponent {
           ];
         }
         
-        this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
+        if(this.tipo_producto_asociado) {
+          this.camposService.getCamposPorTipoProducto(this.tipo_producto_asociado).subscribe((campos) => {
+            campos.filter((campo : any) => campo.grupo === 'datos_producto').forEach((campo : any) => {
+              campo.obligatorio = campo.obligatorio == '1' ? true : false;
+              campo.visible = campo.visible == '1' ? true : false;
+              campo.fila = campo.fila ? campo.fila : '';
+              campo.columna = campo.columna ? campo.columna : '';
+              this.campos.push(campo);
+            });
+          });
+
+          this.camposAnexo = [
+            { id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_anexo', opciones: [] }
+          ];
+        } else {
+          this.camposAnexo = [];
+          this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
+        }
       }
     });
     
@@ -260,7 +280,11 @@ export class ProductConfiguratorComponent {
   
 
   agregarCampo() {
-    this.campos.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' , opciones: []});
+    if(this.tipo_producto_asociado) {
+      this.camposAnexo.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_anexo' , opciones: []});
+    } else {
+      this.campos.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' , opciones: []});
+    }
   }
 
   eliminarCampo(index: number) {
@@ -317,7 +341,7 @@ export class ProductConfiguratorComponent {
   crearTipoProducto() {
 
     
-    const camposFormulario = [...this.camposGenerales, ...this.camposAsegurado, ...this.campos]; // Concatenación de campos fijos y variables
+    const camposFormulario = [...this.camposGenerales, ...this.camposAsegurado, ...this.campos, ...this.camposAnexo]; // Concatenación de campos fijos y variables
     
     const editando : boolean = this.id_tipo_producto_editado ? true : false;
 
@@ -341,12 +365,13 @@ export class ProductConfiguratorComponent {
     
 
       this.cargandoNuevoProducto = true;
-
+      const prefijoLetras = this.tipo_producto_asociado ? AppConfig.PREFIJO_LETRAS_IDENTIFICACION_ANEXOS : AppConfig.PREFIJO_LETRAS_IDENTIFICACION ;
       const nuevoProducto = {
         nombreProducto: this.nombreProducto,
-        letrasIdentificacion: AppConfig.PREFIJO_LETRAS_IDENTIFICACION + this.letrasIdentificacion,
+        letrasIdentificacion: prefijoLetras + this.letrasIdentificacion,
         campos: camposFormulario,
-        padre_id : this.padre_id ? this.padre_id : null
+        padre_id : this.padre_id ? this.padre_id : null,
+        tipo_producto_asociado : this.tipo_producto_asociado ? this.tipo_producto_asociado : null
       };
 
       // Crear un array para guardar los campos con opciones
@@ -456,7 +481,7 @@ export class ProductConfiguratorComponent {
             console.log(res);
             this.societyService.connectSocietyWithTipoProducto(AppConfig.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
               console.log(res);
-              this.snackBarService.openSnackBar('Tipo de producto creado con éxito');
+              this.snackBarService.openSnackBar('Tipo de '+ !this.padre_id ? (this.tipo_producto_asociado ? 'anexo' : 'producto') : 'subproducto' + ' creado con éxito');
               this.cargandoNuevoProducto = false;
               window.location.reload();
             });
@@ -512,6 +537,8 @@ export class ProductConfiguratorComponent {
   verificarCampos(campos: any[], editando : boolean): boolean {
 
     let camposFormulario = [...campos, ...this.camposTiempo]; // Añadir los campos de tiempo al array de campos
+    console.log(camposFormulario);
+
     const campoFormatoFilasColumnasIncorrecto = this.formatoIncorrectoFilasColumnas(camposFormulario);
     const campoUsoCaracteresEspeciales = this.usoCaracteresEspeciales();
     const campoConOpcionesRepetidas = this.campoConOpcionesRepetidas(camposFormulario);
@@ -548,7 +575,7 @@ export class ProductConfiguratorComponent {
     }
     
     if (this.tarifasVacias() && !editando && !this.areTarifasHeredadas) {
-      this.showErrorDialog('Hay tarifas sin rellenar');
+      this.showErrorDialog('Hay tarifas sin rellenar. Ponga 0 si no tiene precio');
       return false;
     }
     
@@ -587,18 +614,27 @@ export class ProductConfiguratorComponent {
   }
 
   private campoConOpcionesRepetidas(campos: Campo[]): Campo | null {
-    for (const campo of campos) {
-      const nombres = campo.opciones.map((opcion) => opcion.nombre);
-      const nombresSet = new Set(nombres);
-      
-      // Si el tamaño del Set es menor que el array original, hay elementos duplicados
-      if (nombresSet.size !== nombres.length) {
-        return campo; // Retorna el campo con opciones repetidas
-      }
+    // Comprobar si no existen campos con opciones
+    const camposConOpciones = campos.filter(campo => campo.opciones?.length > 0);
+    
+    if (camposConOpciones.length === 0) {
+        return null; // No hay campos con opciones, retorna null
+    }
+
+    // Iterar por los campos que sí tienen opciones
+    for (const campo of camposConOpciones) {
+        const nombres = campo.opciones.map((opcion) => opcion.nombre);
+        const nombresSet = new Set(nombres);
+        
+        // Si el tamaño del Set es menor que el array original, hay elementos duplicados
+        if (nombresSet.size !== nombres.length) {
+            return campo; // Retorna el campo con opciones repetidas
+        }
     }
     
     return null; // Si no se encuentran campos con opciones repetidas, retorna null
   }
+
 
   //Funcion para comprobar que la plantilla no se esté usando ya en otro tipo de producto:
   private plantillaEnUso() {

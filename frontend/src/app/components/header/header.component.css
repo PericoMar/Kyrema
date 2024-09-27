@@ -36,6 +36,26 @@ header.top-header{
     width: 200px;
 }
 
+.profile-button {
+  background-color: rgba(0, 0, 0, 0); /* Fondo con baja opacidad */
+  border: none; /* Sin borde */
+  outline: none; /* Sin borde de enfoque */
+  padding: 0; /* Quitar el padding del botón */
+  margin: 0; /* Quitar el margin */
+  border-radius: 50%; /* Borde redondeado para que sea circular */
+  display: inline-flex; /* Alinear contenido del botón */
+  align-items: center;
+  justify-content: center;
+  width: 46px; /* Ajusta el tamaño según tus necesidades */
+  height: 46px;
+  cursor: pointer; /* Cambia el cursor al de puntero */
+  transition: background-color 0.3s ease; /* Transición suave para el cambio de opacidad */
+}
+
+.profile-button:hover {
+  background-color: rgba(0, 0, 0, 0.2); /* Aumenta la opacidad al hacer hover */
+}
+
 .user-name {
   margin-right: auto; /* Empuja el botón de logout al final */
   max-width: 200px; /* Limita el ancho del nombre */
@@ -51,6 +71,12 @@ header.top-header{
   border-radius: 50%; /* Hace que el botón tenga forma de círculo */
   padding: 6px; /* Ajusta el tamaño del área de clic */
   transition: background-color 0.3s ease; /* Transición suave para el cambio de borde */
+}
+
+.user-image {
+  width: 32px; /* Ajusta el tamaño según tus necesidades */
+  height: 32px;
+  border-radius: 50%; /* Hace que la imagen sea circular */
 }
   
   .logout-button:hover {

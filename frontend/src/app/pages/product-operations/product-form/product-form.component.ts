@@ -355,8 +355,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
       return new Promise<void>((resolve, reject) => {
         this.anexosService.getCamposPorTipoAnexo(tipoAnexo.id).subscribe({
           next: (camposAnexo: any[]) => {
+            console.log('Campos anexo', camposAnexo);
             // Asignar los campos al tipo de anexo correspondiente
-            this.camposAnexo[tipoAnexo.id] = camposAnexo.filter((campo: any) => campo.grupo !== 'datos_duracion');
+            this.camposAnexo[tipoAnexo.id] = camposAnexo.filter((campo: any) => campo.grupo === 'datos_anexo' || campo.grupo === 'datos_fecha');
             console.log('Campos anexo', this.camposAnexo);
             resolve(); // Resolver la promesa cuando la carga se complete
           },
@@ -380,9 +381,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
   loadTarifasPorAnexo(sociedad_id: any){
     this.tarifasAnexos = {};
     this.tiposAnexos.forEach((tipoAnexo: any) => {
-      this.rateService.getTarifaPorSociedadAndTipoAnexo(AppConfig.SOCIEDAD_ADMIN_ID, tipoAnexo.id).subscribe({
+      this.rateService.getTarifasPorSociedadAndTipoProducto(AppConfig.SOCIEDAD_ADMIN_ID, tipoAnexo.id).subscribe({
         next: (tarifas: any[]) => {
-          this.tarifasAnexos[tipoAnexo.id] = tarifas;
+          this.tarifasAnexos[tipoAnexo.id] = tarifas[0];
           // this.getPrecioFinal();
         },
         error: (error: any) => {

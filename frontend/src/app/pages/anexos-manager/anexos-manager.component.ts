@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AnexosService } from '../../services/anexos.service';
 import { SocietyService } from '../../services/society.service';
 import { CommonModule } from '@angular/common';
@@ -24,24 +24,30 @@ export class AnexosManagerComponent {
   displayedColumns: string[] = ['nombre', 'actions'];
   configUrl: string = '/configurador-anexos';
   dataType: string = 'anexo';
+  tipo_producto_asociado: any;
 
   constructor(
     private anexosService: AnexosService,
     private societyService: SocietyService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) {
 
   }
 
   ngOnInit(): void {
-    this.anexosService.getAnexosPorSociedad(this.societyService.getCurrentSociety().id).subscribe({
-      next: (anexos: any[]) => {
-        this.anexos = anexos;
-        console.log('Anexos: ', this.anexos);
-      },
-      error: (error: any) => {
-        console.error('Error loading anexos', error);
-      }
+    this.route.paramMap.subscribe(params => {
+      this.tipo_producto_asociado = params.get('tipo_producto_asociado');
+      this.configUrl = `/configurador-anexos/${this.tipo_producto_asociado}`;
+      this.anexosService.getTipoAnexosPorTipoProducto(this.tipo_producto_asociado).subscribe({
+        next: (anexos: any[]) => {
+          this.anexos = anexos;
+          console.log('Anexos: ', this.anexos);
+        },
+        error: (error: any) => {
+          console.error('Error loading anexos', error);
+        }
+      });
     });
   }
 

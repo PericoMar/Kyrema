@@ -38,6 +38,10 @@ export class SocietyService {
     return this.http.get<any>(`${this.apiUrl}/sociedad/${id_sociedad}`);
   }
 
+  getSocietySecondLevel(id_sociedad: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/sociedad/${id_sociedad}/segundo-nivel`);
+  }
+
 
   getSociedadAndHijas(id_sociedad: string | undefined): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/sociedad/hijas/${id_sociedad}`);

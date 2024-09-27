@@ -1,48 +1,47 @@
 @if(formIsLoaded){
     <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form content-block" id="product-form">
     @if(productForm){
-    <header class="form-header">
-        <h3 class="form-section-title">Datos de la sociedad</h3>
-        @if(product.id !== null || product.id !== ''){
-            <button  mat-raised-button color="primary" type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
-        }
-    </header>
-
-    <fieldset class="input-group">
-        <div class="input-container select">
-            @if(sociedades && sociedades.length > 0){
-                <label for="sociedad" class="input-label">Sociedad <span class="span-required">*</span></label>
-                <ng-select
-                    [items]="sociedades"
-                    bindLabel="nombre"
-                    bindValue="id"
-                    formControlName="sociedad_id"
-                    [searchable]="true"
-                    class="ng-select-field"
-                    id="sociedad">
-                </ng-select>
-            }
-        </div>
-        
         @if(comercialActual.responsable == 1){
-            <div class="input-container select">
-                <label for="comercial_id" class="input-label">Emisor </label>
-                <ng-select
-                    [items]="comerciales"
-                    bindLabel="nombre"
-                    bindValue="id"
-                    formControlName="comercial_id"
-                    [searchable]="true"
-                    class="ng-select-field"
-                    placeholder="Seleccione un comercial...">
-                </ng-select>
-            </div>
+            <header class="form-header">
+                <h3 class="form-section-title">Datos de la sociedad</h3>
+                @if(product.id !== null || product.id !== ''){
+                    <button  mat-raised-button color="primary" type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
+                }
+            </header>
+        
+            <fieldset class="input-group">
+                <div class="input-container select">
+                    <label for="sociedad" class="input-label">Sociedad <span class="span-required">*</span></label>
+                    <ng-select
+                        [items]="sociedades"
+                        bindLabel="nombre"
+                        bindValue="id"
+                        formControlName="sociedad_id"
+                        [searchable]="true"
+                        class="ng-select-field"
+                        id="sociedad"
+                        [loading]="!(sociedades && sociedades.length > 0)">
+                    </ng-select>
+                </div>
+                
+                
+                <div class="input-container select">
+                    <label for="comercial_id" class="input-label">Emisor </label>
+                    <ng-select
+                        [items]="comerciales"
+                        bindLabel="nombre"
+                        bindValue="id"
+                        formControlName="comercial_id"
+                        [searchable]="true"
+                        class="ng-select-field"
+                        placeholder="Seleccione un comercial..."
+                        [loading]="!(comerciales && comerciales.length > 0)">
+                    </ng-select>
+                </div>
+            </fieldset>
+
+            <hr class="divider">
         }
-    </fieldset>
-
-
-    
-    <hr class="divider">
 
     <header class="form-header">
         <h3 class="form-section-title">Datos del asegurado</h3>
@@ -303,7 +302,7 @@
                                 </header>
                                 <div *ngIf="anexos[i].abierto" [@expandCollapse]>
                                     <div *ngFor="let campoAnexo of camposAnexo[anexo.tipo_anexo.id]; let j = index" class="input-container">
-                                        @if(campoAnexo.grupo === 'datos_producto'){
+                                        @if(campoAnexo.grupo === 'datos_anexo'){
                                             <label [for]="campoAnexo.nombre_codigo + i + j" class="input-label">{{ campoAnexo.nombre }}</label>
                                             <input [id]="campoAnexo.nombre_codigo + i + j" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexos[i].formato[campoAnexo.nombre_codigo]" name="{{campoAnexo.nombre_codigo}}-{{i}}-{{j}}">
                                         }

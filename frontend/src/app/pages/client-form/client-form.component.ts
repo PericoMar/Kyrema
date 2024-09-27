@@ -36,6 +36,7 @@ export class ClientFormComponent implements OnInit{
   formLoaded!: boolean;
 
   @Output() sociedadEmitida = new EventEmitter<any>();
+  subproducto_id: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -71,7 +72,20 @@ export class ClientFormComponent implements OnInit{
         next: (family : any) => {
           try {
             this.tipo_producto = family;
-            this.productName = this.tipo_producto.nombre;
+            if(this.tipo_producto.padre_id != null){
+              this.familyService.getTipoProductoPorId(this.tipo_producto.padre_id).subscribe({
+                next: (parent : any) => {
+                  this.subproducto_id = this.tipo_producto.id;
+                  this.productName = parent.nombre + " - " + this.tipo_producto.nombre;
+                  this.tipo_producto = parent;
+                },
+                error: (error : any) => {
+                  console.log(error);
+                }
+              });
+            } else {
+              this.productName = this.tipo_producto.nombre;
+            }
           } catch (error) {
             console.error(error);
             // Recargar la pagina
@@ -90,8 +104,28 @@ export class ClientFormComponent implements OnInit{
     // Aquí puedes implementar la lógica para cargar los datos del producto
     this.familyService.getTipoProductoPorLetras(productUrl).subscribe(
       (data : any) => {
-        this.tipo_producto = data;
-        this.productName = this.tipo_producto.nombre;
+          try{
+            this.tipo_producto = data;
+            if(this.tipo_producto.padre_id != null){
+              this.familyService.getTipoProductoPorId(this.tipo_producto.padre_id).subscribe({
+                next: (parent : any) => {
+                  this.subproducto_id = this.tipo_producto.id;
+                  console.log("Subproducto id", this.subproducto_id);
+                  this.productName = parent.nombre + " - " + this.tipo_producto.nombre;
+                  this.tipo_producto = parent;
+                },
+                error: (error : any) => {
+                  console.log(error);
+                }
+              });
+            } else {
+              this.productName = this.tipo_producto.nombre;
+            }
+          } catch (error) {
+            console.error(error);
+            // Recargar la pagina
+            this.snackBarService.openSnackBar("Error al cargar el tipo producto, prueba a recargar la página");
+          }
         if(data.subproductos && data.subproductos.length > 0){
           this.getAllCamposSubproductos(data.subproductos);
         }

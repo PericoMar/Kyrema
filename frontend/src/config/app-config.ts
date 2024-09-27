@@ -1,6 +1,8 @@
 export const AppConfig = {
+    // URL : https://proud-ocean-001393110.5.azurestaticapps.net,
     // API_URL: 'https://canama-backend-afcegzdrh8brgvc8.spaincentral-01.azurewebsites.net/api',
     // STORAGE_URL: 'https://canama-backend-afcegzdrh8brgvc8.spaincentral-01.azurewebsites.net/storage/',
+    URL : 'http://localhost:4200',
     API_URL: 'http://localhost:8000/api',
     STORAGE_URL: 'http://localhost:8000/storage/',
     PAYMENT_URL: 'https://sis-t.redsys.es:25443/sis/realizarPago',

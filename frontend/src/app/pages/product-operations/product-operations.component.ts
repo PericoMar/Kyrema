@@ -15,11 +15,14 @@ import { CommonModule } from '@angular/common';
 import { SnackBarService } from '../../services/snackBar/snack-bar.service';
 import { UserService } from '../../services/user.service';
 import { Commercial } from '../../interfaces/commercial';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
+import { AppConfig } from '../../../config/app-config';
 
 @Component({
   selector: 'app-product-operations',
   standalone: true,
-  imports: [TableComponent, ProductFormComponent, RouterModule, CommonModule],
+  imports: [TableComponent, ProductFormComponent, RouterModule, CommonModule, MatIconModule, MatMenuModule],
   templateUrl: './product-operations.component.html',
   styleUrl: './product-operations.component.css'
 })
@@ -276,6 +279,13 @@ export class ProductOperationsComponent {
 
   clearFilters() {
     this.tableComponent.clearAllFilters();
+  }
+
+  copyUrl(letras_identificacion: string) {
+    const url = AppConfig.URL + '/contratar/' + letras_identificacion.toLowerCase() + '/' + this.comercial.id;
+    navigator.clipboard.writeText(url).then(() => {
+      this.snackBarService.openSnackBar('URL copiada al portapapeles');
+    });
   }
 
 }

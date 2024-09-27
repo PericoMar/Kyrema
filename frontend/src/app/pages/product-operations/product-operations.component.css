@@ -2,6 +2,39 @@ main.product-page{
     background-color: var(--main-bg-color);
 }
 
+.copy-url-button {
+  background-color: transparent; /* Fondo transparente por defecto */
+  border: none; /* Sin bordes */
+  outline: none; /* Sin borde de enfoque */
+  cursor: pointer; /* Cambia el cursor a puntero */
+  color: #4A4A4A; /* Color de las letras gris oscuro */
+  display: inline-flex; /* Para alinear el texto y el ícono */
+  align-items: center;
+  transition: background-color 0.3s ease, color 0.3s ease; /* Transiciones suaves */
+  padding: 6px 10px; /* Añadir un pequeño padding */
+  border-radius: 4px; /* Borde redondeado */
+  margin-bottom: 16px;
+  margin-left: 5px;
+}
+
+.copy-url-button mat-icon {
+  margin-left: 8px; /* Espacio entre el texto y el ícono */
+  transform: scale(0.7);
+}
+
+.copy-url-opt mat-icon{
+  transform: scale(0.7);
+}
+
+.copy-url-button:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* Fondo oscuro al hacer hover */
+  color: #333; /* Color de las letras más oscuro al hacer hover */
+}
+
+.copy-url-button:active {
+  background-color: rgba(0, 0, 0, 0.2); /* Fondo un poco más oscuro al hacer click */
+}
+
 .listado{
     height: 540px;
 }
@@ -36,6 +69,8 @@ h2{
 .button-header.see-history{
   background-color: #21afda;
 }
+
+
 
 ::ng-deep .custom-snackbar {
     --mdc-snackbar-container-color: white;  
