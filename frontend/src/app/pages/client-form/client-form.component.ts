@@ -37,6 +37,8 @@ export class ClientFormComponent implements OnInit{
 
   @Output() sociedadEmitida = new EventEmitter<any>();
   subproducto_id: any;
+  duracion_padre: any;
+  tipo_duracion_padre: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -109,10 +111,12 @@ export class ClientFormComponent implements OnInit{
             if(this.tipo_producto.padre_id != null){
               this.familyService.getTipoProductoPorId(this.tipo_producto.padre_id).subscribe({
                 next: (parent : any) => {
-                  this.subproducto_id = this.tipo_producto.id;
-                  console.log("Subproducto id", this.subproducto_id);
                   this.productName = parent.nombre + " - " + this.tipo_producto.nombre;
-                  this.tipo_producto = parent;
+                  if(this.tipo_producto.tipo_duracion == 'heredada'){
+                    console.log("Duracion heredada", parent.duracion);
+                    this.duracion_padre = parent.duracion;
+                    this.tipo_duracion_padre = parent.tipo_duracion;
+                  } 
                 },
                 error: (error : any) => {
                   console.log(error);
@@ -166,6 +170,7 @@ export class ClientFormComponent implements OnInit{
               resultObject[key] = value;
             });
             this.camposFormulario = camposFormulario;
+            console.log("Campos formulario", this.camposFormulario);
             this.productSelected = resultObject;
             console.log("Producto generado cuando cambiamos de tipo de producto", this.productSelected);
             this.camposLoaded = true;
@@ -186,7 +191,7 @@ export class ClientFormComponent implements OnInit{
   getAllCamposSubproductos(subproductos : any){
     subproductos.forEach((subproducto : any) => {
       subproducto.campos.forEach((campo : any) => {
-        if(campo.grupo === "datos_producto"){
+        if(campo.grupo === "datos_subproducto"){
           this.camposSubproductos.push(campo);
         }
       });

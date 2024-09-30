@@ -105,6 +105,8 @@ export class ProductConfiguratorComponent {
   camposGenerales : Campo[] = [];
   camposAsegurado : Campo[] = [];
   campos : Campo[] = [];
+  camposAnexo!: Campo[];
+  camposSubproducto!: Campo[];
 
   id_tipo_producto_editado : string | null = null;
 
@@ -113,7 +115,7 @@ export class ProductConfiguratorComponent {
   tipo_producto_asociado!: string | null;
   areTarifasHeredadas: boolean = false;
   tarifasHeredadas!: Tarifa[];
-  camposAnexo!: Campo[];
+  
 
   constructor(
     private productService : ProductsService,
@@ -191,6 +193,10 @@ export class ProductConfiguratorComponent {
                 this.camposAsegurado.push(campo);
               } else if(campo.grupo === 'datos_producto') {
                 this.campos.push(campo);
+              } else if(campo.grupo === 'datos_anexo') {
+                this.camposAnexo.push(campo);
+              } else if(campo.grupo === 'datos_subproducto'){
+                this.camposSubproducto.push(campo);
               } else if(campo.grupo === 'datos_duracion') {
                 // Gestionar si es tipo selector de días
                 if(campo.tipo_dato === 'selector_dias') {
@@ -213,46 +219,62 @@ export class ProductConfiguratorComponent {
           });
         });
       } else {
+        if(!this.tipo_producto_asociado && !this.padre_id) {
+          this.camposAnexo = [];
+          this.camposSubproducto = [];
+          this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
+        }
 
         this.camposTiempo = [{ id: '', nombre: 'Duración del seguro', tipo_dato: 'diario', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_duracion', opciones: []}];
 
         if(this.padre_id) {
           this.camposTiempo[0].tipo_dato = 'heredada';
+          this.camposService.getCamposPorTipoProducto(this.padre_id).subscribe((campos) => {
+            campos.filter((campo : any) => campo.grupo === 'datos_producto').forEach((campo : any) => {
+              campo.obligatorio = campo.obligatorio == '1' ? true : false;
+              campo.visible = campo.visible == '1' ? true : false;
+              campo.fila = campo.fila ? campo.fila : '';
+              campo.columna = campo.columna ? campo.columna : '';
+              this.campos.push(campo);
+            });
+          });
+
+          this.camposSubproducto = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_subproducto', opciones: [] }]
+
         }
 
-        if(!this.padre_id) {
-          this.camposGenerales= [
-            { id: '', nombre: 'Codigo producto', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Fecha de emisión', tipo_dato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_fecha', opciones: []},
-            { id: '', nombre: 'Fecha de inicio', tipo_dato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_fecha', opciones: []},
-            { id: '', nombre: 'Fecha de fin', tipo_dato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_fecha', opciones: []},
-            { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Comercial', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Precio base', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Extra 1', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Extra 2', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Extra 3', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Precio Total', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
-            { id: '', nombre: 'Numero anexos', tipo_dato: 'number', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_generales', opciones: []},
-          ]
-        
-          this.camposAsegurado = [
-            { id: '', nombre: 'DNI', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado', opciones: []},
-            { id: '', nombre: 'Nombre socio', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' , opciones: []},
-            { id: '', nombre: 'Apellido 1', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
-            { id: '', nombre: 'Apellido 2', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
-            { id: '', nombre: 'Email', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' , opciones: []},
-            { id: '', nombre: 'Telefono', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' , opciones: []},
-            { id: '', nombre: 'Sexo', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado' , opciones: []},
-            { id: '', nombre: 'Dirección', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio:false, grupo: 'datos_asegurado' , opciones: []},
-            { id: '', nombre: 'Población', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
-            { id: '', nombre: 'Provincia', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado', opciones: []},
-            { id: '', nombre: 'Codigo Postal', tipo_dato: 'number', fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
-            { id: '', nombre: 'Fecha de nacimiento', tipo_dato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado', opciones: []},
-          ];
-        }
+        this.camposGenerales= [
+          { id: '', nombre: 'Codigo producto', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Fecha de emisión', tipo_dato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_fecha', opciones: []},
+          { id: '', nombre: 'Fecha de inicio', tipo_dato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_fecha', opciones: []},
+          { id: '', nombre: 'Fecha de fin', tipo_dato: 'date', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_fecha', opciones: []},
+          { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Comercial', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Precio base', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Extra 1', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Extra 2', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Extra 3', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Precio Total', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Numero anexos', tipo_dato: 'number', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_generales', opciones: []},
+        ]
+      
+        this.camposAsegurado = [
+          { id: '', nombre: 'DNI', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado', opciones: []},
+          { id: '', nombre: 'Nombre socio', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio:true, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Apellido 1', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Apellido 2', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Email', tipo_dato: 'text',fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Telefono', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Sexo', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Dirección', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio:false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Población', tipo_dato: 'text',fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Provincia', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_asegurado', opciones: []},
+          { id: '', nombre: 'Codigo Postal', tipo_dato: 'number', fila: '',columna: '', visible: false, obligatorio: false, grupo: 'datos_asegurado' , opciones: []},
+          { id: '', nombre: 'Fecha de nacimiento', tipo_dato: 'date', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_asegurado', opciones: []},
+        ];
+      
         
         if(this.tipo_producto_asociado) {
           this.camposService.getCamposPorTipoProducto(this.tipo_producto_asociado).subscribe((campos) => {
@@ -268,10 +290,7 @@ export class ProductConfiguratorComponent {
           this.camposAnexo = [
             { id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_anexo', opciones: [] }
           ];
-        } else {
-          this.camposAnexo = [];
-          this.campos = [{ id: '', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto', opciones: [] }];
-        }
+        } 
       }
     });
     
@@ -281,9 +300,19 @@ export class ProductConfiguratorComponent {
 
   agregarCampo() {
     if(this.tipo_producto_asociado) {
-      this.camposAnexo.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_anexo' , opciones: []});
+      this.camposAnexo.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true,
+        grupo: 'datos_anexo',
+        opciones: []});
     } else {
-      this.campos.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_producto' , opciones: []});
+      if(this.padre_id){
+        this.camposSubproducto.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true,
+          grupo: 'datos_subproducto',
+          opciones: []});
+      } else {
+        this.campos.push({ id:'', nombre: '', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true,
+          grupo: 'datos_producto',
+          opciones: []});
+      }
     }
   }
 
@@ -341,8 +370,20 @@ export class ProductConfiguratorComponent {
   crearTipoProducto() {
 
     
-    const camposFormulario = [...this.camposGenerales, ...this.camposAsegurado, ...this.campos, ...this.camposAnexo]; // Concatenación de campos fijos y variables
-    
+    let camposFormulario = [...this.camposGenerales, ...this.camposAsegurado, ...this.campos];
+
+    // Si existe tipo_producto_asociado, añadimos camposAnexo
+    if (this.tipo_producto_asociado) {
+      camposFormulario = [...camposFormulario, ...this.camposAnexo];
+    }
+
+    // Si existe padre_id, añadimos camposSubproducto
+    if (this.padre_id) {
+      camposFormulario = [...camposFormulario, ...this.camposSubproducto];
+    } // Concatenación de campos fijos y variables
+
+    console.log(camposFormulario);
+      
     const editando : boolean = this.id_tipo_producto_editado ? true : false;
 
     // Poner todas los precios de las opciones de los campos con opciones vacios a 0
@@ -481,7 +522,7 @@ export class ProductConfiguratorComponent {
             console.log(res);
             this.societyService.connectSocietyWithTipoProducto(AppConfig.SOCIEDAD_ADMIN_ID, id_tipo_producto).subscribe((res:any) => {
               console.log(res);
-              this.snackBarService.openSnackBar('Tipo de '+ !this.padre_id ? (this.tipo_producto_asociado ? 'anexo' : 'producto') : 'subproducto' + ' creado con éxito');
+              this.snackBarService.openSnackBar('Tipo de '+ (!this.padre_id ? (this.tipo_producto_asociado ? 'anexo' : 'producto') : 'subproducto') + ' creado con éxito');
               this.cargandoNuevoProducto = false;
               window.location.reload();
             });

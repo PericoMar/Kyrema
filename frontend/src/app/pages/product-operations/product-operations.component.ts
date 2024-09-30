@@ -261,7 +261,7 @@ export class ProductOperationsComponent {
   getAllCamposSubproductos(subproductos : any){
     subproductos.forEach((subproducto : any) => {
       subproducto.campos.forEach((campo : any) => {
-        if(campo.grupo === "datos_producto"){
+        if(campo.grupo === "datos_subproducto"){
           this.camposSubproductos.push(campo);
         }
       });

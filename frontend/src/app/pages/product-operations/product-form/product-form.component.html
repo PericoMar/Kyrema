@@ -20,6 +20,7 @@
                         [searchable]="true"
                         class="ng-select-field"
                         id="sociedad"
+                        [clearable]="false"
                         [loading]="!(sociedades && sociedades.length > 0)">
                     </ng-select>
                 </div>
@@ -35,6 +36,7 @@
                         [searchable]="true"
                         class="ng-select-field"
                         placeholder="Seleccione un comercial..."
+                        [clearable]="false"
                         [loading]="!(comerciales && comerciales.length > 0)">
                     </ng-select>
                 </div>
@@ -140,17 +142,48 @@
            
     }
 
+    @if(camposFormularioPorGrupos['datos_subproducto'] && camposFormularioPorGrupos['datos_subproducto'].length > 0){
+        <header class="form-header">
+            <h3 class="form-section-title">Datos del subproducto</h3>
+        </header>
+            <input id="id" formControlName="id" hidden>
+            @for(campo of camposFormularioPorGrupos['datos_subproducto']; track campo.name){
+                @if(campo.tipo_dato == 'select'){
+                    <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_subproducto', campo.name)" class="span-required">*</span></label>
+                    <select [id]="campo.name" [formControlName]="campo.name" class="input-field" (change)="changeOnSelect($event, campo)">
+                        <option value="">Seleccione una opcion...</option>
+                        @for(opcion of campo.opciones ; track opcion.id){
+                            <option [value]="opcion.nombre">{{ opcion.nombre }}</option>
+                        }
+                    </select>
+                } @else {
+                    <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_subproducto', campo.name)" class="span-required">*</span></label>
+                    <input [id]="campo.name" [placeholder]="campo.label" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field" [ngClass]="{'date' : campo.tipo_dato == 'date'}">
+                }
+            }
+        <hr class="divider">
+           
+    }
+
     <!-- Input de fecha fin -->
      <fieldset class="input-group">
         @if(tipo_producto && tipo_producto?.subproductos){
             <div class="input-container subproducto">
                 <label for="subproducto" class="input-label">Producto</label>
-                <select id="subproducto" formControlName="subproducto" class="input-field" (change)="onSubproductoChange($event)">
-                    <option value="null" disabled>Seleccione un producto...</option>
-                    @for(subproducto of tipo_producto.subproductos ; track subproducto.id){
-                        <option [value]="subproducto.id">{{ subproducto.nombre }}</option>
-                    }
-                </select>
+                <ng-select
+                    [items]="tipo_producto.subproductos"
+                    bindLabel="nombre"
+                    bindValue="id"
+                    formControlName="subproducto"
+                    [searchable]="true"
+                    class="ng-select-field"
+                    id="sociedad"
+                    (change)="onSubproductoChange($event)"
+                    [clearable]="false"
+                    [loading]="!formIsLoaded"
+                    [placeholder]="'Seleccione un producto...'">
+                    >
+                </ng-select>
             </div>
         }
         <div class="input-container date">
@@ -248,7 +281,7 @@
             </div>
         </fieldset>
 
-        <button mat-raised-button type="submit" class="mat-button-success submit-button">
+        <button mat-raised-button type="submit" class="mat-button-success submit-button" [disabled]="!(productForm.value.id == null || productForm.value.id == '') && sociedad_id != sociedad_admin_id">
     @if(loadingAction){
         <app-button-spinner></app-button-spinner>
     }@else {

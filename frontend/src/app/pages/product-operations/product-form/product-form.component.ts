@@ -80,6 +80,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
   tipo_producto!: any;
   @Input() campos! : Campo[];
 
+  sociedad_admin_id: any = AppConfig.SOCIEDAD_ADMIN_ID;
+  sociedad_id: any = this.societyService.getCurrentSociety().id;
   sociedades: any;
   comercialActual: any = this.userService.getCurrentUser();
   comerciales!: any[];
@@ -179,6 +181,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['product'] && !(changes['campos'] || changes['letras_identificacion'])) {
+
       this.isLoadingProduct = true;
       this.productForm.patchValue(this.product);
 
@@ -205,6 +208,8 @@ export class ProductFormComponent implements OnInit, OnChanges{
     }
 
     if(changes['campos']){
+      this.formIsLoaded = false;
+      this.formLoadedChange.emit(this.formIsLoaded);
       console.log('Cambios en campos')
       this.productForm.disable();
       this.loadTipoProducto();      
@@ -478,22 +483,25 @@ export class ProductFormComponent implements OnInit, OnChanges{
   onSubproductoChange(event: Event) {
     this.eliminateCamposSubproducto();
 
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    if(selectedValue){
-      console.log('Selected value:', selectedValue);
-      // Coger el subproducto de la lista de subproductos this.tipo_producto.subproductos
-      const selectedSubproducto = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id == selectedValue);
+    console.log('Selected value:', event);
+
+    const selectedSubproducto : any = event;
+
+    if(selectedSubproducto){
+
       this.selectedSubproducto = selectedSubproducto;
       console.log('Selected subproducto:', selectedSubproducto);
       // Actualizar el precio total con el precio del subproducto seleccionado
-      this.productForm.controls['precio_base'].setValue(selectedSubproducto.precio_base);
-      this.productForm.controls['extra_1'].setValue(selectedSubproducto.extra_1);
-      this.productForm.controls['extra_2'].setValue(selectedSubproducto.extra_2);
-      this.productForm.controls['extra_3'].setValue(selectedSubproducto.extra_3);
-      this.productForm.controls['precio_total'].setValue(selectedSubproducto.precio_total);
+      this.productForm.controls['precio_base'].setValue(selectedSubproducto.tarifas.precio_base);
+      this.productForm.controls['extra_1'].setValue(selectedSubproducto.tarifas.extra_1);
+      this.productForm.controls['extra_2'].setValue(selectedSubproducto.tarifas.extra_2);
+      this.productForm.controls['extra_3'].setValue(selectedSubproducto.tarifas.extra_3);
+      this.productForm.controls['precio_total'].setValue(selectedSubproducto.tarifas.precio_total);
 
       selectedSubproducto.campos.forEach((campo: any) => {
-        this.añadirCampoAlFormulario(campo);
+        if(campo.grupo == 'datos_subproducto'){
+          this.añadirCampoAlFormulario(campo);
+        }
       });
 
       this.letras_identificacion = selectedSubproducto.letras_identificacion;
@@ -705,8 +713,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
     nuevoProducto.fecha_de_fin = formatFecha(this.fecha_fin);
 
     if(this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
-      nuevoProducto.subproducto = this.productForm.get('subproducto')?.value;
-      nuevoProducto.subproducto_codigo = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id === nuevoProducto.subproducto_id)?.letras_identificacion.replace(AppConfig.PREFIJO_LETRAS_IDENTIFICACION, '') || '';
+      console.log('Subproducto seleccionado', this.selectedSubproducto);
+      nuevoProducto.subproducto = this.selectedSubproducto.id;
+      nuevoProducto.subproducto_codigo = this.selectedSubproducto.nombre;
     }
     
     
@@ -945,7 +954,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   }
 
   eliminateCamposSubproducto() {
-    
+    console.log(this.camposSubproductos);
     this.camposSubproductos.forEach(campo => {
 
         if (this.productForm.get(campo.nombre_codigo)) {
@@ -953,10 +962,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
             this.productForm.removeControl(campo.nombre_codigo);
 
             // Filtra el campo del array 'camposFormularioPorGrupos' basado en su grupo
-            if (this.camposFormularioPorGrupos['datos_producto']) {
+            if (this.camposFormularioPorGrupos['datos_subproducto']) {
                 
 
-                this.camposFormularioPorGrupos['datos_producto'] = this.camposFormularioPorGrupos['datos_producto'].filter(
+                this.camposFormularioPorGrupos['datos_subproducto'] = this.camposFormularioPorGrupos['datos_subproducto'].filter(
                     (campoFormulario: any) => {
                       console.log(campo.name);
                       console.log(campoFormulario);

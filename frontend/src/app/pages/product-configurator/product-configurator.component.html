@@ -17,7 +17,7 @@
             @if(padre_id){
               <div>
                 <label for="nombre_producto">Tipo producto asociado</label>
-                <select [(ngModel)]="padre_id" name="tipoProductoAsociado">
+                <select [(ngModel)]="padre_id" name="tipoProductoAsociado" disabled>
                     @for(tipo of tiposProductos ; track tipo.id) {
                       <option value="{{tipo.id}}">{{tipo.nombre}}</option>
                     }
@@ -137,7 +137,6 @@
           </table>
           </div>
 
-          @if(!padre_id){
             <h2>Datos generales</h2>
             <hr>
             <div class="overflow-scroll">
@@ -184,10 +183,10 @@
                     <td class="col-posicion">
                       <div class="center" style="gap:4px;">
                         <div class="small-input">
-                          <input type="text" placeholder="Columna" [(ngModel)]="campoGeneral.columna" name="columna{{$index}}">
+                          <input type="text" placeholder="Columna" [(ngModel)]="campoGeneral.columna" name="columnaGeneral{{$index}}">
                         </div>
                         <div class="small-input">
-                          <input type="text" placeholder="Fila" [(ngModel)]="campoGeneral.fila" name="fila{{$index}}">
+                          <input type="text" placeholder="Fila" [(ngModel)]="campoGeneral.fila" name="filaGeneral{{$index}}">
                         </div>
                       </div>
                     </td>
@@ -255,10 +254,10 @@
                     <td class="col-posicion">
                       <div class="center" style="gap:4px;">
                         <div class="small-input">
-                          <input type="text" placeholder="Columna" [(ngModel)]="campoFijo.columna" name="columna{{$index}}">
+                          <input type="text" placeholder="Columna" [(ngModel)]="campoFijo.columna" name="columnaFijo{{$index}}">
                         </div>
                         <div class="small-input">
-                          <input type="text" placeholder="Fila" [(ngModel)]="campoFijo.fila" name="fila{{$index}}">
+                          <input type="text" placeholder="Fila" [(ngModel)]="campoFijo.fila" name="filaFijo{{$index}}">
                         </div>
                       </div>
                     </td>
@@ -278,11 +277,11 @@
                 }
               </tbody>
             </table>
-            </div>
-          }
-          <h2>Datos variables del {{ !padre_id ? 'producto' : 'subproducto' }}</h2>
+          </div>
+          <h2>Datos variables del producto</h2>
           <hr>
-          <div class="overflow-scroll flexible table-variable-fields">
+          <div class="overflow-scroll flexible" [ngClass]="{ 'table-variable-fields': !padre_id && !tipo_producto_asociado }"
+          >
             <table class="table">
               <thead>
                 <tr>
@@ -482,6 +481,112 @@
                             </button>
                           </div>
                           <button mat-button (click)="agregarOpcion(campoAnexo)" type="button">Añadir opción</button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+          @if(padre_id){
+            <h2>Datos variables del subproducto</h2>
+            <hr>
+            <div class="overflow-scroll flexible table-variable-fields">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="col-nombre">Nombre del campo</th>
+                    <th class="col-tipo-dato">
+                      <div class="center">
+                        Tipo de Dato
+                      </div>
+                    </th>
+                    <th class="col-posicion">
+                      <div class="center">
+                        Posición en el Certificado
+                      </div>  
+                    </th>
+                    @if(!tipo_producto_asociado){
+                      <th class="col-visible">
+                        <div class="center">
+                          Visible en la tabla
+                        </div>
+                      </th>
+                    }
+                    <th class="col-obligatorio">
+                      <div class="center">
+                        Obligatorio
+                      </div>
+                    </th>
+                    <th class="col-eliminar">
+                      <div class="center">
+                        Eliminar
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (campoSubproducto of camposSubproducto; track $index) {
+                    <tr>
+                      <td class="col-nombre">
+                        <div class="center">
+                          <input type="text" placeholder="Nombre" [(ngModel)]="campoSubproducto.nombre" name="nombre_subproducto{{$index}}" [disabled]="campoSubproducto.id != ''">
+                        </div>
+                      </td>
+                      <td class="col-tipo-dato">
+                        <div class="center div-select">
+                          <select [(ngModel)]="campoSubproducto.tipo_dato" name="tipo_dato_subproducto{{$index}}" (change)="onTipoDatoChange(campoSubproducto)" [disabled]="campoSubproducto.id != ''">
+                            @for(tipo of tiposDato ; track $index) {
+                              <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                            }
+                          </select>
+                        </div>
+                      </td>
+                      <td class="col-posicion">
+                        <div class="center" style="gap:4px;">
+                          <div class="small-input">
+                            <input type="text" placeholder="Columna" [(ngModel)]="campoSubproducto.columna" name="columna_subproducto{{$index}}">
+                          </div>
+                          <div class="small-input">
+                            <input type="text" placeholder="Fila" [(ngModel)]="campoSubproducto.fila" name="fila_subproducto{{$index}}">
+                          </div>
+                        </div>
+                      </td>
+                      @if(!tipo_producto_asociado){
+                        <td class="col-visible">
+                          <div class="center">
+                          <mat-checkbox [(ngModel)]="campoSubproducto.visible" name="visible{{$index}}"></mat-checkbox>
+                          </div>
+                        </td>
+                      }
+                      <td class="col-obligatorio">
+                        <div class="center">
+                          <mat-checkbox [(ngModel)]="campoSubproducto.obligatorio" name="obligatorio_subproducto{{$index}}"></mat-checkbox>
+                        </div>
+                      </td>
+                      <td class="col-eliminar">
+                        <div class="center">
+                          <button mat-icon-button color="warn" (click)="eliminarCampo($index)" type="button" [disabled]="campoSubproducto.id != ''">
+                            <mat-icon>delete</mat-icon>
+                          </button> 
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Desplegable de opciones adicionales si se selecciona "select" -->
+                    <tr *ngIf="campoSubproducto.tipo_dato === 'select'">
+                      <td colspan="6">
+                        <div class="additional-options">
+                          <h3 class="opt-header">Opciones para {{campoSubproducto.nombre}}</h3>
+                          <div *ngFor="let opcion of campoSubproducto.opciones; let j = index" class="flex-start">
+                            <input type="text" [(ngModel)]="campoSubproducto.opciones[j].nombre" placeholder="Opción {{j + 1}}" name="{{campoSubproducto.nombre}}opciones{{$index + j}}">
+                            <input type="text" [(ngModel)]="campoSubproducto.opciones[j].precio" placeholder="Incremento precio {{j + 1}}" name="{{campoSubproducto.nombre}}precio{{$index + j}}" class="incremento-precio">
+                            <button mat-icon-button color="warn" (click)="eliminarOpcion(campoSubproducto, j)" type="button">
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </div>
+                          <button mat-button (click)="agregarOpcion(campoSubproducto)" type="button">Añadir opción</button>
                         </div>
                       </td>
                     </tr>

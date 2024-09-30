@@ -4,7 +4,7 @@
         <header class="space-between-header">
             <div class="center">
                 <h1>Listado de {{ productName }}</h1>
-                @if(!tipo_producto.subproductos){
+                @if(!tipo_producto?.subproductos){
                     <button class="copy-url-button" (click)="copyUrl(productUrl)">
                         Copiar URL clientes
                         <mat-icon class="icon">content_copy</mat-icon>

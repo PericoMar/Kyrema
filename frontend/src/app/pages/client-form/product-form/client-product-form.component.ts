@@ -88,6 +88,9 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
   comercialActual: any = this.userService.getCurrentUser();
   comerciales!: any[];
 
+  @Input() tipo_duracion_padre: any;
+  @Input() duracion_padre: any;
+
   camposFormularioPorGrupos!: any;
 
   formIsLoaded : boolean = true;
@@ -169,7 +172,7 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['subproducto_id'] && this.subproducto_id !== null) {
+    if (changes['subproducto_id'] && this.subproducto_id !== undefined) {
       console.log('Subproducto id:', this.subproducto_id);
       this.onSubproductoIdChange(this.subproducto_id);
     }
@@ -372,8 +375,8 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
   }
 
   onSubproductoChange(event: Event) {
-    this.eliminateCamposSubproducto();
-
+    // this.eliminateCamposSubproducto();
+    console.log('event', event);
     const selectedValue = (event.target as HTMLSelectElement).value;
     if(selectedValue){
       console.log('Selected value:', selectedValue);
@@ -382,8 +385,10 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
       this.selectedSubproducto = selectedSubproducto;
       console.log('Selected subproducto:', selectedSubproducto);
       // Actualizar el precio total con el precio del subproducto seleccionado
-      this.productForm.controls['prima_del_seguro'].setValue(selectedSubproducto.tarifas.prima_seguro);
-      this.productForm.controls['cuota_de_asociación'].setValue(selectedSubproducto.tarifas.cuota_asociacion);
+      this.productForm.controls['precio_base'].setValue(selectedSubproducto.tarifas.precio_base);
+      this.productForm.controls['extra_1'].setValue(selectedSubproducto.tarifas.extra_1);
+      this.productForm.controls['extra_2'].setValue(selectedSubproducto.tarifas.extra_2);
+      this.productForm.controls['extra_3'].setValue(selectedSubproducto.tarifas.extra_3);
       this.productForm.controls['precio_total'].setValue(selectedSubproducto.tarifas.precio_total);
 
       selectedSubproducto.campos.forEach((campo: any) => {
@@ -580,9 +585,9 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
     
     this.camposFormularioPorGrupos = {};
     campos.forEach((campo : Campo) => {
-
-      this.añadirCampoAlFormulario(campo);
-      
+      if(campo.grupo == 'datos_subproducto'){
+        this.añadirCampoAlFormulario(campo);
+      }
     });
 
     this.onSubproductoIdChange(this.subproducto_id);
@@ -645,9 +650,16 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
     nuevoProducto.fecha_de_emisión = formatFecha(fecha_emision);
     nuevoProducto.fecha_de_fin = formatFecha(this.fecha_fin);
 
-    if(this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
+    if(this.tipo_producto.padre_id != null){
       nuevoProducto.subproducto = this.productForm.get('subproducto')?.value;
-      nuevoProducto.subproducto_codigo = this.tipo_producto.subproductos.find((subproducto: any) => subproducto.id === nuevoProducto.subproducto_id)?.letras_identificacion.replace(AppConfig.PREFIJO_LETRAS_IDENTIFICACION, '') || '';
+      this.familyService.getTipoProductoPorId(nuevoProducto.subproducto).subscribe({
+        next: (subproducto: any) => {
+          nuevoProducto.subproducto_codigo = subproducto.nombre;
+        },
+        error: (error: any) => {
+          console.error('Error loading subproducto', error);
+        }
+      });
     }
     
     
@@ -784,7 +796,9 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
 
   getDuracion(subproducto : any = null): Observable<any> {
     this.productForm.get('duracion')?.disable();
-    const productoCalculoDuracion = subproducto ? subproducto : this.tipo_producto;
+    const productoCalculoDuracion = this.tipo_producto.tipo_duracion !== 'heredada' ? this.tipo_producto :
+     {tipo_duracion: this.tipo_duracion_padre, duracion: this.duracion_padre};
+    console.log('Producto calculo duracion', productoCalculoDuracion);
     if (productoCalculoDuracion.tipo_duracion === 'selector_dias') {
       return this.productsService.getDuraciones(productoCalculoDuracion.duracion).pipe(
         map((duraciones: any) => {
@@ -804,7 +818,6 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
       return of(productoCalculoDuracion.duracion);
 
     } else {
-
       return of(productoCalculoDuracion.duracion);
     }
   }
