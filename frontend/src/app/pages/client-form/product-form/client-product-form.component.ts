@@ -585,9 +585,7 @@ export class ClientProductFormComponent implements OnInit, OnChanges{
     
     this.camposFormularioPorGrupos = {};
     campos.forEach((campo : Campo) => {
-      if(campo.grupo == 'datos_subproducto'){
         this.añadirCampoAlFormulario(campo);
-      }
     });
 
     this.onSubproductoIdChange(this.subproducto_id);

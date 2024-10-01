@@ -13,6 +13,10 @@ export class UserService {
   constructor(private http: HttpClient){}
 
 
+  getAllUsers(): Observable<any>{
+    return this.http.get<any>(`${this.apiUrl}/comerciales/all`);
+  }
+
   getComercialById(id_sociedad: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/comercial/${id_sociedad}`);
   }

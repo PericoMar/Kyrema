@@ -2,14 +2,16 @@
 
 14 - Octubre
 [x] Logos del header
-[] Formulario del cliente adaptado al subproducto
+[x] Formulario del cliente adaptado al subproducto
 [x] URL's del comercial para formulario del cliente 
-[] Contraseña robusta
+[] Favicon
+[x] Contraseña robusta
 [] Recuperar contraseña
 [] Generación de certificados Productos
 [] Generación de certificados Productos con subproductos
     - [] Tener todos los campos para tener la posición que se le quiere dar
 [] Generación de certificados Anexos
+    - [] Verficar que funcionan las casillas de suma
 [] Pasarela de pago (A espera de los datos del banco)
 
 [] Selectores

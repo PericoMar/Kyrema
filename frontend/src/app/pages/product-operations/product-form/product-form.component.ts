@@ -185,6 +185,10 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.isLoadingProduct = true;
       this.productForm.patchValue(this.product);
 
+      if(this.sociedad_id != this.sociedad_admin_id){
+        this.productForm.disable();
+      }
+
       const sociedadId = Number(this.product.sociedad_id);
       const comercial_id = Number(this.product.comercial_id);
       this.productForm.controls['sociedad_id'].setValue(sociedadId);
@@ -640,6 +644,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   eliminateProductSelected() {  
     this.productForm.reset();
+    this.productForm.enable();
     console.log(this.productForm.value);
     this.anexos = [];
     this.productForm.patchValue({sociedad_id: this.sociedades[0].id});
@@ -674,8 +679,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   onSubmit() {
     this.limpiarEstilosErrores();
-    this.enablePrecios();
-    this.productForm.get('duracion')?.enable();
+    this.productForm.enable();
     console.log(this.productForm.value);
     console.log('Anexos', this.anexos);
 
@@ -684,40 +688,58 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.loadingAction = true;
     const nuevoProducto = this.productForm.value;
 
-    //Agregar fecha de inicio y fecha de fin al objeto nuevoProducto
-    const fecha_emision = new Date();
-    this.fecha_fin = new Date();
-    if((this.selectedSubproducto && this.selectedSubproducto.tipo_duracion === 'fecha_exacta') || (!this.selectedSubproducto && this.tipo_producto.tipo_duracion === 'fecha_exacta')){
-      this.fecha_fin = new Date(this.duracion);
-      //Cambiar el valor de duracion a la diferencia de días entre la fecha de inicio y la fecha de fin
-      const diffTime = Math.abs(this.fecha_fin.getTime() - fecha_emision.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      // Asignar la diferencia en el nuevoProducto
-      nuevoProducto.duracion = diffDays;
-    } else {
-      this.fecha_fin.setDate(this.fecha_fin.getDate() + parseInt(this.duracion));
+    if(this.productForm.value.id == null || this.productForm.value.id == ''){
+      //Agregar fecha de inicio y fecha de fin al objeto nuevoProducto
+      const fecha_emision = new Date();
+      this.fecha_fin = new Date();
+      if((this.selectedSubproducto && this.selectedSubproducto.tipo_duracion === 'fecha_exacta') || (!this.selectedSubproducto && this.tipo_producto.tipo_duracion === 'fecha_exacta')){
+        this.fecha_fin = new Date(this.duracion);
+        //Cambiar el valor de duracion a la diferencia de días entre la fecha de inicio y la fecha de fin
+        const diffTime = Math.abs(this.fecha_fin.getTime() - fecha_emision.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        // Asignar la diferencia en el nuevoProducto
+        nuevoProducto.duracion = diffDays;
+      } else {
+        this.fecha_fin.setDate(this.fecha_fin.getDate() + parseInt(this.duracion));
+      }
+
+      const formatFecha = (fecha: Date) => {
+        // Obtener el año, mes y día de la fecha
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, '0'); // getMonth() devuelve de 0 a 11, por lo que se suma 1
+        const day = String(fecha.getDate()).padStart(2, '0');
+      
+        // Devolver la fecha en formato 'Y-m-d'
+        return `${year}-${month}-${day}`;
+      };
+
+
+      nuevoProducto.fecha_de_emisión = formatFecha(fecha_emision);
+      nuevoProducto.fecha_de_fin = formatFecha(this.fecha_fin);
+
+      if(this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
+        console.log('Subproducto seleccionado', this.selectedSubproducto);
+        nuevoProducto.subproducto = this.selectedSubproducto.id;
+        nuevoProducto.subproducto_codigo = this.selectedSubproducto.nombre;
+      }
+
+      const arrayUnicoTodosCampos = Object.values(this.camposFormularioPorGrupos).reduce((acc : any, array) => acc.concat(array), []);
+      // Comprobar campos vacios:
+      const camposVacios = this.verificarCamposObligatorios(arrayUnicoTodosCampos, nuevoProducto);
+      if(camposVacios.length > 0){
+        console.log(nuevoProducto.duracion);
+        this.snackBarService.openSnackBar('Hay campos obligatorios sin rellenar.');
+        console.log('Campos vacios', camposVacios);
+        this.aplicarEstilosErrores(camposVacios.map((campo: any) => campo.name));
+        this.disablePrecios();
+        if(this.tipo_producto.tipo_duracion != 'selector_dias' && this.tipo_producto.tipo_duracion != 'fecha_exacta'){
+          console.log("Entro en desactivar duracion");
+          this.productForm.get('duracion')?.disable();
+        }
+        this.loadingAction = false;
+        return;
+      }
     }
-
-    const formatFecha = (fecha: Date) => {
-      // Obtener el año, mes y día de la fecha
-      const year = fecha.getFullYear();
-      const month = String(fecha.getMonth() + 1).padStart(2, '0'); // getMonth() devuelve de 0 a 11, por lo que se suma 1
-      const day = String(fecha.getDate()).padStart(2, '0');
-    
-      // Devolver la fecha en formato 'Y-m-d'
-      return `${year}-${month}-${day}`;
-    };
-
-
-    nuevoProducto.fecha_de_emisión = formatFecha(fecha_emision);
-    nuevoProducto.fecha_de_fin = formatFecha(this.fecha_fin);
-
-    if(this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
-      console.log('Subproducto seleccionado', this.selectedSubproducto);
-      nuevoProducto.subproducto = this.selectedSubproducto.id;
-      nuevoProducto.subproducto_codigo = this.selectedSubproducto.nombre;
-    }
-    
     
     // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
     const sociedadSeleccionada = this.sociedades.find((sociedad :any)=> sociedad.id === nuevoProducto.sociedad_id);
@@ -737,23 +759,6 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
     console.log('Nuevo producto', nuevoProducto);
 
-    const arrayUnicoTodosCampos = Object.values(this.camposFormularioPorGrupos).reduce((acc : any, array) => acc.concat(array), []);
-
-    // Comprobar campos vacios:
-    const camposVacios = this.verificarCamposObligatorios(arrayUnicoTodosCampos, nuevoProducto);
-    if(camposVacios.length > 0){
-      console.log(nuevoProducto.duracion);
-      this.snackBarService.openSnackBar('Hay campos obligatorios sin rellenar.');
-      console.log('Campos vacios', camposVacios);
-      this.aplicarEstilosErrores(camposVacios.map((campo: any) => campo.name));
-      this.disablePrecios();
-      if(this.tipo_producto.tipo_duracion != 'selector_dias' && this.tipo_producto.tipo_duracion != 'fecha_exacta'){
-        console.log("Entro en desactivar duracion");
-        this.productForm.get('duracion')?.disable();
-      }
-      this.loadingAction = false;
-      return;
-    }
 
     // CREAR O EDITAR PRODUCTO
     // Si no tiene id se está creando un nuevo producto
@@ -797,7 +802,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
         }
       )
     }
-    
+    if(this.sociedad_id != this.sociedad_admin_id){
+      this.productForm.disable();
+    }
   }
 
   /************************************/

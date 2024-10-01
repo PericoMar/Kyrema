@@ -79,6 +79,11 @@ export class ClientFormComponent implements OnInit{
                 next: (parent : any) => {
                   this.subproducto_id = this.tipo_producto.id;
                   this.productName = parent.nombre + " - " + this.tipo_producto.nombre;
+                  if(this.tipo_producto.tipo_duracion == 'heredada'){
+                    console.log("Duracion heredada", parent.duracion);
+                    this.duracion_padre = parent.duracion;
+                    this.tipo_duracion_padre = parent.tipo_duracion;
+                  } 
                   this.tipo_producto = parent;
                 },
                 error: (error : any) => {
@@ -108,34 +113,13 @@ export class ClientFormComponent implements OnInit{
       (data : any) => {
           try{
             this.tipo_producto = data;
-            if(this.tipo_producto.padre_id != null){
-              this.familyService.getTipoProductoPorId(this.tipo_producto.padre_id).subscribe({
-                next: (parent : any) => {
-                  this.productName = parent.nombre + " - " + this.tipo_producto.nombre;
-                  if(this.tipo_producto.tipo_duracion == 'heredada'){
-                    console.log("Duracion heredada", parent.duracion);
-                    this.duracion_padre = parent.duracion;
-                    this.tipo_duracion_padre = parent.tipo_duracion;
-                  } 
-                },
-                error: (error : any) => {
-                  console.log(error);
-                }
-              });
-            } else {
-              this.productName = this.tipo_producto.nombre;
-            }
           } catch (error) {
             console.error(error);
             // Recargar la pagina
             this.snackBarService.openSnackBar("Error al cargar el tipo producto, prueba a recargar la página");
           }
-        if(data.subproductos && data.subproductos.length > 0){
-          this.getAllCamposSubproductos(data.subproductos);
-        }
         console.log("Data",this.tipo_producto);
         
-
         //Recoger los campos del formulario
         this.camposService.getCamposPorTipoProducto(this.tipo_producto.id).subscribe(
           (camposFormulario:any) => {

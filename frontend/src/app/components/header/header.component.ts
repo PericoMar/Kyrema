@@ -40,16 +40,19 @@ export class HeaderComponent implements OnInit{
   profileLogoUrl : string | null = '';
   comercial_id!: string;
 
+  frontCliente: boolean = false;
+
   constructor(
     private userService : UserService,
     private dialog: MatDialog,
+    private router : Router,
   ){
-    
+    this.frontCliente = this.router.url.includes('contratar');
   }
 
   ngOnInit(): void {
     console.log('User:', this.society);
-    this.profileLogoUrl = this.society.logo ? AppConfig.STORAGE_URL + this.society.logo : "https://kyrema.es/dist/panel-gestion/images/users/avatar-1.jpg";
+    this.profileLogoUrl = this.society.logo ? AppConfig.STORAGE_URL + this.society.logo : "assets/avatar-1.jpg";
     // this.user = this.userService.getCurrentUser();
   }
 

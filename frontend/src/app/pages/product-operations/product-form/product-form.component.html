@@ -4,9 +4,7 @@
         @if(comercialActual.responsable == 1){
             <header class="form-header">
                 <h3 class="form-section-title">Datos de la sociedad</h3>
-                @if(product.id !== null || product.id !== ''){
-                    <button  mat-raised-button color="primary" type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
-                }
+                <button  mat-raised-button color="primary" type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
             </header>
         
             <fieldset class="input-group">
@@ -43,10 +41,13 @@
             </fieldset>
 
             <hr class="divider">
-        }
+        } 
 
     <header class="form-header">
         <h3 class="form-section-title">Datos del asegurado</h3>
+        @if(comercialActual.responsable !== 1){
+            <button  mat-raised-button color="primary" type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
+        }
     </header>
     <main class="form-main">
         <div class="input-container dni">
@@ -333,18 +334,30 @@
                                         <mat-icon>close</mat-icon>
                                     </button>
                                 </header>
-                                <div *ngIf="anexos[i].abierto" [@expandCollapse]>
+                                <div *ngIf="anexo.abierto" [@expandCollapse]>
                                     <div *ngFor="let campoAnexo of camposAnexo[anexo.tipo_anexo.id]; let j = index" class="input-container">
                                         @if(campoAnexo.grupo === 'datos_anexo'){
                                             <label [for]="campoAnexo.nombre_codigo + i + j" class="input-label">{{ campoAnexo.nombre }}</label>
-                                            <input [id]="campoAnexo.nombre_codigo + i + j" [type]="campoAnexo.tipo_dato" class="input-field" [(ngModel)]="anexos[i].formato[campoAnexo.nombre_codigo]" name="{{campoAnexo.nombre_codigo}}-{{i}}-{{j}}">
+                                            <input 
+                                            [id]="campoAnexo.nombre_codigo + i + j" 
+                                            [type]="campoAnexo.tipo_dato" class="input-field" 
+                                            [(ngModel)]="anexos[i].formato[campoAnexo.nombre_codigo]" 
+                                            name="{{campoAnexo.nombre_codigo}}-{{i}}-{{j}}" 
+                                            [disabled]="(anexo.id != '' && sociedad_id != sociedad_admin_id)">
                                         }
                                     </div>
                                     <!-- Input de duración -->
                                     <fieldset class="input-group">
                                         <div class="input-container fecha_de_inicio date">
                                             <label for="fecha_de_inicio_anexo" class="input-label">Fecha de inicio </label>
-                                            <input id="fecha_de_inicio_anexo" type="date" class="input-field" [(ngModel)]="anexos[i].formato['fecha_de_inicio']" name="fecha_de_inicio-{{i}}" [min]="minDate">
+                                            <input 
+                                            id="fecha_de_inicio_anexo" 
+                                            type="date" 
+                                            class="input-field" 
+                                            [(ngModel)]="anexos[i].formato['fecha_de_inicio']" 
+                                            name="fecha_de_inicio-{{i}}" 
+                                            [min]="minDate"
+                                            [disabled]="anexo.id != ''">
                                         </div>
                                         @if(anexos[i].tipo_anexo.tipo_duracion != 'fecha_dependiente')  {
                                             @if(anexos[i].tipo_anexo.tipo_duracion == 'selector_dias'){

@@ -76,16 +76,34 @@
                 <div class="input-container usuario">
                     <label for="usuario" class="input-label">Usuario<span class="span-required"> *</span></label>
                     <input id="usuario" formControlName="usuario" class="input-field" placeholder="Ej: usuario12canama"
-                        [ngClass]="{'input-error': comercialForm.get('usuario')?.invalid && formularioMandado}">
+                           [ngClass]="{'input-error': comercialForm.get('usuario')?.invalid && formularioMandado}">
+                    <div *ngIf="comercialForm.get('usuario')?.errors?.['userNameTaken']" class="error-message">
+                        <p >
+                            <span class="error-icon">
+                            <mat-icon>error_outline</mat-icon>
+                            </span>
+                            Este nombre de usuario ya está en uso. Elige otro.
+                        </p>
+                    </div>
                 </div>
+                
                 <!-- Contraseña (opcional) -->
-                <div class="input-container contraseña" >
+                <div class="input-container contraseña">
                     <label for="contraseña" class="input-label" [hidden]="comercial_id != ''">
                         Contraseña<span class="span-required"> *</span>
                     </label>
-                    <input id="contraseña" formControlName="contraseña" class="input-field" placeholder="******"
-                        [ngClass]="{'input-error': comercialForm.get('contraseña')?.invalid && formularioMandado}"
-                        [hidden]="comercial_id != ''">
+                    <input id="contraseña" type="password" formControlName="contraseña" class="input-field" placeholder="******"
+                           [ngClass]="{'input-error': comercialForm.get('contraseña')?.invalid && formularioMandado}"
+                           [hidden]="comercial_id != ''">
+                    <!-- Mostrar los mensajes de error -->
+                    <div *ngIf="comercialForm.get('contraseña')?.invalid && formularioMandado" class="error-message">
+                        <p *ngIf="comercialForm.get('contraseña')?.errors?.['passwordInvalid']">
+                          <span class="error-icon">
+                            <mat-icon>error_outline</mat-icon>
+                          </span>
+                          La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales.
+                        </p>
+                      </div>
                 </div>
             </fieldset>
 

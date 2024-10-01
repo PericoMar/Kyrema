@@ -8,7 +8,7 @@
             <span class="user-name">
                 {{(user && user.nombre) ?  'Bienvenido, '+user.nombre :  'Bienvenido'  }}. 
             </span>
-            <button mat-icon-button [matMenuTriggerFor]="menu" class="profile-button">
+            <button mat-icon-button [matMenuTriggerFor]="menu" class="profile-button" [disabled]="frontCliente">
                 <img [src]="profileLogoUrl" alt="Logo" class="user-image">
             </button>
           
