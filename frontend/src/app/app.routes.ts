@@ -19,13 +19,17 @@ import { AnexosManagerComponent } from './pages/anexos-manager/anexos-manager.co
 import { AnexosConfiguratorComponent } from './pages/anexos-configurator/anexos-configurator.component';
 import { SubproductManagerComponent } from './pages/subproduct-manager/subproduct-manager.component';
 import { ClientFormComponent } from './pages/client-form/client-form.component';
+import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
+import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 
 export const routes: Routes = [
     {
         path: 'login',
         component: LayoutLoginComponent,
         children: [
-            { path: '', component: LoginComponent }
+            { path: '', component: LoginComponent },
+            { path: 'reset-password', component: ResetPasswordComponent },
+            { path: 'password/reset/:token', component: ChangePasswordComponent },
         ]
     },
     {
@@ -45,7 +49,6 @@ export const routes: Routes = [
         // { path: 'gestion-productos' , component: ProductsManagerComponent, canActivate: [authGuard]},
         // { path: 'configurador-productos' , component: ProductConfiguratorComponent, canActivate: [authGuard]},
         // { path: 'configurador-productos/:id' , component: ProductConfiguratorComponent, canActivate: [authGuard]},
-        { path: '', component: ProductOperationsComponent,  },
         { path: 'operaciones/:product', component: ProductOperationsComponent, }, 
         { path: 'anulados/:product', component: AnulacionesPageComponent, },
         { path: 'informes', component: ReportsComponent, }, 

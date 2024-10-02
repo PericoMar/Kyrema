@@ -2,7 +2,8 @@
 
 /* You can add global styles to this file, and also import other style files */
 :root{
-    --main-bg-color: #ebeff2;   
+    --main-bg-color: #ebeff2;
+    --light-green: rgb(11, 125, 11);   
     --dark-green: rgb(3, 99, 3);
     --form-gap: 20px;
     --required-color: #c50606;
@@ -37,6 +38,10 @@ body {
     border-radius: 8px;
     background-color: white;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.text-center{
+    text-align: center;
 }
 
 .center{

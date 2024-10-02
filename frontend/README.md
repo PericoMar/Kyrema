@@ -20,6 +20,8 @@
 [] Ver los seguros con anexos en regla/activos
 [] Anexos anulados/pasados con estilo diferente
 
+[] Gestion variables de entorno
+
 v2.0:
 [] Añadir compañias y polizas
     - [] Tabla compañias.
