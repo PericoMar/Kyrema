@@ -71,7 +71,7 @@ export class ChangePasswordComponent {
           this.passwordChanged = true;
           setTimeout(() => {
             this.router.navigate(['/login'])
-          }, 6000);
+          }, 3300);
         },
         error: (error) => {
           console.error('Error sending reset password email:', error);

@@ -33,9 +33,9 @@
                         formControlName="comercial_id"
                         [searchable]="true"
                         class="ng-select-field"
-                        placeholder="Seleccione un comercial..."
+                        
                         [clearable]="false"
-                        [loading]="!(comerciales && comerciales.length > 0)">
+                        [loading]="(!(comerciales && comerciales.length > 0) || loadingComercial)   ">
                     </ng-select>
                 </div>
             </fieldset>
@@ -45,7 +45,7 @@
 
     <header class="form-header">
         <h3 class="form-section-title">Datos del asegurado</h3>
-        @if(comercialActual.responsable !== 1){
+        @if(comercialActual.responsable != 1){
             <button  mat-raised-button color="primary" type="button" class="clean-inputs" (click)="eliminateProductSelected()">Limpiar campos</button>
         }
     </header>

@@ -42,6 +42,7 @@ interface Campo {
 })
 export class ProductConfiguratorComponent {
   tiposDato = [{ nombre: 'Texto', value: 'text' }, { nombre: 'Número', value: 'number' }, { nombre: 'Fecha', value: 'date' }, { nombre: 'Decimal', value: 'decimal' }, { nombre: 'Selector', value: 'select' }];
+  tipoLogo = [{ nombre: 'Logo', value: 'logo' }];
   // a.	Diario
   // b.	Anual
   // c.	Días delimitados
@@ -55,13 +56,8 @@ export class ProductConfiguratorComponent {
 
   nombreProducto = '';
   letrasIdentificacion = '';
+  casilla_logo_sociedad!: string;
   duracion = '';
-  nuevoProducto : any = {
-    nombreProducto: '',
-    letrasIdentificacion: '',
-    plantilla: null,
-    campos: []
-  };
 
   cargandoNuevoProducto : boolean = false;
 
@@ -105,8 +101,12 @@ export class ProductConfiguratorComponent {
   camposGenerales : Campo[] = [];
   camposAsegurado : Campo[] = [];
   campos : Campo[] = [];
-  camposAnexo!: Campo[];
+  camposAnexo: Campo[] = [];
   camposSubproducto!: Campo[];
+  camposLogos: Campo[] = [
+    { id: '', nombre: 'Logo sociedad', tipo_dato: 'logo', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_logos', opciones: []},
+    // { id: '', nombre: 'Logo compañia', tipo_dato: 'logo', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_logos', opciones: []},
+  ];
 
   id_tipo_producto_editado : string | null = null;
 
@@ -164,6 +164,14 @@ export class ProductConfiguratorComponent {
           this.letrasIdentificacion = tipoProducto.letras_identificacion;
           this.fileName = tipoProducto.plantilla_path;
           this.duracion = tipoProducto.duracion;
+          //Dividir letras y numeros para dividir en columnas y filas
+          this.casilla_logo_sociedad = tipoProducto.casilla_logo_sociedad;
+          if(this.casilla_logo_sociedad) {
+            const columna = this.casilla_logo_sociedad.match(/[a-zA-Z]+/g);
+            const fila = this.casilla_logo_sociedad.match(/\d+/g);
+            this.camposLogos[0].columna = columna ? columna[0] : '';
+            this.camposLogos[0].fila = fila ? fila[0] : '';
+          }
           
 
           // Poner el campo de letrasIdentificacion como disabled
@@ -184,10 +192,16 @@ export class ProductConfiguratorComponent {
               this.camposService.getOpcionesPorCampo(campo.id).subscribe((opciones) => {
                 console.log(opciones);
                 campo.opciones = opciones;
-                this.campos.push(campo);
+                if(campo.grupo === 'datos_producto') {
+                  this.campos.push(campo);
+                } else if(campo.grupo === 'datos_anexo') {
+                  this.camposAnexo.push(campo);
+                } else if(campo.grupo === 'datos_subproducto'){
+                  this.camposSubproducto.push(campo);
+                } 
               });
             } else {
-              if(campo.grupo === 'datos_generales') {
+              if(campo.grupo === 'datos_generales' || campo.grupo === 'datos_precio') {
                 this.camposGenerales.push(campo);
               } else if(campo.grupo === 'datos_asegurado') {
                 this.camposAsegurado.push(campo);
@@ -217,6 +231,14 @@ export class ProductConfiguratorComponent {
               }
             }
           });
+
+          console.log(this.campos);
+          console.log(this.camposAnexo);
+          console.log(this.camposSubproducto);
+          console.log(this.camposGenerales);
+          console.log(this.camposAsegurado);
+          console.log(this.camposTiempo);
+
         });
       } else {
         if(!this.tipo_producto_asociado && !this.padre_id) {
@@ -251,11 +273,11 @@ export class ProductConfiguratorComponent {
           { id: '', nombre: 'Sociedad', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
           { id: '', nombre: 'Comercial', tipo_dato: 'text', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
           { id: '', nombre: 'Tipo de pago', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
-          { id: '', nombre: 'Precio base', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-          { id: '', nombre: 'Extra 1', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-          { id: '', nombre: 'Extra 2', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-          { id: '', nombre: 'Extra 3', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
-          { id: '', nombre: 'Precio Total', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_generales', opciones: []},
+          { id: '', nombre: 'Precio base', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_precio', opciones: []},
+          { id: '', nombre: 'Extra 1', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_precio', opciones: []},
+          { id: '', nombre: 'Extra 2', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_precio', opciones: []},
+          { id: '', nombre: 'Extra 3', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_precio', opciones: []},
+          { id: '', nombre: 'Precio Total', tipo_dato: 'decimal', fila: '',columna: '', visible: false, obligatorio: true, grupo: 'datos_precio', opciones: []},
           { id: '', nombre: 'Precio Final', tipo_dato: 'text', fila: '',columna: '', visible: true, obligatorio: true, grupo: 'datos_generales', opciones: []},
           { id: '', nombre: 'Numero anexos', tipo_dato: 'number', fila: '',columna: '', visible: true, obligatorio: false, grupo: 'datos_generales', opciones: []},
         ]
@@ -408,6 +430,7 @@ export class ProductConfiguratorComponent {
       this.cargandoNuevoProducto = true;
       const prefijoLetras = this.tipo_producto_asociado ? AppConfig.PREFIJO_LETRAS_IDENTIFICACION_ANEXOS : AppConfig.PREFIJO_LETRAS_IDENTIFICACION ;
       const nuevoProducto = {
+        casilla_logo_sociedad: this.camposLogos[0].columna + this.camposLogos[0].fila,
         nombreProducto: this.nombreProducto,
         letrasIdentificacion: prefijoLetras + this.letrasIdentificacion,
         campos: camposFormulario,
@@ -474,13 +497,14 @@ export class ProductConfiguratorComponent {
           console.log(res);
         });
 
-        this.familyService.editTipoProducto(this.id_tipo_producto_editado, this.nombreProducto).subscribe((tipo_producto) => {
+        console.log(nuevoProducto.casilla_logo_sociedad);
+        this.familyService.editTipoProducto(this.id_tipo_producto_editado, this.nombreProducto, nuevoProducto.casilla_logo_sociedad).subscribe((tipo_producto) => {
           console.log(tipo_producto);
         });
 
         console.log(this.selectedFile);
         if(this.selectedFile) {
-          this.productService.subirPlantilla(this.letrasIdentificacion, this.selectedFile).subscribe((res:any) => {
+          this.productService.subirPlantilla(this.id_tipo_producto_editado, this.selectedFile).subscribe((res:any) => {
             console.log(res); 
           });
         }
@@ -506,7 +530,7 @@ export class ProductConfiguratorComponent {
           // La respuesta contiene la información del nuevo tipo de producto
           const id_tipo_producto = res.id.toString();
           console.log(res);
-          this.productService.subirPlantilla(this.letrasIdentificacion, this.selectedFile).subscribe((res:any) => {
+          this.productService.subirPlantilla(id_tipo_producto, this.selectedFile).subscribe((res:any) => {
             console.log(res);
           });
           const tarifaNuevoProducto: Tarifa = {

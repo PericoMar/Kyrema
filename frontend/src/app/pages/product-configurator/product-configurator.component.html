@@ -51,6 +51,58 @@
           </div>
           </header>
 
+          <h2>Logos</h2>
+            <hr>
+            <div class="overflow-scroll">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="col-nombre">Nombre del campo</th>
+                  <th class="col-tipo-dato">
+                    <div class="center">
+                      Tipo de Dato
+                    </div>
+                  </th>
+                  <th class="col-posicion">
+                    <div class="center">
+                      Posición en el Certificado
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (campoLogo of camposLogos; track $index) {
+                  <tr>
+                    <td class="col-nombre">
+                      <div class="center">
+                        <input type="text" [placeholder]="campoLogo.nombre" [(ngModel)]="campoLogo.nombre" name="nombreLogo{{$index}}" disabled>
+                      </div>
+                    </td>
+                    <td class="col-tipo-dato">
+                      <div class="center div-select">
+                        <select [(ngModel)]="campoLogo.tipo_dato" name="tipo_datoLogo{{$index}}" disabled>
+                          @for(tipo of tipoLogo ; track $index) {
+                            <option value="{{tipo.value}}">{{tipo.nombre}}</option>
+                          }
+                        </select>
+                      </div>
+                    </td>
+                    <td class="col-posicion">
+                      <div class="center" style="gap:4px;">
+                        <div class="small-input">
+                          <input type="text" placeholder="Columna" [(ngModel)]="campoLogo.columna" name="columnaLogo{{$index}}">
+                        </div>
+                        <div class="small-input">
+                          <input type="text" placeholder="Fila" [(ngModel)]="campoLogo.fila" name="filaLogo{{$index}}">
+                        </div>
+                      </div>
+                    </td>
+                  </tr>                
+                }
+              </tbody>
+            </table>
+            </div>
+
           <h2>Duración</h2>
           <hr>
           <div class="overflow-scroll">

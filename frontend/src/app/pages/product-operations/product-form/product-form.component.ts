@@ -113,6 +113,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   duracion: any;
   minDate!: string;
   fecha_fin!: Date;
+  loadingComercial: boolean = false;
   
   
 
@@ -147,7 +148,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
     this.userService.getComercialesPorSociedad(this.societyService.getCurrentSociety().id).subscribe({
       next: (comerciales: any[]) => {
-        this.comerciales = comerciales;
+        this.comerciales = Object.values(comerciales);;
         console.log('Comercial Actual ', this.comercialActual);
         if(this.comercialActual.responsable == '1'){
           console.log('reponsable')
@@ -191,8 +192,20 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
       const sociedadId = Number(this.product.sociedad_id);
       const comercial_id = Number(this.product.comercial_id);
+
       this.productForm.controls['sociedad_id'].setValue(sociedadId);
-      this.productForm.controls['comercial_id'].setValue(comercial_id);
+
+      this.loadComercialesPorSociedad(this.product.sociedad_id);
+
+      console.log('comerciales', this.comerciales, 'comercial_id', comercial_id);
+
+      const comercialExists = this.comerciales.some(comercial => comercial.id === comercial_id);
+
+      if (comercialExists) {
+          this.productForm.controls['comercial_id'].setValue(comercial_id);
+      } else {
+          console.warn('El comercial con id', comercial_id, 'no existe en la lista de comerciales.');
+      }
 
       if(this.product.id != null && this.product.id != ''){
         if(this.societyService.getCurrentSociety().id != AppConfig.SOCIEDAD_ADMIN_ID) this.productForm.disable();
@@ -237,12 +250,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   loadComercialesPorSociedad(sociedad_id: string) {
     this.productForm.get('comercial_id')?.disable();
+    this.loadingComercial = true;
     this.userService.getComercialesPorSociedad(sociedad_id).subscribe({
       next: (comerciales: any[]) => {
         this.comerciales = comerciales;
-        if(this.comerciales.length > 0){
+        if (this.comerciales.length > 0 && !this.productForm.get('comercial_id')?.value) {
           this.productForm.controls['comercial_id'].setValue(this.comerciales[0].id);
         }
+        this.loadingComercial = false;
         this.productForm.get('comercial_id')?.enable();
         console.log('Comerciales', this.comerciales);
       },
@@ -323,6 +338,9 @@ export class ProductFormComponent implements OnInit, OnChanges{
         },
         error => {
           console.error(error);
+        },
+        () => {
+          this.disablePrecios();
         });
     }
   }
@@ -688,6 +706,22 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.loadingAction = true;
     const nuevoProducto = this.productForm.value;
 
+    // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
+    const sociedadSeleccionada = this.sociedades.find((sociedad :any)=> sociedad.id === nuevoProducto.sociedad_id);
+    nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
+
+    // Agregar el id del comercial al objeto nuevoProducto
+    if(nuevoProducto.comercial_id != this.comercialActual.id){
+      nuevoProducto.comercial_creador_id = this.comercialActual.id;
+    }
+    nuevoProducto.comercial = this.comercialActual.nombre;
+
+    const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
+    nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
+
+    nuevoProducto.numero_anexos = this.anexos.length;
+    nuevoProducto.precio_final = this.precioFinal;
+
     if(this.productForm.value.id == null || this.productForm.value.id == ''){
       //Agregar fecha de inicio y fecha de fin al objeto nuevoProducto
       const fecha_emision = new Date();
@@ -740,25 +774,14 @@ export class ProductFormComponent implements OnInit, OnChanges{
         return;
       }
     }
-    
-    // Agregar el nombre de la sociedad seleccionada al objeto nuevoProducto
-    const sociedadSeleccionada = this.sociedades.find((sociedad :any)=> sociedad.id === nuevoProducto.sociedad_id);
-    nuevoProducto.sociedad = sociedadSeleccionada ? sociedadSeleccionada.nombre : '';
-
-    // Agregar el id del comercial al objeto nuevoProducto
-    if(nuevoProducto.comercial_id != this.comercialActual.id){
-      nuevoProducto.comercial_creador_id = this.comercialActual.id;
-    }
-    nuevoProducto.comercial = this.comercialActual.nombre;
-
-    const tipo_de_pago = this.tiposPago.find((tipo: any) => tipo.id === nuevoProducto.tipo_de_pago_id);
-    nuevoProducto.tipo_de_pago = tipo_de_pago ? tipo_de_pago.nombre : '';
-
-    nuevoProducto.numero_anexos = this.anexos.length;
-    nuevoProducto.precio_final = this.precioFinal;
 
     console.log('Nuevo producto', nuevoProducto);
 
+    if(this.sociedad_id != this.sociedad_admin_id){
+      this.productForm.disable(); 
+    }
+    this.disablePrecios();
+    this.productForm.get('duracion')?.disable();
 
     // CREAR O EDITAR PRODUCTO
     // Si no tiene id se está creando un nuevo producto
@@ -767,8 +790,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       this.productsService.crearProducto(this.letras_identificacion, nuevoProducto).subscribe(
         data => {
           console.log(data);
-          this.disablePrecios();
-          this.productForm.get('duracion')?.disable();
+          
           if(this.anexos.length > 0){
             this.conectarAnexosConProductos(this.anexos, data.id); 
           } else {
@@ -802,9 +824,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
         }
       )
     }
-    if(this.sociedad_id != this.sociedad_admin_id){
-      this.productForm.disable();
-    }
+    
   }
 
   /************************************/
