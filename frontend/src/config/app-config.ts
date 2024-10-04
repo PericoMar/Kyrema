@@ -1,5 +1,5 @@
 export const AppConfig = {
-    URL : https://proud-ocean-001393110.5.azurestaticapps.net,
+    URL : 'https://proud-ocean-001393110.5.azurestaticapps.net',
     API_URL: 'https://canama-backend-afcegzdrh8brgvc8.spaincentral-01.azurewebsites.net/api',
     STORAGE_URL: 'https://canama-backend-afcegzdrh8brgvc8.spaincentral-01.azurewebsites.net/storage/',
     // URL : 'http://localhost:4200',
