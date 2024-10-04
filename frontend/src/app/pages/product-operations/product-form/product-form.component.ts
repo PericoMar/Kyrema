@@ -751,7 +751,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       nuevoProducto.fecha_de_emisión = formatFecha(fecha_emision);
       nuevoProducto.fecha_de_fin = formatFecha(this.fecha_fin);
 
-      if(this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0){
+      if(this.tipo_producto.subproductos && this.tipo_producto.subproductos.length > 0 && this.selectedSubproducto){
         console.log('Subproducto seleccionado', this.selectedSubproducto);
         nuevoProducto.subproducto = this.selectedSubproducto.id;
         nuevoProducto.subproducto_codigo = this.selectedSubproducto.nombre;

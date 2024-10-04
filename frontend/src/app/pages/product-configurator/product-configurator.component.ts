@@ -201,7 +201,7 @@ export class ProductConfiguratorComponent {
                 } 
               });
             } else {
-              if(campo.grupo === 'datos_generales' || campo.grupo === 'datos_precio') {
+              if(campo.grupo === 'datos_generales' || campo.grupo === 'datos_precio' || campo.grupo === 'datos_fecha') {
                 this.camposGenerales.push(campo);
               } else if(campo.grupo === 'datos_asegurado') {
                 this.camposAsegurado.push(campo);
@@ -451,7 +451,7 @@ export class ProductConfiguratorComponent {
           if (campo.opciones.length > 0) {
             camposConOpciones.push(campo);
             campo.opciones.forEach((opcion) => {
-              // Comprobar el formato del precio y si tiene com cambiar por punto
+              // Comprobar el formato del precio y si tiene coma cambiar por punto
               if(opcion.precio !== '') {
                 opcion.precio = opcion.precio.replace(',', '.');
               }
