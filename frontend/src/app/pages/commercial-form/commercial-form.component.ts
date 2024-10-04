@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { SnackBarService } from '../../services/snackBar/snack-bar.service';
 import { ButtonSpinnerComponent } from '../../components/button-spinner/button-spinner.component';
 import { AppConfig } from '../../../config/app-config';
+import { CustomValidators } from '../../validators/custom-validators';
 
 @Component({
   selector: 'app-commercial-form',
@@ -24,6 +25,7 @@ import { AppConfig } from '../../../config/app-config';
 export class CommercialFormComponent {
   comercialForm!: FormGroup;
 
+  existingUsernames: string[] = [];
   comercial_id!: string;
   comercial! : Commercial;
   sociedad!: any;
@@ -77,17 +79,27 @@ export class CommercialFormComponent {
   }
 
   ngOnInit(): void {
-    this.initializeForm();
+    this.comercialService.getAllUsers().subscribe({
+      next: (response : any) => {
+        this.existingUsernames = response.map((user: any) => user.usuario);
+        this.initializeForm();
+      },
+      error: (error: any) => {
+        console.error(error);
+      }
+      }
+    )
+    
   }
 
   private initializeForm() {
     this.comercialForm = this.formBuilder.group({
       nombre: ['', Validators.required],
       id_sociedad: [this.sociedad.id],
-      usuario: ['', Validators.required],
+      usuario: ['', [Validators.required, CustomValidators.userNameNotTaken(this.existingUsernames)]],
       email: ['', Validators.required],
       responsable: ['0', Validators.required],
-      contraseña: ['', Validators.required],
+      contraseña: ['', [Validators.required, CustomValidators.passwordValidator]],
       dni: [''],
       sexo: [''],
       fecha_nacimiento: ['', Validators.required],
@@ -112,6 +124,8 @@ export class CommercialFormComponent {
       this.comercialForm.get('fecha_alta')?.setValue(new Date().toISOString().split('T')[0]);
     }
   }
+
+   
 
   transformNullToEmptyString(obj: any): any {
     const result: any = {};
@@ -142,32 +156,40 @@ export class CommercialFormComponent {
     this.cargandoComercial = true;
     const comercial = this.comercialForm.value;
     console.log(comercial);
-    if(this.comercialForm.valid){
 
-      if(this.comercial_id == ''){
-        
+    const passwordControl = this.comercialForm.get('contraseña');
+
+    // Verificamos si hay errores en la contraseña
+    if (passwordControl?.invalid) {
+      this.snackBarService.openSnackBar(
+        'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una minúscula, un número y un carácter especial.',
+        'Cerrar'
+      );
+      this.cargandoComercial = false;
+      return;
+    }
+
+    // Verificamos si el formulario es válido en general
+    if (this.comercialForm.valid) {
+      if (this.comercial_id == '') {
         this.comercialService.createCommercial(comercial).subscribe(response => {
-          this.snackBarService.openSnackBar('Comercial '+ response.nombre + ' creado correctamente.', 'Cerrar');
+          this.snackBarService.openSnackBar('Comercial ' + response.nombre + ' creado correctamente.', 'Cerrar');
           this.formularioMandado = false;
           this.cargandoComercial = false;
         });
-
       } else {
-
         this.comercialService.updateCommercial(this.comercial_id, comercial).subscribe(response => {
-          this.snackBarService.openSnackBar('Comercial '+ response.nombre + ' actualizado correctamente.', 'Cerrar');
+          this.snackBarService.openSnackBar('Comercial ' + response.nombre + ' actualizado correctamente.', 'Cerrar');
           this.formularioMandado = false;
           this.cargandoComercial = false;
         });
-
       }
-
     } else {
       this.snackBarService.openSnackBar('Por favor, rellena los campos obligatorios', 'Cerrar');
       this.cargandoComercial = false;
     }
-    
   }
+
 
   emptyRequiredInput(){
     // Check if all required inputs are filled

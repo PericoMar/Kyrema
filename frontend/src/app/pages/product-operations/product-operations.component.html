@@ -2,7 +2,29 @@
 <main class="product-page">
     <section class="listado section-block">
         <header class="space-between-header">
-            <h1>Listado de {{ productName }}</h1>
+            <div class="center">
+                <h1>Listado de {{ productName }}</h1>
+                @if(!tipo_producto?.subproductos){
+                    <button class="copy-url-button" (click)="copyUrl(productUrl)">
+                        Copiar URL clientes
+                        <mat-icon class="icon">content_copy</mat-icon>
+                      </button>
+                } @else {
+                    <!-- Si el producto tiene subproductos -->
+                  <button mat-icon-button [matMenuTriggerFor]="menu" class="copy-url-button">
+                    Copiar URL productos clientes
+                    <mat-icon>content_copy</mat-icon>
+                  </button>
+                  
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item *ngFor="let subproducto of tipo_producto.subproductos" class="copy-url-opt" (click)="copyUrl(subproducto.letras_identificacion)">
+                      Copiar URL {{ subproducto.nombre }} clientes
+                      <mat-icon>content_copy</mat-icon>
+                    </button>
+                  </mat-menu>
+                }
+                
+            </div>
             <div class="space-between header-buttons">
                 <a [routerLink]="['/historial', productUrl]" routerLinkActive="active" class="button-header see-history">Ver historial</a>
                 <button class="button-header clear-filters" (click)="clearFilters()">Limpiar filtros</button>

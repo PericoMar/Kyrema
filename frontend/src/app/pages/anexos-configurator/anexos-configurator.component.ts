@@ -16,6 +16,7 @@ import { AppConfig } from '../../../config/app-config';
 import { ActivatedRoute } from '@angular/router';
 import { ProductsService } from '../../services/products.service';
 import { SnackBarService } from '../../services/snackBar/snack-bar.service';
+import { Tarifa, TarifaAnexo } from '../../interfaces/tarifa';
 
 interface CampoAnexo {
   id: string;
@@ -56,18 +57,30 @@ export class AnexosConfiguratorComponent {
   tarifas : any[] = [
     {
       id: 1,
-      nombre : "Prima del seguro",
-      codigo: "prima_del_seguro",
+      nombre : "Precio base",
+      codigo: "precio_base",
       valor: ""
     },
     {
       id: 2,
-      nombre : "Cuota de asociación",
-      codigo: "cuota_de_asociacion",
+      nombre : "Extra 1",
+      codigo: "extra_1",
       valor: ""
     },
     {
       id: 3,
+      nombre : "Extra 2",
+      codigo: "extra_2",
+      valor: ""
+    },
+    {
+      id: 4,
+      nombre : "Extra 3",
+      codigo: "extra_3",
+      valor: ""
+    },
+    {
+      id: 5,
       nombre : "Precio Total",
       codigo: "precio_total",
       valor: ""
@@ -225,13 +238,15 @@ export class AnexosConfiguratorComponent {
           console.log(response);
         });
 
-        const tarifaAnexo = {
+        const tarifaAnexo: TarifaAnexo = {
           id_tipo_anexo: response.id,
-          prima_seguro: this.tarifas[0].valor,
-          cuota_asociacion: this.tarifas[1].valor,
-          precio_total: this.tarifas[2].valor,
-          id_sociedad: AppConfig.SOCIEDAD_ADMIN_ID
-        }
+          id_sociedad: AppConfig.SOCIEDAD_ADMIN_ID,
+          precio_base: this.tarifas[0].valor.replace(',', '.'),
+          extra_1:  this.tarifas[1].valor.replace(',', '.'),
+          extra_2: this.tarifas[2].valor.replace(',', '.'),
+          extra_3: this.tarifas[3].valor.replace(',', '.'),
+          precio_total:  this.tarifas[4].valor.replace(',', '.')
+        };
 
         this.ratesService.setTarifaPorSociedadAndTipoAnexo(tarifaAnexo).subscribe((response: any) => {
           console.log(response);
@@ -248,9 +263,11 @@ export class AnexosConfiguratorComponent {
 
 
   calculatePrecioTotal() {
-    const prima = parseFloat(this.tarifas[0].valor.replace(',', '.')) ? parseFloat(this.tarifas[0].valor.replace(',', '.')) : 0;
-    const cuota = parseFloat(this.tarifas[1].valor.replace(',', '.')) ? parseFloat(this.tarifas[1].valor.replace(',', '.')) : 0;
-    this.tarifas[2].valor = (prima + cuota).toString();
+    const precio_base = parseFloat(this.tarifas[0].valor.replace(',', '.')) ? parseFloat(this.tarifas[0].valor.replace(',', '.')) : 0;
+    const extra_1 = parseFloat(this.tarifas[1].valor.replace(',', '.')) ? parseFloat(this.tarifas[1].valor.replace(',', '.')) : 0;
+    const extra_2 = parseFloat(this.tarifas[2].valor.replace(',', '.')) ? parseFloat(this.tarifas[2].valor.replace(',', '.')) : 0;
+    const extra_3 = parseFloat(this.tarifas[3].valor.replace(',', '.')) ? parseFloat(this.tarifas[3].valor.replace(',', '.')) : 0;
+    this.tarifas[4].valor = (precio_base + extra_1 + extra_2 + extra_3).toString();
   }
   
   // VERIFICAR FORMULARIO:

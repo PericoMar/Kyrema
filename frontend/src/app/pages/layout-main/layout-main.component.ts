@@ -35,6 +35,7 @@ export class LayoutMainComponent {
   logoUrl! : string | null;
   navigation!: MenuItem[];
   pageLoading: boolean = true;
+  logoSocietySecondLevel!: string | null;
 
   constructor(
     private userService : UserService,
@@ -60,6 +61,15 @@ export class LayoutMainComponent {
         data => {
           this.society = data;
           this.societyService.setSociedadLocalStorage(this.society);
+
+          this.societyService.getSocietySecondLevel(this.society.id!).subscribe(
+            (sociedad : Society) => {
+              this.logoSocietySecondLevel = sociedad?.logo ? sociedad.logo : null;
+            },
+            (error : any) => {
+              console.error('Error fetching second level society:', error);
+            }
+          );
           
           this.societyService.getSociedadAndHijas(this.society.id).subscribe(
             (sociedad : Society[]) => {
@@ -81,8 +91,4 @@ export class LayoutMainComponent {
     
   }
 
-  recibirSociedad(sociedad: any) {
-    console.log('Sociedad recibida del hijo:', sociedad);
-    this.society = sociedad;
-  }
 }

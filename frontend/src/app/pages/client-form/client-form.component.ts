@@ -36,6 +36,9 @@ export class ClientFormComponent implements OnInit{
   formLoaded!: boolean;
 
   @Output() sociedadEmitida = new EventEmitter<any>();
+  subproducto_id: any;
+  duracion_padre: any;
+  tipo_duracion_padre: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -71,7 +74,25 @@ export class ClientFormComponent implements OnInit{
         next: (family : any) => {
           try {
             this.tipo_producto = family;
-            this.productName = this.tipo_producto.nombre;
+            if(this.tipo_producto.padre_id != null){
+              this.familyService.getTipoProductoPorId(this.tipo_producto.padre_id).subscribe({
+                next: (parent : any) => {
+                  this.subproducto_id = this.tipo_producto.id;
+                  this.productName = parent.nombre + " - " + this.tipo_producto.nombre;
+                  if(this.tipo_producto.tipo_duracion == 'heredada'){
+                    console.log("Duracion heredada", parent.duracion);
+                    this.duracion_padre = parent.duracion;
+                    this.tipo_duracion_padre = parent.tipo_duracion;
+                  } 
+                  this.tipo_producto = parent;
+                },
+                error: (error : any) => {
+                  console.log(error);
+                }
+              });
+            } else {
+              this.productName = this.tipo_producto.nombre;
+            }
           } catch (error) {
             console.error(error);
             // Recargar la pagina
@@ -90,14 +111,15 @@ export class ClientFormComponent implements OnInit{
     // Aquí puedes implementar la lógica para cargar los datos del producto
     this.familyService.getTipoProductoPorLetras(productUrl).subscribe(
       (data : any) => {
-        this.tipo_producto = data;
-        this.productName = this.tipo_producto.nombre;
-        if(data.subproductos && data.subproductos.length > 0){
-          this.getAllCamposSubproductos(data.subproductos);
-        }
+          try{
+            this.tipo_producto = data;
+          } catch (error) {
+            console.error(error);
+            // Recargar la pagina
+            this.snackBarService.openSnackBar("Error al cargar el tipo producto, prueba a recargar la página");
+          }
         console.log("Data",this.tipo_producto);
         
-
         //Recoger los campos del formulario
         this.camposService.getCamposPorTipoProducto(this.tipo_producto.id).subscribe(
           (camposFormulario:any) => {
@@ -132,6 +154,7 @@ export class ClientFormComponent implements OnInit{
               resultObject[key] = value;
             });
             this.camposFormulario = camposFormulario;
+            console.log("Campos formulario", this.camposFormulario);
             this.productSelected = resultObject;
             console.log("Producto generado cuando cambiamos de tipo de producto", this.productSelected);
             this.camposLoaded = true;
@@ -152,7 +175,7 @@ export class ClientFormComponent implements OnInit{
   getAllCamposSubproductos(subproductos : any){
     subproductos.forEach((subproducto : any) => {
       subproducto.campos.forEach((campo : any) => {
-        if(campo.grupo === "datos_producto"){
+        if(campo.grupo === "datos_subproducto"){
           this.camposSubproductos.push(campo);
         }
       });

@@ -9,6 +9,7 @@ import { ActivatedRoute,  Router } from '@angular/router';
 import { Society } from '../../interfaces/society';
 import { AppConfig } from '../../../config/app-config';
 import { CommonModule } from '@angular/common';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
 
 interface User {
   id: string,
@@ -27,27 +28,32 @@ interface MenuItem {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NavBarComponent, MatIcon, LogoutDialogComponent, CommonModule],
+  imports: [NavBarComponent, MatIcon, LogoutDialogComponent, CommonModule, MatMenuModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit{
   @Input() user! : User;
   @Input() society! : Society;
+  @Input() logoSocietySecondLevel! : string;
   @Input() navigation! : MenuItem[] | null;
-  logoUrl : string | null = '';
+  profileLogoUrl : string | null = '';
   comercial_id!: string;
+
+  frontCliente: boolean = false;
 
   constructor(
     private userService : UserService,
     private dialog: MatDialog,
+    private router : Router,
   ){
-    
+    this.frontCliente = this.router.url.includes('contratar');
   }
 
   ngOnInit(): void {
-      this.logoUrl = this.society.logo ? AppConfig.STORAGE_URL + this.society.logo : '../../../assets/Logo_CANAMA__003.png';
-      // this.user = this.userService.getCurrentUser();
+    console.log('User:', this.society);
+    this.profileLogoUrl = this.society.logo ? AppConfig.STORAGE_URL + this.society.logo : "assets/avatar-1.jpg";
+    // this.user = this.userService.getCurrentUser();
   }
 
   logout(){

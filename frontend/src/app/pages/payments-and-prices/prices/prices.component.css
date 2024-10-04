@@ -39,15 +39,27 @@ button {
   margin-top: 20px;
 }
 
+.overflow-scroll{
+  padding: 10px 0px;
+  overflow-x: auto;
+  height: 100%;
+  width: 100%;
+  margin-bottom: 60px;
+}
+
+
 .nombre-header, .nombre-cell {
   width: 300px; /* Ajusta el valor según necesites */
 }
 
-
+::ng-deep .mat-mdc-form-field {
+  width: 80%;
+}
 .centered-table th, 
 .centered-table td {
   text-align: center;
   vertical-align: middle;
+  max-width: 200px;
 }
 
 .mat-form-field {

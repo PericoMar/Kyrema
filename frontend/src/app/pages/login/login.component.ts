@@ -4,13 +4,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NavService } from '../../services/nav.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatIconModule],
+  imports: [ReactiveFormsModule, CommonModule, MatIconModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -19,6 +19,7 @@ export class LoginComponent {
   hidePassword = true;
   errorMessage = "";
   loadingLogin = false;
+  currentRoute: string;
 
   constructor(
     private fb: FormBuilder,
@@ -30,6 +31,7 @@ export class LoginComponent {
       username: ['', [Validators.required]],
       password: ['', [Validators.required]]
     });
+    this.currentRoute = this.router.url;
   }
 
   togglePasswordVisibility() {

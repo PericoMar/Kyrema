@@ -56,4 +56,12 @@ export class AuthService {
   getLoggedStatus(){
     return this.isLoged;
   }
+
+  resetPwd(email : string){
+    return this.http.post<any>(`${this.loginUrl}/password/email`, { email });
+  }
+
+  changePwd(email : string, password : string, password_confirmation : string , token : string){
+    return this.http.post<any>(`${this.loginUrl}/password/reset`, { email, password, password_confirmation, token });
+  }
 }

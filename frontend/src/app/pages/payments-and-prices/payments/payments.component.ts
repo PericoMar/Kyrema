@@ -41,11 +41,11 @@ export class PaymentsComponent {
   ngOnInit() {
     forkJoin({
       paymentTypes: this.ratesService.getAllPaymentTypes(),
-      insurances: this.familyService.getTiposProductoPorSociedad(this.sociedad_id),
+      insurances: this.familyService.getTiposProductoPorSociedad(this.sociedad_id), 
       tipoPagoProductoSociedades: this.ratesService.getTipoPagoProductoSociedades(this.sociedad_id)
     }).subscribe(({ paymentTypes, insurances, tipoPagoProductoSociedades }) => {
       this.paymentTypes = paymentTypes; // Mantiene tanto el id como el nombre de cada tipo de pago
-      this.insurances = insurances;
+      this.insurances = insurances.filter((insurance : any) => insurance.padre_id == null && insurance.tipo_producto_asociado == null); // Filtra los seguros que no tienen id
       this.displayedColumns = ['insurance', ...this.paymentTypes.map(pt => pt.nombre)];
       this.initializeForm(tipoPagoProductoSociedades); // Pasa los datos adicionales a la inicialización del formulario
     });

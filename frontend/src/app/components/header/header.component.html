@@ -1,22 +1,25 @@
 
 <header [ngClass]="{'header-collapsed': !navigation}" class="main-header">
     <header class="top-header">
-        <img [src]="logoUrl" alt="Logo" class="logo">
+        <img [src]="logoSocietySecondLevel" alt="Canama" class="logo" [hidden]="!logoSocietySecondLevel">
+        
+        <img src="assets/Logo_CANAMA__003.png" alt="Canama" class="logo">
         <aside class="space-between welcome-aside">
-            <span>
-                @if(user && user.nombre){
-                    Bienvenido, {{ user.nombre }}. 
-                } @else {
-                    Bienvenido.
-                }
-                
+            <span class="user-name">
+                {{(user && user.nombre) ?  'Bienvenido, '+user.nombre :  'Bienvenido'  }}. 
             </span>
-            <button mat-icon-button class="logout-button" (click)="logout()">
-                <div class="center">
+            <button mat-icon-button [matMenuTriggerFor]="menu" class="profile-button" [disabled]="frontCliente">
+                <img [src]="profileLogoUrl" alt="Logo" class="user-image">
+            </button>
+          
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="logout()">
                     <mat-icon>logout</mat-icon>
-                </div>
-              </button>
+                    <span>Cerrar sesión</span>
+                </button>
+            </mat-menu>
         </aside>
+        
     </header>
     <app-nav-bar [navigation]="navigation" [hidden]="!navigation"></app-nav-bar>
 </header>

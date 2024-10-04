@@ -40,6 +40,30 @@ hr{
     min-width: 120px;
 }
 
+.error-message {
+    color: #ff0000; /* Texto rojo */
+    font-size: 12px; /* Tamaño de texto */
+    background-color: #ffe6e6; /* Fondo rojo suave */
+    padding: 10px; /* Espaciado interno */
+    border: 1px solid #ff0000; /* Borde rojo */
+    border-radius: 4px; /* Bordes redondeados */
+    margin-top: 5px; /* Espacio superior */
+  }
+  
+  .error-message p {
+    margin: 0; /* Elimina el margen del párrafo */
+  }
+  
+  .error-icon {
+    margin-right: 8px; /* Espaciado entre el ícono y el texto */
+    margin-top: 6px;
+  }
+
+  .error-icon mat-icon{
+    font-size: 16px;
+    width: 16px;
+    height : 16px;
+  }
 
 ::ng-deep .custom-snackbar {
     --mdc-snackbar-container-color: white;  

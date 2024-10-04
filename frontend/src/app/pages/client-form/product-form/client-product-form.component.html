@@ -95,6 +95,21 @@
                     <input [id]="campo.name" [placeholder]="campo.label" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field" [ngClass]="{'date' : campo.tipo_dato == 'date'}">
                 }
             }
+
+            @for(campo of camposFormularioPorGrupos['datos_subproducto']; track campo.name){
+                @if(campo.tipo_dato == 'select'){
+                    <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_subproducto', campo.name)" class="span-required">*</span></label>
+                    <select [id]="campo.name" [formControlName]="campo.name" class="input-field" (change)="changeOnSelect($event, campo)">
+                        <option value="">Seleccione una opcion...</option>
+                        @for(opcion of campo.opciones ; track opcion.id){
+                            <option [value]="opcion.nombre">{{ opcion.nombre }}</option>
+                        }
+                    </select>
+                } @else {
+                    <label [for]="campo.name" class="input-label">{{ campo.label }} <span *ngIf="isFieldRequired('datos_subproducto', campo.name)" class="span-required">*</span></label>
+                    <input [id]="campo.name" [placeholder]="campo.label" [formControlName]="campo.name" [type]="campo.tipo_dato" class="input-field" [ngClass]="{'date' : campo.tipo_dato == 'date'}">
+                }
+            }
         <hr class="divider">
            
     }
@@ -198,11 +213,11 @@
     }
 </form>
 
-    <form (ngSubmit)="sendPaymentRequest()">
+    <!-- <form (ngSubmit)="sendPaymentRequest()">
         <input type="text" name="order_id" placeholder="ID de pedido"  />
         <input type="text" name="amount" placeholder="Cantidad"  />
         <button type="submit">Pagar</button>
-    </form>
+    </form> -->
   
 
     <!-- <form (ngSubmit)="pay()" class="content-block">
