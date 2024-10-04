@@ -70,7 +70,7 @@ export class ProductsService {
         let errorMessage = 'Ocurrió un error al intentar descargar la plantilla. Vuelva a intentarlo más tarde.';
   
         // Opcional: puedes mostrar un mensaje al usuario aquí o en otro lugar
-        console.error(errorMessage); // Log del error
+        console.error(error); // Log del error
   
         // Retornar un observable con un error
         return throwError(() => new Error(errorMessage));
