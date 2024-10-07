@@ -1,0 +1,7 @@
+.historial-section{
+    padding: var(--section-padding);
+}
+
+.historial-table{
+    height: 500px;
+}

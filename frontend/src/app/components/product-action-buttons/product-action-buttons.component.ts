@@ -5,6 +5,8 @@ import { ProductsService } from '../../services/products.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
 import { SnackBarService } from '../../services/snackBar/snack-bar.service';
+import { SocietyService } from '../../services/society.service';
+import { AppConfig } from '../../../config/app-config';
 
 @Component({
   selector: 'app-product-action-buttons',
@@ -17,16 +19,21 @@ export class ProductActionButtonsComponent {
   public data: any;
   letrasIdentificacion: any;
 
+  currentSociety: any;
+  society_admin_id = AppConfig.SOCIEDAD_ADMIN_ID;
+
   constructor (
     private productsService: ProductsService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private snackBarService: SnackBarService
+    private snackBarService: SnackBarService,
+    private societyService: SocietyService,
   ) {
 
   }
 
   agInit(params: any): void {
+    this.currentSociety = this.societyService.getCurrentSociety();
     this.data = params.data;
     this.route.paramMap.subscribe(params => {
       this.letrasIdentificacion = params.get('product')!;

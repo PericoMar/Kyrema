@@ -3,7 +3,9 @@
     <div class="loader" [id]="'loader-' + data.id"></div>
     <mat-icon>download</mat-icon>
   </a>
-  <a (click)="openDeleteDialog(data)" routerLinkActive="active" class="delete-icon">
-    <mat-icon>delete</mat-icon>
-  </a>
+  @if(currentSociety.id == society_admin_id){
+    <a (click)="openDeleteDialog(data)" routerLinkActive="active" class="delete-icon">
+      <mat-icon>delete</mat-icon>
+    </a>
+  }
 </div>

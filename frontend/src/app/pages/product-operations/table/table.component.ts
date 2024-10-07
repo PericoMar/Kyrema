@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
-import { ClientSideRowModelModule } from "ag-grid-community";
+import { ClientSideRowModelModule, RowClassRules } from "ag-grid-community";
 import {
   ColDef,
   ColGroupDef,
@@ -27,6 +27,9 @@ export class TableComponent implements OnChanges{
 
   @Input() rowData!: any[] | null;
   @Input() columnDefs!: ColDef[]; 
+  @Input() gridOptions!: GridOptions;
+  @Input() rowClassRules!: RowClassRules;
+
   public defaultColDef: ColDef = {
     filter: "agTextColumnFilter",
     floatingFilter: true,
@@ -124,7 +127,9 @@ export class TableComponent implements OnChanges{
   //   console.log('Page changed:', event.newPage);
   //   this.pageChanged.emit();  // Emitir el número de página
   // }
-
+  
+  constructor() {
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     // Verificar si el valor de 'loadingRows' ha cambiado
@@ -132,6 +137,25 @@ export class TableComponent implements OnChanges{
       console.log('loadingRows changed:', this.loadingRows);
       this.setLoadingRows(this.loadingRows);
     }
+
+    console.log('gridOptions changed:', this.gridOptions);
+    const today = new Date();
+
+    this.rowClassRules = {
+      // apply green to 2008
+      'rag-green-outer': (params) => { 
+        const fechaDeEmision = new Date(params.data.fecha_de_emisión);
+        return fechaDeEmision.getFullYear() === today.getFullYear() &&
+               fechaDeEmision.getMonth() === today.getMonth() &&
+               fechaDeEmision.getDate() === today.getDate(); 
+      },
+  
+      // apply amber 2004
+      'rag-amber-outer': (params) => { return new Date(params.data.fecha_de_fin).getTime() < today.getTime(); },
+  
+      // apply red to 2000
+      'rag-red-outer': (params) => { return params.data.year === 2000; }
+    };  
   }
 
   public onRowClicked(event: any) {
@@ -172,6 +196,7 @@ export class TableComponent implements OnChanges{
   onGridReady(params: any) {
     params.api.sizeColumnsToFit();
     this.gridApi = params.api;
+    console.log('gridOptions changed:', this.gridOptions);
   }
 
   clearAllFilters() {

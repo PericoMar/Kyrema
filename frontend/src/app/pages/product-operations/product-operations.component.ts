@@ -4,7 +4,7 @@ import { ProductFormComponent } from './product-form/product-form.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FamilyProductService } from '../../services/family-product.service';
 import { CamposService } from '../../services/campos.service';
-import { ColDef} from 'ag-grid-community'; 
+import { ColDef, GridOptions } from 'ag-grid-community'; 
 import { ProductsService } from '../../services/products.service';
 import { SocietyService } from '../../services/society.service';
 import { ActionButtonsComponent } from '../society-manager/society-table/action-buttons/action-buttons.component';
@@ -29,8 +29,11 @@ import { AppConfig } from '../../../config/app-config';
 export class ProductOperationsComponent {
   productName! : string;
   productUrl! : string;
+
   columnDefs! : ColDef[];
   rowData! : any[] | null;
+  gridOptions!: GridOptions;
+
   productSelected! : any;
   isProductSelected : boolean = false;
   tipo_producto! : any;
@@ -233,6 +236,17 @@ export class ProductOperationsComponent {
     this.productsService.getProductosByTipoAndComercialNoAnulados(this.tipo_producto.letras_identificacion, this.comercial.id).subscribe(
       data => {
         this.rowData = data;
+
+        const today = new Date().toISOString().split('T')[0]; // Fecha actual en formato ISO 8601
+
+        this.gridOptions = {
+          getRowClass: params => {
+            // return params.data.fecha_de_fin < today ? 'seguro-no-vigente' : ''; // Asigna una clase CSS si el producto está anulado
+            return params.data.anulado == '0' ? 'seguro-no-vigente' : 'seguro-no-vigente'; // Asigna una clase CSS si el producto está anulado
+          }
+        };
+
+
         this.loadingRows = false;
       },
       error => {

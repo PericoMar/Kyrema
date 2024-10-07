@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { AppConfig } from '../../config/app-config';
 
 @Injectable({
@@ -19,8 +19,12 @@ export class ProductsService {
 
   getProductosByTipoAndSociedadesNoAnulados(letras_identificacion: string, sociedades: any[]): Observable<any> {
     return this.getProductosByTipoAndSociedades(letras_identificacion, sociedades).pipe(
-      map((productos: any[]) => productos.filter(producto => producto.anulado == 0)));
-  }
+      tap(() => console.time('Filtrado de productos')), // Iniciar temporizador
+      map((productos: any[]) => productos.filter(producto => producto.anulado == 0)),
+      tap(() => console.timeEnd('Filtrado de productos')) // Finalizar temporizador y mostrar tiempo en consola
+    );
+}
+
 
   getProductosByTipoAndSociedadesAnulados(letras_identificacion: string, sociedades: any[]): Observable<any> {
     return this.getProductosByTipoAndSociedades(letras_identificacion, sociedades).pipe(
@@ -107,4 +111,13 @@ export class ProductsService {
     return this.http.get<any>(`${this.apiUrl}/duraciones/${nombreTabla}`);
   }
 
+
+  getHistorialProductosByTipoAndSociedades(letras_identificacion: string, sociedades: any[]): Observable<any> {
+    const params = new HttpParams().set('sociedades', sociedades.join(','));
+    return this.http.get<any>(`${this.apiUrl}/historial/${letras_identificacion}`, { params });
+  }
+
+  getHistorialProductosByTipoAndComercial(letras_identificacion: string, comercial_id: string | undefined): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/historial/${letras_identificacion}/comercial/${comercial_id}`);
+  }
 }

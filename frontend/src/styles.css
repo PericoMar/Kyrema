@@ -186,3 +186,14 @@ hr{
 }
 
 
+.rag-green-outer {
+    background-color: #c7fec7 !important; /* Verde claro */
+  }
+  
+  .rag-amber-outer {
+    background-color: #f8e1b1 !important; /* Ámbar */
+  }
+  
+  .rag-red-outer {
+    background-color: #ffaaaa !important; /* Rojo claro */
+  }

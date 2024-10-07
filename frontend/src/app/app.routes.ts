@@ -21,6 +21,7 @@ import { SubproductManagerComponent } from './pages/subproduct-manager/subproduc
 import { ClientFormComponent } from './pages/client-form/client-form.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { ChangePasswordComponent } from './pages/change-password/change-password.component';
+import { HistorialComponent } from './pages/historial/historial.component';
 
 export const routes: Routes = [
     {
@@ -51,6 +52,7 @@ export const routes: Routes = [
         // { path: 'configurador-productos/:id' , component: ProductConfiguratorComponent, canActivate: [authGuard]},
         { path: 'operaciones/:product', component: ProductOperationsComponent, }, 
         { path: 'anulados/:product', component: AnulacionesPageComponent, },
+        { path: 'historial/:product', component: HistorialComponent, },
         { path: 'informes', component: ReportsComponent, }, 
         { path: 'sociedades' , component: SocietyManagerComponent,},
         { path: 'tarifas' , component: TarifasComponent,  },
