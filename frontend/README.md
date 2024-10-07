@@ -7,10 +7,10 @@
 [] Favicon
 [x] Contraseña robusta
 [x] Recuperar contraseña
-[] Generación de certificados Productos
-    - [] Casilla logo sociedad
-[] Generación de certificados Productos con subproductos
-    - [] Tener todos los campos para tener la posición que se le quiere dar
+[x] Generación de certificados Productos
+    - [x] Casilla logo sociedad
+[x] Generación de certificados Productos con subproductos
+    - [x] Tener todos los campos para tener la posición que se le quiere dar
 [x] Generación de certificados Anexos
     - [x] Tener todos los campos para tener la posición que se le quiere dar
     - [x] Verficar que funcionan las casillas de suma
@@ -18,11 +18,15 @@
 
 [] Selectores
     - [] Cambiar las tarifas y como se añaden
-[] Ver historial
-[] Ver los seguros con anexos en regla/activos
+[x] Ver historial
+[x] Ver los seguros con anexos en regla/activos
 [] Anexos anulados/pasados con estilo diferente
 
 [] Gestion variables de entorno
+
+[] Propagar cambios en los permisos y los tipos de pago
+
+[] 404
 
 v2.0:
 [] Añadir compañias y polizas

@@ -795,6 +795,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
             this.conectarAnexosConProductos(this.anexos, data.id); 
           } else {
             this.snackBarService.openSnackBar('Producto creado con exito');
+            this.eliminateProductSelected();
             this.loadingAction = false;
           }
           this.productNotificationService.notifyChangesOnProducts();
@@ -814,6 +815,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
           this.productForm.get('duracion')?.disable();
           this.conectarAnexosConProductos(this.anexos, data.id, false);
           this.productNotificationService.notifyChangesOnProducts();
+          this.eliminateProductSelected();
           this.loadingAction = false; 
         },
         error => {
@@ -860,6 +862,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
       next: (data: any) => {
         console.log(data);
         creando ? this.snackBarService.openSnackBar('Producto creado con exito') : this.snackBarService.openSnackBar('Producto editado con exito');
+        this.eliminateProductSelected();
         this.loadingAction = false;
       },
       error: (error: any) => {
