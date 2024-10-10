@@ -26,14 +26,14 @@
           }
         </small>
     </div>
+    <div class="a-link-container">
+      <a class=a-link [routerLink]="[currentRoute, 'reset-password']" href="">¿Has olvidado tu contraseña?</a>
+    </div>
     <small class="text-danger">
       @if(errorMessage){
         {{errorMessage}}
       }
     </small>
-    <div class="a-link-container">
-      <a class=a-link [routerLink]="[currentRoute, 'reset-password']" href="">¿Has olvidado tu contraseña?</a>
-    </div>
     <button type="submit" class="btn btn-primary">
       @if(loadingLogin){
           <div class="spinner"></div>

@@ -22,6 +22,8 @@ import { ClientFormComponent } from './pages/client-form/client-form.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 import { HistorialComponent } from './pages/historial/historial.component';
+import { CompaniesComponent } from './pages/companies/companies.component';
+import { CompaniesFormComponent } from './pages/companies-form/companies-form.component';
 
 export const routes: Routes = [
     {
@@ -57,6 +59,9 @@ export const routes: Routes = [
         { path: 'sociedades' , component: SocietyManagerComponent,},
         { path: 'tarifas' , component: TarifasComponent,  },
         { path: 'comercial' , component: CommercialFormComponent },
+        { path: 'companias', component: CompaniesComponent },
+        { path: 'compania', component: CompaniesFormComponent },
+        { path: 'compania/:id', component: CompaniesFormComponent },
         { path: 'anexos/:tipo_producto_asociado', component: AnexosManagerComponent},
         { path: 'configurador-anexos/:tipo_producto_asociado', component: ProductConfiguratorComponent},
         { path: 'configurador-anexos/:tipo_producto_asociado/:id', component: ProductConfiguratorComponent},

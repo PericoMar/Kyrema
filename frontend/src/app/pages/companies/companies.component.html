@@ -1,0 +1,27 @@
+
+  <section class="companies-manager">
+    <header class="space-between-header">
+        <h1>Gestión de companies</h1>
+            <a routerLink="/sociedad" routerLinkActive="active" class="button-crear">Crear nueva sociedad</a>
+    </header>
+    <main class="companies-list">
+        <div class="table-container content-block" style="width: 100%; height: 100%;">
+            <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
+            <ag-grid-angular
+              style="width: 100%; height: 100%;"
+              [rowData]="rowData"
+              [columnDefs]="columnDefs"
+              [defaultColDef]="defaultColDef"
+              [rowSelection]="rowSelection"
+              [suppressRowClickSelection]="true"
+              [pagination]="true"
+              [paginationPageSize]="paginationPageSize"
+              [paginationPageSizeSelector]="paginationPageSizeSelector"
+              [localeText]="localeText"
+              [class]="themeClass"
+              (cellDoubleClicked)="onCellDoubleClicked($event)"
+              (cellKeyDown)="onCellKeyDown($event)"
+            ></ag-grid-angular>
+          </div>
+    </main>
+</section>
