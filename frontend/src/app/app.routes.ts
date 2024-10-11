@@ -16,7 +16,6 @@ import { PermissionsBySocietyComponent } from './pages/permissions-by-society/pe
 import { CommercialFormComponent } from './pages/commercial-form/commercial-form.component';
 import { AnulacionesPageComponent } from './pages/anulaciones-page/anulaciones-page.component';
 import { AnexosManagerComponent } from './pages/anexos-manager/anexos-manager.component';
-import { AnexosConfiguratorComponent } from './pages/anexos-configurator/anexos-configurator.component';
 import { SubproductManagerComponent } from './pages/subproduct-manager/subproduct-manager.component';
 import { ClientFormComponent } from './pages/client-form/client-form.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
@@ -24,6 +23,8 @@ import { ChangePasswordComponent } from './pages/change-password/change-password
 import { HistorialComponent } from './pages/historial/historial.component';
 import { CompaniesComponent } from './pages/companies/companies.component';
 import { CompaniesFormComponent } from './pages/companies-form/companies-form.component';
+import { PolizasComponent } from './pages/polizas/polizas.component';
+import { PolizasFormComponent } from './pages/polizas-form/polizas-form.component';
 
 export const routes: Routes = [
     {
@@ -62,6 +63,9 @@ export const routes: Routes = [
         { path: 'companias', component: CompaniesComponent },
         { path: 'compania', component: CompaniesFormComponent },
         { path: 'compania/:id', component: CompaniesFormComponent },
+        { path: 'compania/:id/polizas', component: PolizasComponent },
+        { path: 'compania/:id/poliza', component: PolizasFormComponent },
+        { path: 'compania/:id/poliza/:id_poliza', component: PolizasFormComponent },
         { path: 'anexos/:tipo_producto_asociado', component: AnexosManagerComponent},
         { path: 'configurador-anexos/:tipo_producto_asociado', component: ProductConfiguratorComponent},
         { path: 'configurador-anexos/:tipo_producto_asociado/:id', component: ProductConfiguratorComponent},

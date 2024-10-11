@@ -13,6 +13,18 @@ export class PolizasService {
   constructor(private http : HttpClient) { }
 
   getPolizasByCompany(companyId: number){
-    return this.http.get(`${this.apiUrl}/companies/${companyId}/polizas`);
+    return this.http.get(`${this.apiUrl}/company/${companyId}/polizas`);
+  }
+
+  getPolizaById(id: number){
+    return this.http.get(`${this.apiUrl}/poliza/${id}`);
+  }
+
+  createPoliza(data: any){
+    return this.http.post(`${this.apiUrl}/poliza`, data);
+  }
+
+  updatePoliza(id: number, data: any){
+    return this.http.put(`${this.apiUrl}/poliza/${id}`, data);
   }
 }

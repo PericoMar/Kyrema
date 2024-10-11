@@ -1,1 +1,196 @@
-<p>companies-form works!</p>
+<section class="company-form-section">
+    <header>
+        <h1>Crear compañía</h1>
+    </header>
+    <main class="content-block">
+        <form [formGroup]="companyForm" (ngSubmit)="onSubmit()">
+            <header class="space-between datos-header">
+                <h3 class="form-section-title">Información General</h3>
+
+                <!-- Subida de Logo -->
+                <div class="input-file">
+                    <input type="file" class="file-input" accept=".png, .jpg, .jpeg, .svg" formControlName="logo"
+                           (change)="onFileSelected($event)" #fileUpload>
+                    <div class="file-upload">
+                        {{fileName || "No se ha subido ningún logo."}}
+                        <button type="button" mat-mini-fab color="primary" class="upload-btn"
+                                (click)="fileUpload.click()">
+                            <mat-icon>attach_file</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <hr>
+
+            <fieldset class="input-group">
+                
+                <!-- Nombre de la Compañía (obligatorio) -->
+                <div class="input-container nombre">
+                    <label for="nombre" class="input-label">Nombre de la Compañía <span class="span-required">*</span></label>
+                    <input id="nombre" formControlName="nombre" class="input-field" placeholder="Ej., XYZ Corporation"
+                           [ngClass]="{'input-error': companyForm.get('nombre')?.invalid && formSubmitted}">
+                </div>
+
+                <!-- CIF (opcional) -->
+                <div class="input-container cif">
+                    <label for="cif" class="input-label">CIF <span class="span-required">*</span></label>
+                    <input id="cif" formControlName="CIF" class="input-field" placeholder="Ej., A12345678">
+                </div>
+
+                <!-- IBAN (opcional) -->
+                <div class="input-container iban">
+                    <label for="iban" class="input-label">IBAN <span class="span-required">*</span></label>
+                    <input id="iban" formControlName="IBAN" class="input-field" placeholder="Ej., ES1234567890123456789012">
+                </div>
+                
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Contactos</h3>
+            
+            <fieldset class="input-group">
+                
+                <!-- Nombre del Contacto 1 (opcional) -->
+                <div class="input-container contact-name-1">
+                    <label for="nombre_contacto_1" class="input-label">Nombre del Contacto 1</label>
+                    <input id="nombre_contacto_1" formControlName="nombre_contacto_1" class="input-field" placeholder="Ej., Juan Pérez">
+                </div>
+
+                <!-- Cargo 1 (opcional) -->
+                <div class="input-container contact-position-1">
+                    <label for="cargo_contacto_1" class="input-label">Cargo 1</label>
+                    <input id="cargo_contacto_1" formControlName="cargo_contacto_1" class="input-field" placeholder="Ej., Gerente">
+                </div>
+
+                <!-- Correo 1 (opcional) -->
+                <div class="input-container contact-email-1">
+                    <label for="email_contacto_1" class="input-label">Correo 1</label>
+                    <input id="email_contacto_1" formControlName="email_contacto_1" type="email" class="input-field" placeholder="Ej., juan@ejemplo.com">
+                </div>
+
+                <!-- Teléfono 1 (opcional) -->
+                <div class="input-container contact-phone-1">
+                    <label for="telefono_contacto_1" class="input-label">Teléfono 1</label>
+                    <input id="telefono_contacto_1" formControlName="telefono_contacto_1" class="input-field" placeholder="Ej., 912345678">
+                </div>
+
+            </fieldset>
+
+            <fieldset class="input-group">
+                <!-- Contacto 2 -->
+                <div class="input-container contact-2">
+                    <label for="nombre_contacto_2" class="input-label">Nombre del Contacto 2</label>
+                    <input id="nombre_contacto_2" formControlName="nombre_contacto_2" class="input-field" placeholder="Ej., María Gómez">
+                </div>
+
+                <div class="input-container contact-position-2">
+                    <label for="cargo_contacto_2" class="input-label">Cargo 2</label>
+                    <input id="cargo_contacto_2" formControlName="cargo_contacto_2" class="input-field" placeholder="Ej., Asistente">
+                </div>
+
+                <div class="input-container contact-email-2">
+                    <label for="email_contacto_2" class="input-label">Correo 2</label>
+                    <input id="email_contacto_2" formControlName="email_contacto_2" type="email" class="input-field" placeholder="Ej., maria@ejemplo.com">
+                </div>
+
+                <div class="input-container contact-phone-2">
+                    <label for="telefono_contacto_2" class="input-label">Teléfono 2</label>
+                    <input id="telefono_contacto_2" formControlName="telefono_contacto_2" class="input-field" placeholder="Ej., 912345679">
+                </div>
+            </fieldset>
+
+            <fieldset class="input-group">
+                <!-- Contacto 3 -->
+                <div class="input-container contact-3">
+                    <label for="nombre_contacto_3" class="input-label">Nombre del Contacto 3</label>
+                    <input id="nombre_contacto_3" formControlName="nombre_contacto_3" class="input-field" placeholder="Ej., Luis Sánchez">
+                </div>
+            
+                <div class="input-container contact-position-3">
+                    <label for="cargo_contacto_3" class="input-label">Cargo 3</label>
+                    <input id="cargo_contacto_3" formControlName="cargo_contacto_3" class="input-field" placeholder="Ej., Coordinador">
+                </div>
+            
+                <div class="input-container contact-email-3">
+                    <label for="email_contacto_3" class="input-label">Correo 3</label>
+                    <input id="email_contacto_3" formControlName="email_contacto_3" type="email" class="input-field" placeholder="Ej., luis@ejemplo.com">
+                </div>
+            
+                <div class="input-container contact-phone-3">
+                    <label for="telefono_contacto_3" class="input-label">Teléfono 3</label>
+                    <input id="telefono_contacto_3" formControlName="telefono_contacto_3" class="input-field" placeholder="Ej., 912345680">
+                </div>
+            </fieldset>
+
+            <fieldset class="input-group">
+                <!-- Contacto 4 -->
+                <div class="input-container contact-4">
+                    <label for="nombre_contacto_4" class="input-label">Nombre del Contacto 4</label>
+                    <input id="nombre_contacto_4" formControlName="nombre_contacto_4" class="input-field" placeholder="Ej., Ana López">
+                </div>
+            
+                <div class="input-container contact-position-4">
+                    <label for="cargo_contacto_4" class="input-label">Cargo 4</label>
+                    <input id="cargo_contacto_4" formControlName="cargo_contacto_4" class="input-field" placeholder="Ej., Directora">
+                </div>
+            
+                <div class="input-container contact-email-4">
+                    <label for="email_contacto_4" class="input-label">Correo 4</label>
+                    <input id="email_contacto_4" formControlName="email_contacto_4" type="email" class="input-field" placeholder="Ej., ana@ejemplo.com">
+                </div>
+            
+                <div class="input-container contact-phone-4">
+                    <label for="telefono_contacto_4" class="input-label">Teléfono 4</label>
+                    <input id="telefono_contacto_4" formControlName="telefono_contacto_4" class="input-field" placeholder="Ej., 912345681">
+                </div>
+            </fieldset>
+            
+            <fieldset class="input-group">
+                <!-- Contacto 5 -->
+                <div class="input-container contact-5">
+                    <label for="nombre_contacto_5" class="input-label">Nombre del Contacto 5</label>
+                    <input id="nombre_contacto_5" formControlName="nombre_contacto_5" class="input-field" placeholder="Ej., Pedro Martínez">
+                </div>
+            
+                <div class="input-container contact-position-5">
+                    <label for="cargo_contacto_5" class="input-label">Cargo 5</label>
+                    <input id="cargo_contacto_5" formControlName="cargo_contacto_5" class="input-field" placeholder="Ej., Técnico">
+                </div>
+            
+                <div class="input-container contact-email-5">
+                    <label for="email_contacto_5" class="input-label">Correo 5</label>
+                    <input id="email_contacto_5" formControlName="email_contacto_5" type="email" class="input-field" placeholder="Ej., pedro@ejemplo.com">
+                </div>
+            
+                <div class="input-container contact-phone-5">
+                    <label for="telefono_contacto_5" class="input-label">Teléfono 5</label>
+                    <input id="telefono_contacto_5" formControlName="telefono_contacto_5" class="input-field" placeholder="Ej., 912345682">
+                </div>
+            </fieldset>            
+            
+            
+            <hr>
+            <h3 class="form-section-title">Datos adicionales</h3>
+            
+            <!-- Comentarios (opcional) -->
+            <div class="input-container comentarios">
+                <label for="comentarios" class="input-label">Observaciones</label>
+                <textarea id="comentarios" formControlName="comentarios" class="input-field" placeholder="Comentarios adicionales"></textarea>
+            </div>
+
+            <footer class="form-footer">
+                <button type="submit" class="submit-button">
+                    @if(loadingCompany){
+                        <app-button-spinner></app-button-spinner>
+                    } @else {
+                        @if(company_id){
+                            Guardar Cambios
+                        } @else { 
+                            Crear Compañía
+                        }
+                    }
+                </button>
+            </footer>
+        </form>
+    </main>
+</section>

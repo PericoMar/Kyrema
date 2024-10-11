@@ -1,1 +1,9 @@
-<p>companies-action-buttons works!</p>
+<div class="flex-start companies-actions">
+    <a (click)="editCompany(data)" class="edit-icon">
+      <mat-icon>edit</mat-icon>
+    </a>
+    <a (click)="openPolizasPage(data)" routerLinkActive="active" class="a-polizas">Polizas</a>
+    <a (click)="openDeleteDialog(data)" routerLinkActive="active" class="delete-icon">
+        <mat-icon>delete</mat-icon>
+    </a>
+  </div>

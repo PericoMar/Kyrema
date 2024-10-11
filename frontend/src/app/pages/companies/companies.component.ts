@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
-import { Society } from '../../interfaces/society';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ColDef } from 'ag-grid-community'; 
 import { CompaniesService } from '../../services/companies/companies.service';
 import { CompaniesActionButtonsComponent } from './companies-action-buttons/companies-action-buttons.component';
+import { ActionButtonsComponent } from '../society-manager/society-table/action-buttons/action-buttons.component';
+import { ComisionButtonsComponent } from '../society-manager/society-table/comision-buttons/comision-buttons.component';
+import { ProductActionButtonsComponent } from '../../components/product-action-buttons/product-action-buttons.component';
 
 @Component({
   selector: 'app-companies',
@@ -16,14 +18,14 @@ import { CompaniesActionButtonsComponent } from './companies-action-buttons/comp
   styleUrl: './companies.component.css'
 })
 export class CompaniesComponent {
-  public rowData: any[] = [];
+  public rowData!: any[];
   public columnDefs: ColDef[] = [
     { field: 'id', headerName: 'ID', flex: 1 },
     { field: 'nombre', headerName: 'Compañia', flex: 1 },
-    { field: 'cif', headerName: 'CIF', flex:1 },
+    { field: 'CIF', headerName: 'CIF', flex:1 },
     {
       headerName: 'Acciones',
-      cellRenderer: this.getCellRenderer('/companies'),
+      cellRenderer: this.getCellRenderer(this.route.url),
       cellRendererParams: (params: any) => ({
         data: params.data
       }),
@@ -124,6 +126,7 @@ export class CompaniesComponent {
 
   constructor (
     private companiesService: CompaniesService,
+    private route: Router
   ) {
 
   }
@@ -143,8 +146,17 @@ export class CompaniesComponent {
 
   }
 
-  getCellRenderer(route: string) {
-    return CompaniesActionButtonsComponent;
+  public getCellRenderer(route: string) {
+    if (route.includes('/sociedades')) {
+      return ActionButtonsComponent;
+    } else if (route.includes('/comisiones')) {
+      return ComisionButtonsComponent;
+    } else if(route.includes('/operaciones')){
+      return ProductActionButtonsComponent;
+    } else  if(route.includes('/companias')){
+      return CompaniesActionButtonsComponent;
+    }
+    return null; // o cualquier valor por defecto
   }
 
   // Función para manejar el evento cellDoubleClicked y copiar el valor de la celda al portapapeles

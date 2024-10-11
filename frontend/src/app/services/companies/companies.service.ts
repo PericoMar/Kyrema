@@ -15,4 +15,16 @@ export class CompaniesService {
   getCompanies(){
     return this.http.get(`${this.apiUrl}/companies`);
   }
+
+  getCompanyById(id: number){
+    return this.http.get(`${this.apiUrl}/companies/${id}`);
+  }
+
+  createCompany(data: any){
+    return this.http.post(`${this.apiUrl}/companies`, data);
+  }
+
+  updateCompany(id: number, data: any){
+    return this.http.put(`${this.apiUrl}/companies/${id}`, data);
+  }
 }

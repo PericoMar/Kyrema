@@ -1,1 +1,130 @@
-<p>polizas-form works!</p>
+<section class="policy-form-section">
+    <header>
+        <h1>Formulario pólizas</h1>
+    </header>
+    <main class="content-block">
+        <form [formGroup]="polizaForm" (ngSubmit)="onSubmit()">
+            <header class="space-between datos-header">
+                <h3 class="form-section-title">Datos generales</h3>
+                <div class="input-container compania">
+                    <label for="compania" class="input-label">Compañía <span class="span-required">*</span></label>
+                    <select formControlName="compania_id" id="compania" class="input-field">
+                        @for(compania of companias; track compania) {
+                            <option value="{{compania.id}}">{{compania.nombre}}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="input-container numero">
+                    <label for="numero" class="input-label">Número <span class="span-required">*</span></label>
+                    <input id="numero" formControlName="numero" class="input-field" placeholder="Ej: POL123456" 
+                           [ngClass]="{'input-error': polizaForm.get('numero')?.invalid && formularioMandado}">
+                </div>
+            </header>
+            <hr>
+
+            <fieldset class="input-group">
+                <!-- Ramo (opcional) -->
+                <div class="input-container ramo">
+                    <label for="ramo" class="input-label">Ramo</label>
+                    <input id="ramo" formControlName="ramo" class="input-field" placeholder="Ej: Automóvil">
+                </div>
+
+                <!-- Descripción (opcional) -->
+                <div class="input-container descripcion">
+                    <label for="descripcion" class="input-label">Descripción</label>
+                    <input id="descripcion" formControlName="descripcion" class="input-field" placeholder="Descripción de la póliza">
+                </div>
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Detalles financieros</h3>
+
+            <fieldset class="input-group">
+                <!-- Prima Neta (obligatorio) -->
+                <div class="input-container prima_neta">
+                    <label for="prima_neta" class="input-label">Prima Neta <span class="span-required">*</span></label>
+                    <input id="prima_neta" formControlName="prima_neta" type="number" class="input-field" placeholder="Ej: 1000" 
+                           [ngClass]="{'input-error': polizaForm.get('prima_neta')?.invalid && formularioMandado}">
+                </div>
+
+                <!-- Impuestos (opcional) -->
+                <div class="input-container impuestos">
+                    <label for="impuestos" class="input-label">Impuestos</label>
+                    <input id="impuestos" formControlName="impuestos" type="number" class="input-field" placeholder="Ej: 200">
+                </div>
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Fechas</h3>
+
+            <fieldset class="input-group">
+                <!-- Fecha de Inicio (obligatorio) -->
+                <div class="input-container fecha_inicio">
+                    <label for="fecha_inicio" class="input-label">Fecha de Inicio <span class="span-required">*</span></label>
+                    <input id="fecha_inicio" formControlName="fecha_inicio" type="date" class="input-field" 
+                           [ngClass]="{'input-error': polizaForm.get('fecha_inicio')?.invalid && formularioMandado}">
+                </div>
+
+                <!-- Fecha de Fin de Venta (opcional) -->
+                <div class="input-container fecha_fin_venta">
+                    <label for="fecha_fin_venta" class="input-label">Fecha de Fin de Venta</label>
+                    <input id="fecha_fin_venta" formControlName="fecha_fin_venta" type="date" class="input-field">
+                </div>
+
+                <!-- Fecha de Fin de Servicio (opcional) -->
+                <div class="input-container fecha_fin_servicio">
+                    <label for="fecha_fin_servicio" class="input-label">Fecha de Fin de Servicio</label>
+                    <input id="fecha_fin_servicio" formControlName="fecha_fin_servicio" type="date" class="input-field">
+                </div>
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Estado y documentos</h3>
+
+            <fieldset class="input-group">
+                <!-- Estado (opcional) -->
+                <div class="input-container estado">
+                    <label for="estado" class="input-label">Estado</label>
+                    <input id="estado" formControlName="estado" class="input-field" placeholder="Ej: Activa">
+                </div>
+
+                <!-- Documentos Adjuntos (opcional) -->
+                <div class="input-file">
+                    <input type="file" class="file-input" accept=".pdf, .doc, .docx" formControlName="doc_adjuntos_1"
+                           (change)="onFileSelected($event, 1)" #fileUpload1>
+
+                    <div class="file-upload">
+                        {{fileName1 || "No has añadido ningún documento aún."}}
+                        <button type="button" mat-mini-fab color="primary" class="upload-btn"
+                                (click)="fileUpload1.click()">
+                            <mat-icon>attach_file</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <!-- Repite los inputs de documentos adjuntos según sea necesario para doc_adjuntos_2 a doc_adjuntos_6 -->
+            </fieldset>
+
+            <hr>
+            <h3 class="form-section-title">Comentarios</h3>
+            <div class="input-container comentarios">
+                <label for="comentarios" class="input-label">Comentarios</label>
+                <textarea id="comentarios" formControlName="comentarios" class="input-field" placeholder="Comentarios adicionales"></textarea>
+            </div>
+
+            <footer class="form-footer">
+                <button type="submit" class="submit-button">
+                    @if(cargandoPoliza) {
+                        <app-button-spinner></app-button-spinner>
+                    } @else {
+                        @if(poliza_id) {
+                            Guardar cambios
+                        } @else {
+                            Crear póliza
+                        }
+                    }
+                </button>
+            </footer>
+        </form>
+    </main>
+</section>

@@ -16,6 +16,10 @@
     - [x] Verficar que funcionan las casillas de suma
 [] Pasarela de pago (A espera de los datos del banco)
 
+[] Acuerdo Kyrema.
+    - [] Añadir al formulario de creación checkbox.
+    - [] Asociarse y contratar.
+
 [] Selectores
     - [] Cambiar las tarifas y como se añaden
 [x] Ver historial
@@ -28,6 +32,9 @@
 
 [] 404
 
+[] Traslado BBDD
+    - [] Planteado para un miercoles para que haya menos volumen de seguros.
+
 v2.0:
 [] Añadir compañias y polizas
     - [] Tabla compañias.
@@ -37,4 +44,6 @@ v2.0:
     - [] Añadir a los formulario de creación de seguros.
 [] Comisiones por niveles (Esquema Excel)
 [] Gestión de la renovación
+
+1 de Diciembre. Empezar a usar la plataforma y conectar con Elevia.
 
