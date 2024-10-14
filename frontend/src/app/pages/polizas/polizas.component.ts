@@ -191,7 +191,7 @@ export class PolizasComponent {
     document.body.removeChild(dummyTextArea); // Elimina el elemento de texto del DOM
   }
 
-  openPolizaForm(company: any) {
-    this.router.navigate(['/compania/', company, '/poliza']);
+  openPolizaForm(id: any) {
+    this.router.navigate(['compania', id, 'poliza']);
   }
 }

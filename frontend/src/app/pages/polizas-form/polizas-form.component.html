@@ -89,20 +89,23 @@
                     <input id="estado" formControlName="estado" class="input-field" placeholder="Ej: Activa">
                 </div>
 
-                <!-- Documentos Adjuntos (opcional) -->
-                <div class="input-file">
-                    <input type="file" class="file-input" accept=".pdf, .doc, .docx" formControlName="doc_adjuntos_1"
-                           (change)="onFileSelected($event, 1)" #fileUpload1>
-
-                    <div class="file-upload">
-                        {{fileName1 || "No has añadido ningún documento aún."}}
-                        <button type="button" mat-mini-fab color="primary" class="upload-btn"
-                                (click)="fileUpload1.click()">
-                            <mat-icon>attach_file</mat-icon>
-                        </button>
-                    </div>
-                </div>
-                <!-- Repite los inputs de documentos adjuntos según sea necesario para doc_adjuntos_2 a doc_adjuntos_6 -->
+                <div class="documentos-adjuntos">
+                    <label>Documentos Adjuntos (opcional)</label>
+                    <ng-container *ngFor="let doc of documentosAdjuntos; let i = index">
+                      <div class="input-file">
+                        <label for="doc_{{i+1}}">Documento {{i+1}}:</label>
+                        <input id="doc_{{i+1}}" type="file" class="file-input" accept=".pdf, .doc, .docx" [formControlName]="doc"
+                               (change)="onFileSelected($event, i + 1)" #fileUpload>
+                  
+                        <div class="file-upload">
+                          {{ fileNames[i] || "No has añadido ningún documento aún." }}
+                          <button type="button" class="upload-btn" (click)="fileUpload.click()">
+                            <span>Seleccionar archivo</span>
+                          </button>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
             </fieldset>
 
             <hr>

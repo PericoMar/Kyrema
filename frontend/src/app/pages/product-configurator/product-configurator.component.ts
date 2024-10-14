@@ -56,6 +56,7 @@ export class ProductConfiguratorComponent {
 
   nombreProducto = '';
   letrasIdentificacion = '';
+  acuerdoKyrema : boolean = false;
   casilla_logo_sociedad!: string;
   duracion = '';
 
@@ -431,7 +432,8 @@ export class ProductConfiguratorComponent {
       const prefijoLetras = this.tipo_producto_asociado ? AppConfig.PREFIJO_LETRAS_IDENTIFICACION_ANEXOS : AppConfig.PREFIJO_LETRAS_IDENTIFICACION ;
       const nuevoProducto = {
         casilla_logo_sociedad: this.camposLogos[0].columna + this.camposLogos[0].fila,
-        nombreProducto: this.nombreProducto,
+        nombreProducto: this.nombreProducto + (this.acuerdoKyrema ? ' - Acuerdo Kyrema' : ''),
+        acuerdo_kyrema: this.acuerdoKyrema,
         letrasIdentificacion: prefijoLetras + this.letrasIdentificacion,
         campos: camposFormulario,
         padre_id : this.padre_id ? this.padre_id : null,

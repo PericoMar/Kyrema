@@ -34,6 +34,13 @@
                   </select>
               </div>
             }
+            @if(!tipo_producto_asociado && !padre_id){
+              <div>
+                <label for="acuerdo_kyrema">Acuerdo Kyrema</label>
+                <!-- mat-checbox -->
+                <mat-checkbox id=acuerdo_kyrema [(ngModel)]="acuerdoKyrema" color="primary" name="acuerdo_kyrema"></mat-checkbox>
+              </div>
+            }
             <div class="input-file">
               <input type="file" class="file-input" accept=".xls, .xlsx, .xlsm, .xlsb, .csv"
                 (change)="onFileSelected($event)" #fileUpload>

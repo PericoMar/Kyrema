@@ -202,7 +202,12 @@
         @if(loadingAction){
             <app-button-spinner></app-button-spinner>
         }@else {
-            Contratar
+            @if(tipo_producto.acuerdo_kyrema){  
+                Asociarse y contratar
+            }@else {
+                Contratar
+            }
+            
         }
         </button>
     } @else {

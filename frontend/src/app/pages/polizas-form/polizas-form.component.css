@@ -67,3 +67,32 @@ hr{
     color: #b40912; /* Cambia el color del botón de acción */
   }
   
+  .documentos-adjuntos {
+    display: flex;
+    flex-direction: column;
+  }
+
+  
+  .file-upload {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .upload-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 5px;
+  }
+  
+  .upload-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  input[type="file"] {
+    display: none;
+  }

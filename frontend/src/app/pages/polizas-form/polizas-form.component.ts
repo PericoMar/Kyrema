@@ -20,19 +20,13 @@ export class PolizasFormComponent {
   formularioMandado: boolean = false; // Para validar si el formulario fue enviado
   cargandoPoliza: boolean = false; // Para mostrar un spinner mientras se carga
   poliza_id: number | null = null; // Para saber si se está editando una póliza
-  fileName1: string = ''; // Para mostrar el nombre del archivo seleccionado
-  fileName2: string = ''; // Para mostrar el nombre del archivo seleccionado
-  fileName3: string = ''; // Para mostrar el nombre del archivo seleccionado
-  fileName4: string = ''; // Para mostrar el nombre del archivo seleccionado
-  fileName5: string = ''; // Para mostrar el nombre del archivo seleccionado
-  fileName6: string = ''; // Para mostrar el nombre del archivo seleccionado
+  fileNames: string[] = Array(6).fill('');
+  
+  // Array para los controles de documentos adjuntos
+  documentosAdjuntos = ['doc_adjuntos_1', 'doc_adjuntos_2', 'doc_adjuntos_3', 'doc_adjuntos_4', 'doc_adjuntos_5', 'doc_adjuntos_6'];
 
-  selectedFile1!: File; // Para guardar el archivo seleccionado
-  selectedFile2!: File; // Para guardar el archivo seleccionado
-  selectedFile3!: File; // Para guardar el archivo seleccionado
-  selectedFile4!: File; // Para guardar el archivo seleccionado
-  selectedFile5!: File; // Para guardar el archivo seleccionado
-  selectedFile6!: File; // Para guardar el archivo seleccionado
+
+  
 
   constructor(private fb: FormBuilder, private companyService: CompaniesService, private polizasService: PolizasService, private route: ActivatedRoute) { 
     this.polizaForm = this.fb.group({
@@ -74,10 +68,8 @@ export class PolizasFormComponent {
   }
 
   loadPoliza(id: number): void {
-    this.cargandoPoliza = true;
     this.polizasService.getPolizaById(id).subscribe((data : any) => {
       this.polizaForm.patchValue(data);
-      this.cargandoPoliza = false;
     });
   }
 
@@ -104,10 +96,11 @@ export class PolizasFormComponent {
     }
   }
 
-  onFileSelected(event: any, index: number): void {
+  // Método que maneja la selección del archivo
+  onFileSelected(event: any, index: number) {
     const file = event.target.files[0];
     if (file) {
-      this.polizaForm.patchValue({ [`doc_adjuntos_${index}`]: file });
+      this.fileNames[index - 1] = file.name;
     }
   }
 }
