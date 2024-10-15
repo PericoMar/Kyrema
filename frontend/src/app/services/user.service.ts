@@ -46,5 +46,13 @@ export class UserService {
   updateCommercial(commercial_id: any, commercial: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/comercial/${commercial_id}`, commercial);
   }
+
+  getAsegurado(dni : string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/socio/${dni}`);
+  }
+
+  guardarAsegurado(asegurado: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/socio`, asegurado);
+  }
 }
 

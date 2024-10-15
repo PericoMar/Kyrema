@@ -50,10 +50,20 @@
         }
     </header>
     <main class="form-main">
-        <div class="input-container dni">
-            <label for="dni" class="input-label">DNI o CIF <span *ngIf="isFieldRequired('datos_asegurado', 'dni')" class="span-required">*</span></label>
-            <input id="dni" formControlName="dni" class="input-field" placeholder="Ej: 12345678X">
-        </div>
+        <fieldset class="input-group">
+            <div class="input-container dni">
+                <label for="dni" class="input-label">DNI o CIF <span *ngIf="isFieldRequired('datos_asegurado', 'dni')" class="span-required">*</span></label>
+                <input id="dni" formControlName="dni" class="input-field" placeholder="Ej: 12345678X">
+            </div>
+            <!-- mat-button -->
+            <button mat-raised-button color="primary" type="button" class="socio-btn" (click)="searchAsegurado()" [disabled]="cargandoBusquedaAsegurado">
+            @if(cargandoBusquedaAsegurado){
+                <app-button-spinner></app-button-spinner>
+            } @else {
+                Buscar socio/cliente
+            } 
+            </button>
+        </fieldset>
         
         <fieldset class="input-group">
             <div class="input-container">
@@ -114,6 +124,9 @@
                 <label for="codigo_postal" class="input-label">Código Postal <span *ngIf="isFieldRequired('datos_asegurado', 'codigo_postal')" class="span-required">*</span></label>
                 <input id="codigo_postal" formControlName="codigo_postal" type="number" class="input-field" placeholder="Ej: 28001">
             </div>
+
+            <!-- mat-button -->
+            <button mat-raised-button color="success" type="button" class="socio-btn" (click)="guardarAsegurado()">Guardar socio/cliente</button>
 
         </fieldset>
         

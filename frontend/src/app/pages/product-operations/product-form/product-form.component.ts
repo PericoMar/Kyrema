@@ -114,6 +114,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
   minDate!: string;
   fecha_fin!: Date;
   loadingComercial: boolean = false;
+  cargandoBusquedaAsegurado: boolean = false;
   
   
 
@@ -254,7 +255,7 @@ export class ProductFormComponent implements OnInit, OnChanges{
     this.userService.getComercialesPorSociedad(sociedad_id).subscribe({
       next: (comerciales: any[]) => {
         this.comerciales = comerciales;
-        if (this.comerciales.length > 0 && !this.productForm.get('comercial_id')?.value) {
+        if (this.comerciales.length > 0) {
           this.productForm.controls['comercial_id'].setValue(this.comerciales[0].id);
         }
         this.loadingComercial = false;
@@ -1055,6 +1056,67 @@ export class ProductFormComponent implements OnInit, OnChanges{
 
   }
 
-  
+  searchAsegurado(){
+    this.cargandoBusquedaAsegurado = true;
+    this.userService.getAsegurado(this.productForm.value.dni).subscribe({
+      next: (asegurado: any) => {
+        console.log('Asegurado', asegurado);
+        this.productForm.controls['nombre_socio'].setValue(asegurado.nombre);
+        this.productForm.controls['apellido_1'].setValue(asegurado.apellido1);
+        this.productForm.controls['apellido_2'].setValue(asegurado.apellido2);
+        this.productForm.controls['telefono'].setValue(asegurado.telefono);
+        this.productForm.controls['email'].setValue(asegurado.email);
+        this.productForm.controls['sexo'].setValue(asegurado.sexo);
+        this.productForm.controls['dirección'].setValue(asegurado.direccion);
+        this.productForm.controls['población'].setValue(asegurado.poblacion);
+        this.productForm.controls['provincia'].setValue(asegurado.provincia);
+        this.productForm.controls['codigo_postal'].setValue(asegurado.codigo_postal);
+        this.productForm.controls['fecha_de_nacimiento'].setValue(asegurado.fecha_nacimiento);
+        this.cargandoBusquedaAsegurado = false;
+      },
+      error: (error: any) => {
+        this.snackBarService.openSnackBar('No se ha encontrado ningún socio/cliente con ese DNI.');
+        this.cargandoBusquedaAsegurado = false;
+      }
+    });
+  }
 
+  guardarAsegurado() {
+    // Comprobar que dni, nombre, email y fecha de nacimiento no estén vacíos
+    if (
+      this.productForm.value.dni === '' ||
+      this.productForm.value.nombre_socio === '' ||
+      this.productForm.value.email === '' ||
+      this.productForm.value.fecha_de_nacimiento === ''
+    ) {
+      this.snackBarService.openSnackBar('Por favor rellene los campos: dni, nombre, email y fecha de nacimiento.');
+      return;
+    }
+    // Crear un objeto con los datos del asegurado
+    const asegurado = {
+      dni: this.productForm.value.dni,
+      nombre_socio: this.productForm.value.nombre_socio,
+      apellido1: this.productForm.value.apellido_1,
+      apellido2: this.productForm.value.apellido_2,
+      telefono: this.productForm.value.telefono,
+      email: this.productForm.value.email,
+      sexo: this.productForm.value.sexo,
+      direccion: this.productForm.value.dirección,
+      poblacion: this.productForm.value.población,
+      provincia: this.productForm.value.provincia,
+      codigo_postal: this.productForm.value.codigo_postal + '',
+      fecha_de_nacimiento: this.productForm.value.fecha_de_nacimiento
+    };
+
+    // Guardar el asegurado en la base de datos
+    this.userService.guardarAsegurado(asegurado).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.snackBarService.openSnackBar('Asegurado guardado con éxito.');
+      },
+      error: (error: any) => {
+        console.error('Error saving asegurado', error);
+      }
+    });
+  }
 }
